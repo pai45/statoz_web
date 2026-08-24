@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StatOz Web
 
-## Getting Started
+StatOz is a Next.js sports platform. The repository is organized around a
+shared design system, domain models, and feature-first product modules.
 
-First, run the development server:
+## Local development
+
+Install dependencies and start the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Learn More
+Run both checks together with:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run deploy:check
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment CLI
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Deployments use the project-local Vercel CLI pinned in `package-lock.json`, so
+contributors do not need a global installation.
 
-## Deploy on Vercel
+Link the local folder to the correct Vercel account and project once:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run deploy:setup
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Then create a preview or production deployment:
+
+```bash
+npm run deploy
+npm run deploy:prod
+```
+
+Both deployment commands run lint and a production build before uploading.
+When the current commit has already passed CI or `npm run deploy:check`, skip
+that repeated preflight:
+
+```bash
+npm run deploy -- --skip-checks
+npm run deploy:prod -- --skip-checks
+```
+
+Additional arguments are forwarded to Vercel, for example
+`npm run deploy -- --logs` or `npm run deploy:prod -- --force`.
+
+Keep secrets in Vercel project settings or ignored `.env.*` files. Add only
+documented variable names, never credentials, to `.env.example`.
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the codebase structure.
