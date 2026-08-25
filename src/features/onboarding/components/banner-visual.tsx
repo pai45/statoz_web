@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { withAlpha } from "@/design-system";
+import { publicAsset } from "@/shared/config";
 
 import type { ProfileBannerOption } from "../types";
 
@@ -23,7 +24,7 @@ export function BannerVisual({ banner, className }: BannerVisualProps) {
   if (banner.src) {
     return (
       <Image
-        src={banner.src}
+        src={publicAsset(banner.src)}
         alt=""
         fill
         sizes="(min-width: 1024px) 32rem, 100vw"

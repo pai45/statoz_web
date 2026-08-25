@@ -20,6 +20,13 @@ export const shape = {
   hudAccentCut: 4,
   /** Octagon corner cut, as a fraction of the badge's shortest side. */
   octagonCutRatio: 0.15,
+  /**
+   * A collectible card wears the HUD chamfer, but scaled to its own width so
+   * every card size keeps the same proportion instead of the fixed 14/4 plate.
+   */
+  cardCutRatio: 0.13,
+  cardCutMin: 10,
+  cardCutMax: 30,
   /** The only rounded radii in the system — reserved for pills and meters. */
   radius: {
     none: "0",
@@ -70,6 +77,33 @@ export const hudClipPath = (() => {
   const small = `${shape.hudAccentCut}px`;
   return `polygon(${big} 0, calc(100% - ${small}) 0, 100% ${small}, 100% calc(100% - ${big}), calc(100% - ${big}) 100%, ${small} 100%, 0 calc(100% - ${small}), 0 ${big})`;
 })();
+
+/**
+ * The card silhouette: the HUD chamfer again, sized from the two custom
+ * properties a card sets for itself, so one path serves every card size — and
+ * so an overlay such as the reveal's foil sweep clips to the exact same shape
+ * by inheriting them rather than measuring the card at runtime.
+ *
+ * Use this string, not `var(--ds-clip-card)`, on anything that overrides the
+ * cuts. A custom property's `var()` references resolve against the element that
+ * *declares* it, so `--ds-clip-card` always resolves its cuts on `:root` and
+ * silently ignores a local override; assigning this value directly resolves
+ * them on the element using it, which is the whole point.
+ */
+export const cardClipPath = (() => {
+  const big = "var(--ds-card-cut-big)";
+  const small = "var(--ds-card-cut-small)";
+  return `polygon(${big} 0, calc(100% - ${small}) 0, 100% ${small}, 100% calc(100% - ${big}), calc(100% - ${big}) 100%, ${small} 100%, 0 calc(100% - ${small}), 0 ${big})`;
+})();
+
+/** The chamfer measurements a card of the given width should declare. */
+export function cardCuts(width: number): { big: number; small: number } {
+  const big = Math.min(
+    Math.max(width * shape.cardCutRatio, shape.cardCutMin),
+    shape.cardCutMax,
+  );
+  return { big, small: big / 2 };
+}
 
 /** Active tab plate: square on top, cut on both bottom corners. */
 export const tabPlateClipPath = `polygon(0 0, 100% 0, 100% calc(100% - ${shape.tabChamfer}px), calc(100% - ${shape.tabChamfer}px) 100%, ${shape.tabChamfer}px 100%, 0 calc(100% - ${shape.tabChamfer}px))`;

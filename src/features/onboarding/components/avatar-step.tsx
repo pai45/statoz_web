@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { SelectableTile } from "@/design-system";
+import { publicAsset } from "@/shared/config";
 
 import { avatarOptions } from "../data/avatars";
 
@@ -43,7 +44,7 @@ export function AvatarStep({ selectedId, onSelect }: AvatarStepProps) {
               className="aspect-square w-full"
             >
               <Image
-                src={avatar.src}
+                src={publicAsset(avatar.src)}
                 alt=""
                 fill
                 sizes="(min-width: 1024px) 8rem, 30vw"

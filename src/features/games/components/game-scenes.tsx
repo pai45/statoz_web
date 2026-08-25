@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { publicAsset } from "@/shared/config";
+
 import { gameRegistry } from "../data/game-registry";
 import type { GameId, GameSceneId } from "../types";
 
@@ -124,7 +126,7 @@ export function GameScene({ game, opacity = 1, washed = true }: GameSceneProps) 
         />
       ) : null}
       <Image
-        src={asset.src}
+        src={publicAsset(asset.src)}
         alt=""
         aria-hidden
         fill

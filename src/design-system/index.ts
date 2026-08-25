@@ -2,9 +2,11 @@ export * from "./tokens";
 export * from "./icons";
 
 export * from "./components/actions/button";
+export * from "./components/data-display/action-card";
 export * from "./components/data-display/badge";
 export * from "./components/data-display/hud-panel";
 export * from "./components/data-display/monogram";
+export * from "./components/data-display/player-card";
 export * from "./components/data-display/signal-panel";
 export * from "./components/feedback/countdown-ring";
 export * from "./components/feedback/progress";

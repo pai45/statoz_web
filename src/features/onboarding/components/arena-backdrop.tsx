@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { withAlpha } from "@/design-system";
+import { publicAsset } from "@/shared/config";
 
 import styles from "./motion.module.css";
 
@@ -32,7 +33,7 @@ export function ArenaBackdrop({ className }: ArenaBackdropProps) {
     >
       <div className={`${styles.drift} absolute inset-0`}>
         <Image
-          src="/assets/backgrounds/penalty_arena.png"
+          src={publicAsset("/assets/backgrounds/penalty_arena.png")}
           alt=""
           fill
           priority

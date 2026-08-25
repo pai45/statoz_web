@@ -1,3 +1,5 @@
+import type { RarityName } from "./colors";
+
 /** Gradient decisions that repeat across StatOz surfaces. */
 export const gradients = {
   /** The full-bleed backdrop behind every platform screen. */
@@ -12,6 +14,91 @@ export const gradients = {
   stepPassed: "linear-gradient(to right, #00c850 0%, #009865 100%)",
   /** The segment the player is on — the only one that glows. */
   stepCurrent: "linear-gradient(to right, #ffb13d 0%, #ff7a1a 100%)",
+  /** The headline a pack announces itself with, cyan raking into acid green. */
+  packHeadline: "linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%)",
+  /** A collectible card's nameplate, under the player's name. */
+  cardNameplate: "linear-gradient(to right, #202836 0%, #121824 100%)",
 } as const;
+
+/**
+ * The metallic fill of a card face, graded by tier: the higher the rarity, the
+ * lighter and more iridescent the base, so rarity reads before the edge is seen.
+ *
+ * Flutter layers a semi-transparent tier tint over the shell's fill; here the
+ * tint is mixed into the neighbouring dark stop instead, which composites to the
+ * same color and keeps the gradient opaque and self-contained.
+ */
+export const rarityFoil: Record<RarityName, string> = {
+  bronze: [
+    "linear-gradient(135deg,",
+    "#19120c 0%,",
+    "color-mix(in srgb, var(--ds-color-rarity-bronze-base) 10%, #19120c) 50%,",
+    "#120f0e 100%)",
+  ].join(" "),
+  silver: [
+    "linear-gradient(135deg,",
+    "#141a24 0%,",
+    "color-mix(in srgb, var(--ds-color-rarity-silver-base) 12%, #141a24) 36%,",
+    "#10151f 70%,",
+    "#0e1118 100%)",
+  ].join(" "),
+  gold: [
+    "linear-gradient(135deg,",
+    "#1a1606 0%,",
+    "color-mix(in srgb, var(--ds-color-rarity-gold-base) 16%, #1a1606) 34%,",
+    "#14130a 70%,",
+    "#0f1118 100%)",
+  ].join(" "),
+  platinum: [
+    "linear-gradient(135deg,",
+    "#0b1426 0%,",
+    "color-mix(in srgb, var(--ds-color-rarity-platinum-base) 22%, #0b1426) 30%,",
+    "#141d3a 50%,",
+    "color-mix(in srgb, var(--ds-color-rarity-platinum-deep) 18%, #141d3a) 72%,",
+    "#0b1426 100%)",
+  ].join(" "),
+};
+
+/** The sealed pack's shell, and the card back it flips from: light to deep. */
+export const rarityPack: Record<RarityName, string> = {
+  bronze: packFill("bronze"),
+  silver: packFill("silver"),
+  gold: packFill("gold"),
+  platinum: packFill("platinum"),
+};
+
+function packFill(tier: RarityName): string {
+  return [
+    "linear-gradient(to bottom,",
+    `var(--ds-color-rarity-${tier}-light) 0%,`,
+    `var(--ds-color-rarity-${tier}-base) 50%,`,
+    `var(--ds-color-rarity-${tier}-deep) 100%)`,
+  ].join(" ");
+}
+
+/**
+ * An action card's ground, tinted towards what the action does: warm for
+ * attack, violet for defense, cool for the specials.
+ */
+export const actionCategoryFill = {
+  attack: "linear-gradient(135deg, #1a1520 0%, #200d0d 100%)",
+  defense: "linear-gradient(135deg, #151020 0%, #1d0d2b 100%)",
+  special: "linear-gradient(135deg, #0d1520 0%, #1a1520 100%)",
+} as const;
+
+/**
+ * The plate behind a card's glyph when no portrait exists — a bright catch-light
+ * raking down through the tier hue into ink and a deep red edge.
+ */
+export function cardIconFallback(tierColor: string): string {
+  return [
+    "linear-gradient(135deg,",
+    "#f7f7f4 0%,",
+    "#ffffff 40%,",
+    `${tierColor} 54%,`,
+    "#111827 72%,",
+    "#e31f26 100%)",
+  ].join(" ");
+}
 
 export type GradientTokens = typeof gradients;

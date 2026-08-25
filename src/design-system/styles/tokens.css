@@ -33,6 +33,21 @@
   --ds-color-accent-racing: #f42d29;
   --ds-color-accent-pink: #ff94c1;
 
+  /* Rarity — collectible card tiers. Gold and platinum reuse the accents the
+     palette already holds rather than growing a second gold. */
+  --ds-color-rarity-bronze-light: #e8a45c;
+  --ds-color-rarity-bronze-base: #cd7f32;
+  --ds-color-rarity-bronze-deep: #5c3a1a;
+  --ds-color-rarity-silver-light: #f1f5f9;
+  --ds-color-rarity-silver-base: #cbd5e1;
+  --ds-color-rarity-silver-deep: #64748b;
+  --ds-color-rarity-gold-light: #ffe9a8;
+  --ds-color-rarity-gold-base: var(--ds-color-accent-gold);
+  --ds-color-rarity-gold-deep: #b8860b;
+  --ds-color-rarity-platinum-light: #b9f6ff;
+  --ds-color-rarity-platinum-base: var(--ds-color-accent-cyan);
+  --ds-color-rarity-platinum-deep: var(--ds-color-accent-violet);
+
   /* Feedback */
   --ds-color-success: #05df72;
   --ds-color-warning: #fdc700;
@@ -58,6 +73,8 @@
   );
   --ds-gradient-step-passed: linear-gradient(to right, #00c850 0%, #009865 100%);
   --ds-gradient-step-current: linear-gradient(to right, #ffb13d 0%, #ff7a1a 100%);
+  --ds-gradient-pack-headline: linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%);
+  --ds-gradient-card-nameplate: linear-gradient(to right, #202836 0%, #121824 100%);
 
   /* Elevation */
   --ds-shadow-hard-drop: 0 4px 0 rgb(0 0 0 / 20%);
@@ -71,6 +88,10 @@
   --ds-shape-field-cut: 10px;
   --ds-shape-hud-cut: 14px;
   --ds-shape-hud-accent-cut: 4px;
+  /* A card scales its chamfer to its own width; these are the resting values a
+     card overrides. See cardCuts() in design-system/tokens/shape.ts. */
+  --ds-card-cut-big: 14px;
+  --ds-card-cut-small: 7px;
   --ds-radius-none: 0;
   --ds-radius-sm: 2px;
   --ds-radius-md: 4px;
@@ -117,6 +138,19 @@
     4px 100%,
     0 calc(100% - 4px),
     0 14px
+  );
+  /* Only correct at the resting cut sizes above: the cuts in this polygon
+     resolve here on :root, so a card that overrides --ds-card-cut-* must use
+     cardClipPath from design-system/tokens/shape.ts instead. */
+  --ds-clip-card: polygon(
+    var(--ds-card-cut-big) 0,
+    calc(100% - var(--ds-card-cut-small)) 0,
+    100% var(--ds-card-cut-small),
+    100% calc(100% - var(--ds-card-cut-big)),
+    calc(100% - var(--ds-card-cut-big)) 100%,
+    var(--ds-card-cut-small) 100%,
+    0 calc(100% - var(--ds-card-cut-small)),
+    0 var(--ds-card-cut-big)
   );
   --ds-clip-tab-plate: polygon(
     0 0,

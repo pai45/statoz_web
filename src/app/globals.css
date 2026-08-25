@@ -33,6 +33,19 @@
   --color-racing: var(--ds-color-accent-racing);
   --color-pink: var(--ds-color-accent-pink);
 
+  /* Rarity */
+  --color-bronze: var(--ds-color-rarity-bronze-base);
+  --color-bronze-light: var(--ds-color-rarity-bronze-light);
+  --color-bronze-deep: var(--ds-color-rarity-bronze-deep);
+  --color-silver: var(--ds-color-rarity-silver-base);
+  --color-silver-light: var(--ds-color-rarity-silver-light);
+  --color-silver-deep: var(--ds-color-rarity-silver-deep);
+  --color-gold-light: var(--ds-color-rarity-gold-light);
+  --color-gold-deep: var(--ds-color-rarity-gold-deep);
+  --color-platinum: var(--ds-color-rarity-platinum-base);
+  --color-platinum-light: var(--ds-color-rarity-platinum-light);
+  --color-platinum-deep: var(--ds-color-rarity-platinum-deep);
+
   /* Feedback */
   --color-success: var(--ds-color-success);
   --color-warning: var(--ds-color-warning);

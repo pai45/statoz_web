@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { publicAsset } from "@/shared/config";
 
 /**
  * Multi-color brand artwork from the app's `assets/icons`. These carry their
@@ -36,7 +37,7 @@ export function BrandIcon({
 
   return (
     <Image
-      src={asset.src}
+      src={publicAsset(asset.src)}
       alt={resolved}
       width={size}
       height={size}

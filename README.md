@@ -60,4 +60,19 @@ Additional arguments are forwarded to Vercel, for example
 Keep secrets in Vercel project settings or ignored `.env.*` files. Add only
 documented variable names, never credentials, to `.env.example`.
 
+## GitHub Pages
+
+The `main` branch deploys to GitHub Pages through
+`.github/workflows/github-pages.yml`. The workflow builds a static Next.js
+export for the repository subpath and publishes the generated `out/` directory.
+
+Run the same export locally with:
+
+```bash
+npm run build:pages
+```
+
+The Pages site is served from
+`https://pai45.github.io/statoz_web/`.
+
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the codebase structure.
