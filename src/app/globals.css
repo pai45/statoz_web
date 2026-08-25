@@ -2,22 +2,100 @@
 @import "../design-system/styles/tokens.css";
 
 @theme inline {
+  /* Surfaces */
   --color-background: var(--ds-color-background-primary);
   --color-surface: var(--ds-color-background-secondary);
   --color-surface-elevated: var(--ds-color-background-elevated);
+  --color-surface-muted: var(--ds-color-background-muted);
+  --color-surface-nav: var(--ds-color-background-nav);
+
+  /* Text */
   --color-foreground: var(--ds-color-text-default);
   --color-muted: var(--ds-color-text-muted);
+  --color-subtle: var(--ds-color-text-subtle);
+  --color-inverse: var(--ds-color-text-inverse);
+  --color-disabled: var(--ds-color-text-disabled);
+
+  /* Borders */
+  --color-line: var(--ds-color-border-default);
+  --color-line-muted: var(--ds-color-border-muted);
+  --color-line-subtle: var(--ds-color-border-subtle);
+  --color-line-strong: var(--ds-color-border-strong);
+
+  /* Accents */
   --color-accent: var(--ds-color-accent-cyan);
+  --color-cyan: var(--ds-color-accent-cyan);
+  --color-violet: var(--ds-color-accent-violet);
+  --color-orange: var(--ds-color-accent-orange);
+  --color-lime: var(--ds-color-accent-lime);
+  --color-gold: var(--ds-color-accent-gold);
+  --color-blue: var(--ds-color-accent-blue);
+  --color-racing: var(--ds-color-accent-racing);
+  --color-pink: var(--ds-color-accent-pink);
+
+  /* Feedback */
   --color-success: var(--ds-color-success);
   --color-warning: var(--ds-color-warning);
   --color-danger: var(--ds-color-danger);
+  --color-info: var(--ds-color-info);
+
+  /* Type */
   --font-sans: var(--ds-font-body);
   --font-display: var(--ds-font-display);
   --font-mono: var(--ds-font-mono);
+  --text-2xs: var(--ds-text-2xs);
+  --text-xs: var(--ds-text-xs);
+  --text-sm: var(--ds-text-sm);
+  --text-md: var(--ds-text-md);
+  --text-base: var(--ds-text-base);
+  --text-lg: var(--ds-text-lg);
+  --text-xl: var(--ds-text-xl);
+  --text-2xl: var(--ds-text-2xl);
+  --text-3xl: var(--ds-text-3xl);
+  --text-hero: var(--ds-text-hero);
+  --text-celebration: var(--ds-text-celebration);
+  --text-countdown: var(--ds-text-countdown);
+  --leading-compact: var(--ds-leading-compact);
+  --leading-tight: var(--ds-leading-tight);
+  --leading-body: var(--ds-leading-body);
+  --leading-relaxed: var(--ds-leading-relaxed);
+  --tracking-tight: var(--ds-tracking-tight);
+  --tracking-label: var(--ds-tracking-label);
+  --tracking-wide: var(--ds-tracking-wide);
+  --tracking-display: var(--ds-tracking-display);
+  --tracking-ultra: var(--ds-tracking-ultra);
+  --tracking-mega: var(--ds-tracking-mega);
+  --tracking-max: var(--ds-tracking-max);
+
+  /* Shape */
+  --radius-sm: var(--ds-radius-sm);
+  --radius-md: var(--ds-radius-md);
+  --radius-pill: var(--ds-radius-pill);
 }
 
 body {
   background: var(--ds-color-background-primary);
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-body);
+}
+
+/* Numbers that sit in columns or animate must not jitter. */
+.ds-tabular {
+  font-feature-settings: var(--ds-numeric-tabular);
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ds-color-accent-cyan);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

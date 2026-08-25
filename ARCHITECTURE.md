@@ -24,12 +24,14 @@ domain, server, and shared modules.
 
 ```text
 src/app/
-|-- (onboarding)/onboarding/
+|-- (onboarding)/
+|   |-- login/
+|   `-- onboarding/
 |-- (platform)/
 |   |-- matches/[matchId]/
 |   |-- leagues/[leagueId]/
 |   |-- picks/
-|   |-- games/
+|   |-- games/[sport]/
 |   |-- cards/
 |   |-- decks/[sport]/
 |   |-- leaderboard/

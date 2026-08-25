@@ -1,19 +1,27 @@
+/**
+ * Typography tokens. The size scale carries the steps the StatOz surfaces
+ * actually use — the Flutter app leans on 10, 13, 15, 17 and 22px far more than
+ * on a conventional web scale, so the ramp is calibrated to those.
+ */
 export const typography = {
   family: {
-    body: '"Onest", var(--font-geist-sans), sans-serif',
-    display: '"Orbitron", "Onest", var(--font-geist-sans), sans-serif',
-    mono: 'var(--font-geist-mono), monospace',
+    body: '"Onest", var(--font-onest), system-ui, sans-serif',
+    display: '"Orbitron", var(--font-orbitron), "Onest", system-ui, sans-serif',
+    mono: 'ui-monospace, "SFMono-Regular", monospace',
   },
   size: {
+    "2xs": "0.625rem",
     xs: "0.6875rem",
     sm: "0.8125rem",
     md: "0.875rem",
-    base: "1rem",
-    lg: "1.25rem",
-    xl: "1.5rem",
-    "2xl": "2rem",
+    base: "0.9375rem",
+    lg: "1.0625rem",
+    xl: "1.25rem",
+    "2xl": "1.375rem",
+    "3xl": "2rem",
     hero: "2.625rem",
     celebration: "3.375rem",
+    countdown: "4.5rem",
   },
   weight: {
     regular: 400,
@@ -31,8 +39,17 @@ export const typography = {
   },
   letterSpacing: {
     normal: "0",
+    tight: "0.02em",
     label: "0.05em",
+    wide: "0.07em",
     display: "0.075em",
+    ultra: "0.12em",
+    mega: "0.2em",
+    max: "0.3em",
+  },
+  /** Every figure on the prediction surfaces uses tabular lining numerals. */
+  numeric: {
+    tabular: '"tnum" 1',
   },
 } as const;
 

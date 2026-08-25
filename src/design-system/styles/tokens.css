@@ -6,6 +6,7 @@
   --ds-color-background-secondary: #0f172b;
   --ds-color-background-elevated: #1d293d;
   --ds-color-background-muted: #070c1f;
+  --ds-color-background-nav: #1a253a;
 
   /* Text */
   --ds-color-text-default: #ffffff;
@@ -13,10 +14,12 @@
   --ds-color-text-subtle: #cad5e2;
   --ds-color-text-accent: #5cdfff;
   --ds-color-text-inverse: #081019;
+  --ds-color-text-disabled: #6a7282;
 
   /* Borders */
   --ds-color-border-default: #314158;
   --ds-color-border-muted: #243654;
+  --ds-color-border-subtle: #20293e;
   --ds-color-border-strong: #45556c;
   --ds-color-border-active: rgb(173 70 255 / 50%);
 
@@ -40,6 +43,90 @@
   --ds-color-overlay-subtle: rgb(255 255 255 / 10%);
   --ds-color-overlay-scrim: rgb(0 0 0 / 84%);
 
+  /* Gradients */
+  --ds-gradient-app-background: linear-gradient(135deg, #010916 0%, #0e2646 100%);
+  --ds-gradient-nav-bar: linear-gradient(
+    to top,
+    rgb(14 22 43 / 97.6%) 0%,
+    rgb(28 40 60 / 97.6%) 100%
+  );
+  --ds-gradient-arena-backdrop: linear-gradient(
+    to bottom,
+    #02060f 0%,
+    #06121f 46%,
+    #01040a 100%
+  );
+  --ds-gradient-step-passed: linear-gradient(to right, #00c850 0%, #009865 100%);
+  --ds-gradient-step-current: linear-gradient(to right, #ffb13d 0%, #ff7a1a 100%);
+
+  /* Elevation */
+  --ds-shadow-hard-drop: 0 4px 0 rgb(0 0 0 / 20%);
+  --ds-shadow-panel: 0 2px 12px rgb(0 0 0 / 35%);
+
+  /* Shape — StatOz cuts corners instead of rounding them. */
+  --ds-shape-signal-cut: 12px;
+  --ds-shape-signal-notch: 34px;
+  --ds-shape-signal-lift: 6px;
+  --ds-shape-tab-chamfer: 16px;
+  --ds-shape-field-cut: 10px;
+  --ds-shape-hud-cut: 14px;
+  --ds-shape-hud-accent-cut: 4px;
+  --ds-radius-none: 0;
+  --ds-radius-sm: 2px;
+  --ds-radius-md: 4px;
+  --ds-radius-pill: 999px;
+
+  /* Clip paths — kept in sync with design-system/tokens/shape.ts */
+  --ds-clip-signal: polygon(
+    12px 0,
+    calc(100% - 42px) 0,
+    calc(100% - 34px) 8px,
+    100% 8px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    8px 100%,
+    0 calc(100% - 8px),
+    0 12px
+  );
+  --ds-clip-octagon: polygon(
+    15% 0,
+    85% 0,
+    100% 15%,
+    100% 85%,
+    85% 100%,
+    15% 100%,
+    0 85%,
+    0 15%
+  );
+  --ds-clip-field: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0 calc(100% - 10px),
+    0 10px
+  );
+  --ds-clip-hud: polygon(
+    14px 0,
+    calc(100% - 4px) 0,
+    100% 4px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    4px 100%,
+    0 calc(100% - 4px),
+    0 14px
+  );
+  --ds-clip-tab-plate: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 16px),
+    calc(100% - 16px) 100%,
+    16px 100%,
+    0 calc(100% - 16px)
+  );
+
   /* Spacing */
   --ds-space-0: 0;
   --ds-space-2: 0.125rem;
@@ -59,22 +146,32 @@
   --ds-space-64: 4rem;
 
   /* Typography */
-  --ds-font-body: "Onest", var(--font-geist-sans), sans-serif;
-  --ds-font-display: "Orbitron", "Onest", var(--font-geist-sans), sans-serif;
-  --ds-font-mono: var(--font-geist-mono), monospace;
+  --ds-font-body: "Onest", var(--font-onest), system-ui, sans-serif;
+  --ds-font-display: "Orbitron", var(--font-orbitron), "Onest", system-ui,
+    sans-serif;
+  --ds-font-mono: ui-monospace, "SFMono-Regular", monospace;
+  --ds-text-2xs: 0.625rem;
   --ds-text-xs: 0.6875rem;
   --ds-text-sm: 0.8125rem;
   --ds-text-md: 0.875rem;
-  --ds-text-base: 1rem;
-  --ds-text-lg: 1.25rem;
-  --ds-text-xl: 1.5rem;
-  --ds-text-2xl: 2rem;
+  --ds-text-base: 0.9375rem;
+  --ds-text-lg: 1.0625rem;
+  --ds-text-xl: 1.25rem;
+  --ds-text-2xl: 1.375rem;
+  --ds-text-3xl: 2rem;
   --ds-text-hero: 2.625rem;
   --ds-text-celebration: 3.375rem;
+  --ds-text-countdown: 4.5rem;
   --ds-leading-compact: 1;
   --ds-leading-tight: 1.2;
   --ds-leading-body: 1.4;
   --ds-leading-relaxed: 1.6;
+  --ds-tracking-tight: 0.02em;
   --ds-tracking-label: 0.05em;
+  --ds-tracking-wide: 0.07em;
   --ds-tracking-display: 0.075em;
+  --ds-tracking-ultra: 0.12em;
+  --ds-tracking-mega: 0.2em;
+  --ds-tracking-max: 0.3em;
+  --ds-numeric-tabular: "tnum" 1;
 }
