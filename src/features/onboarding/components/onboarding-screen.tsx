@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import type { Sport } from "@/domain/sports";
+import { saveProfileSetup } from "@/features/profile";
 
 import { afterOnboardingHref, setupSteps } from "../constants";
 import { avatarOptionById } from "../data/avatars";
@@ -86,14 +87,22 @@ export function OnboardingScreen({
     setPhase("launch");
   }
 
+  /**
+   * Finishing setup saves it. The profile reads the same record back, so the
+   * dossier opens wearing the face and colours that were just chosen rather
+   * than the defaults. `onComplete` still fires, for anything that wants to
+   * know beyond the storing of it.
+   */
   const enterApp = useCallback(() => {
-    onComplete?.({
+    const result: ProfileSetupResult = {
       avatarId,
       bannerId,
       primarySport,
       followedLeagueIds,
       favoriteTeams,
-    });
+    };
+    saveProfileSetup(result);
+    onComplete?.(result);
     router.push(afterOnboardingHref);
   }, [
     onComplete,

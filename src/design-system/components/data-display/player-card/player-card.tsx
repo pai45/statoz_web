@@ -144,14 +144,14 @@ export function PlayerCard({
   const lighten = (0.15 + rank * 0.17) * 100;
   const edge =
     rank >= 3
-      ? `linear-gradient(135deg, #ffffff, ${tierColor}, var(--ds-color-rarity-platinum-deep))`
-      : `linear-gradient(135deg, color-mix(in srgb, #ffffff ${lighten}%, ${tierColor}), ${tierColor})`;
+      ? `linear-gradient(135deg, var(--ds-color-text-default), ${tierColor}, var(--ds-color-rarity-platinum-deep))`
+      : `linear-gradient(135deg, color-mix(in srgb, var(--ds-color-text-default) ${lighten}%, ${tierColor}), ${tierColor})`;
 
   const plateHeight = `${namePlateFraction * 100}%`;
   const ovrWidth = step.width * 0.36;
   const ovrFace = [
     "linear-gradient(to bottom,",
-    `color-mix(in srgb, #ffffff ${rank >= 2 ? 60 : 30}%, ${tierColor}),`,
+    `color-mix(in srgb, var(--ds-color-text-default) ${rank >= 2 ? 60 : 30}%, ${tierColor}),`,
     `color-mix(in srgb, var(--ds-color-background-primary) ${rank >= 1 ? 18 : 45}%, ${tierColor}))`,
   ].join(" ");
 
@@ -237,18 +237,28 @@ export function PlayerCard({
         {/* Role and country, tucked inside the top-left cut rather than under
             it — the chamfer scales with the card, so the inset must too. */}
         <div
-          className="absolute flex flex-col bg-black/60 px-1.5 py-0.5"
-          style={{ top: cuts.big * 0.6, left: cuts.big * 0.45 }}
+          className="absolute flex max-w-[56%] flex-col px-1.5 py-0.5"
+          style={{
+            top: cuts.big * 0.6,
+            left: cuts.big * 0.45,
+            background: "var(--ds-color-overlay-plate)",
+          }}
         >
+          {/* A position is two letters for a footballer but a team or an
+              archetype for a driver or a tennis player, so it is clipped to
+              the room left of the OVR plate rather than allowed to wrap. */}
           <span
-            className="font-display font-black leading-compact"
+            className="truncate font-display font-black leading-compact"
             style={{ color: roleAccent, fontSize: step.chip }}
           >
             {roleLabel} - {position.split("/")[0]}
           </span>
           <span
-            className="font-bold leading-compact text-white/70"
-            style={{ fontSize: step.chip }}
+            className="truncate font-bold leading-compact"
+            style={{
+              fontSize: step.chip,
+              color: "color-mix(in srgb, var(--ds-color-text-default) 70%, transparent)",
+            }}
           >
             {countryCode}
           </span>
@@ -298,12 +308,14 @@ export function PlayerCard({
 
         {/* Trait, resting on the nameplate. */}
         <div
-          className="absolute truncate bg-black/65 px-1 py-[3px] text-center font-bold text-white/90"
+          className="absolute truncate px-1 py-[3px] text-center font-bold"
           style={{
             left: 4,
             right: 4,
             bottom: plateHeight,
             fontSize: step.trait,
+            background: "var(--ds-color-overlay-plate)",
+            color: "color-mix(in srgb, var(--ds-color-text-default) 90%, transparent)",
           }}
         >
           {trait}

@@ -10,14 +10,25 @@ export const shape = {
   signalNotch: 34,
   /** How far a signal panel's accent shadow sits below the panel. */
   signalLift: 6,
+  /** Match-hub card: lower chamfer and centred status notch geometry. */
+  fixtureCut: 12,
+  fixtureNotchWidth: 96,
+  fixtureNotchDepth: 22,
+  fixtureNotchSlope: 12,
+  fixtureLift: 6,
   /** Bottom corner cut on the active tab plate. */
   tabChamfer: 16,
   /** Corner cut on fields and buttons — the system's smallest chamfer. */
   fieldCut: 10,
+  /** Corner cut on a dossier panel: the card chamfer, on all four corners. */
+  panelCut: 12,
   /** The HUD plate's strong cut, on the top-left and bottom-right corners. */
   hudCut: 14,
   /** The HUD plate's answering cut, on the top-right and bottom-left. */
   hudAccentCut: 4,
+  /** Denser HUD plate used by quiz objectives. */
+  compactHudCut: 12,
+  compactHudAccentCut: 3,
   /** Octagon corner cut, as a fraction of the badge's shortest side. */
   octagonCutRatio: 0.15,
   /**
@@ -54,6 +65,26 @@ export const signalClipPath = [
   `)`,
 ].join(" ");
 
+/** Square top with a centred trapezoidal status notch and cut lower corners. */
+export const fixtureClipPath = (() => {
+  const halfNotch = shape.fixtureNotchWidth / 2;
+  const opening = halfNotch + shape.fixtureNotchSlope;
+  return [
+    "polygon(",
+    "0 0,",
+    `calc(50% - ${opening}px) 0,`,
+    `calc(50% - ${halfNotch}px) ${shape.fixtureNotchDepth}px,`,
+    `calc(50% + ${halfNotch}px) ${shape.fixtureNotchDepth}px,`,
+    `calc(50% + ${opening}px) 0,`,
+    "100% 0,",
+    `100% calc(100% - ${shape.fixtureCut}px),`,
+    `calc(100% - ${shape.fixtureCut}px) 100%,`,
+    `${shape.fixtureCut}px 100%,`,
+    `0 calc(100% - ${shape.fixtureCut}px)`,
+    ")",
+  ].join(" ");
+})();
+
 /** Regular octagon used for team badges and avatars. */
 export const octagonClipPath = (() => {
   const cut = `${shape.octagonCutRatio * 100}%`;
@@ -68,13 +99,38 @@ export const fieldClipPath = (() => {
 })();
 
 /**
+ * A dossier panel: the card chamfer taken evenly around all four corners. The
+ * profile's stacked surfaces read as one family because they share it, and it
+ * differs from `fieldClipPath` only in carrying a card's cut rather than a
+ * control's.
+ */
+export const panelClipPath = (() => {
+  const c = `${shape.panelCut}px`;
+  return `polygon(${c} 0, calc(100% - ${c}) 0, 100% ${c}, 100% calc(100% - ${c}), calc(100% - ${c}) 100%, ${c} 100%, 0 calc(100% - ${c}), 0 ${c})`;
+})();
+
+/**
  * The HUD plate: a strong chamfer on the top-left and bottom-right corners, and
  * a smaller answering cut on the other two. Cards and action surfaces share it
  * so they read as one piece of hardware.
+ *
+ * `hudChamferPath` is the same geometry at any pair of cuts. Most surfaces want
+ * the tokenised `hudClipPath`; a dense HUD built at several sizes at once — a
+ * ball strip, a sting plate, a score token — needs the cuts to scale with the
+ * element, and reaches for the function instead.
  */
-export const hudClipPath = (() => {
-  const big = `${shape.hudCut}px`;
-  const small = `${shape.hudAccentCut}px`;
+export function hudChamferPath(bigCut: number, smallCut: number): string {
+  const big = `${bigCut}px`;
+  const small = `${smallCut}px`;
+  return `polygon(${big} 0, calc(100% - ${small}) 0, 100% ${small}, 100% calc(100% - ${big}), calc(100% - ${big}) 100%, ${small} 100%, 0 calc(100% - ${small}), 0 ${big})`;
+}
+
+export const hudClipPath = hudChamferPath(shape.hudCut, shape.hudAccentCut);
+
+/** The slightly tighter HUD silhouette used by quiz-set objective cards. */
+export const compactHudClipPath = (() => {
+  const big = `${shape.compactHudCut}px`;
+  const small = `${shape.compactHudAccentCut}px`;
   return `polygon(${big} 0, calc(100% - ${small}) 0, 100% ${small}, 100% calc(100% - ${big}), calc(100% - ${big}) 100%, ${small} 100%, 0 calc(100% - ${small}), 0 ${big})`;
 })();
 

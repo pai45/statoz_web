@@ -35,8 +35,26 @@ export function revealItemSubtitle(item: PackRevealItem): string {
 }
 
 /**
- * A new player's starter pack: two strikers, two defenders, a keeper, and a set
- * of actions split between attack and defense.
+ * What any pack hands over, whichever sport rolled it.
+ *
+ * The five starter packs have nothing in common structurally — football deals a
+ * squad and a hand of actions, tennis deals one player — so they meet here, the
+ * way Flutter's builders all return a `PackResult`.
+ */
+export type PackResult = {
+  playerCards: PlayerCard[];
+  actionCards: ActionCard[];
+  /** Earned from the cards themselves; see `packXp`. */
+  xpGained: number;
+};
+
+export function packCardCount(result: PackResult): number {
+  return result.playerCards.length + result.actionCards.length;
+}
+
+/**
+ * A new player's football starter pack: two strikers, two defenders, a keeper,
+ * and a set of actions split between attack and defense.
  */
 export type StarterPack = {
   strikers: PlayerCard[];
@@ -76,6 +94,12 @@ export function starterPackRarityBreakdown(
 export type PackRevealData = {
   playerCards: PlayerCard[];
   actionCards: ActionCard[];
+  /**
+   * The game this pack belongs to, set over the headline. Flutter hardcodes
+   * PITCH DUEL here because its pack screen only ever served football; five
+   * sports share this one, so it is data.
+   */
+  brandLabel: string;
   /** The intro's headline. Newlines are honoured as deliberate line breaks. */
   headline: string;
   /** The word under the headline — UNLOCKED, PURCHASED, CLAIMED. */

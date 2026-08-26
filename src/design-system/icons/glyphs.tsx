@@ -192,6 +192,42 @@ export function ChevronRightIcon(props: IconProps) {
   );
 }
 
+/** Material Symbols `chevron_left` (rounded). */
+export function ChevronLeftIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `calendar_month` (rounded). */
+export function CalendarIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `event_busy` (rounded). */
+export function EventBusyIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m610-160 56-56-84-84 84-84-56-56-84 84-84-84-56 56 84 84-84 84 56 56 84-84 84 84ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `expand_more` (rounded). */
+export function ExpandMoreIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-240 240-480l56-56 184 184 184-184 56 56-240 240Zm0-200L240-680l56-56 184 184 184-184 56 56-240 240Z" />
+    </Icon>
+  );
+}
+
 /** Material Symbols `quiz` (rounded). */
 export function QuizIcon(props: IconProps) {
   return (
@@ -270,7 +306,6 @@ export function CheckBoxBlankIcon(props: IconProps) {
  * the filled Material design, so each is the filled rounded Material Symbols
  * cut rather than the outlined one the navigation glyphs above use.
  * ---------------------------------------------------------------------- */
-
 
 /** Material Symbols `auto_awesome` (filled). */
 export function AutoAwesomeIcon(props: IconProps) {
@@ -362,7 +397,6 @@ export function MyLocationIcon(props: IconProps) {
   );
 }
 
-
 /** Material Symbols `pan_tool` (filled). */
 export function PanToolIcon(props: IconProps) {
   return (
@@ -390,7 +424,6 @@ export function PsychologyIcon(props: IconProps) {
   );
 }
 
-
 /** Material Symbols `security` (filled). */
 export function SecurityIcon(props: IconProps) {
   return (
@@ -408,8 +441,6 @@ export function ShieldIcon(props: IconProps) {
     </Icon>
   );
 }
-
-
 
 /** Material Symbols `swap_horiz` (filled). */
 export function SwapHorizIcon(props: IconProps) {
@@ -438,7 +469,6 @@ export function SyncAltIcon(props: IconProps) {
   );
 }
 
-
 /** Material Symbols `turn_right` (filled). */
 export function TurnRightIcon(props: IconProps) {
   return (
@@ -462,6 +492,357 @@ export function DangerousIcon(props: IconProps) {
   return (
     <Icon {...props}>
       <path d="M363-120q-16 0-30.5-6T307-143L143-307q-11-11-17-25.5t-6-30.5v-234q0-16 6-30.5t17-25.5l164-164q11-11 25.5-17t30.5-6h234q16 0 30.5 6t25.5 17l164 164q11 11 17 25.5t6 30.5v234q0 16-6 30.5T817-307L653-143q-11 11-25.5 17t-30.5 6H363Zm117-304 86 86q11 11 28 11t28-11q11-11 11-28t-11-28l-86-86 86-86q11-11 11-28t-11-28q-11-11-28-11t-28 11l-86 86-86-86q-11-11-28-11t-28 11q-11 11-11 28t11 28l86 86-86 86q-11 11-11 28t11 28q11 11 28 11t28-11l86-86Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `visibility` (rounded). */
+export function VisibilityIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `timer_off` (rounded). */
+export function TimerOffIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M360-800v-80h240v80H360Zm80 260v-98l80 80v18h-80Zm352 288L666-378q-25 91-99.5 154.5T400-160q-100 0-170-70t-70-170q0-92 63.5-166.5T378-666L56-988l56-56 736 736-56 56ZM400-240q66 0 113-47t47-113q0-8-1-15.5t-2-15.5L433-561q-8-1-16-2t-17-1q-66 0-113 47t-47 113q0 66 47 113t113 47Zm332-198-58-58 84-84 56 56-82 86Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `radar` (rounded). */
+export function RadarIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q57 0 109.5 15T688-822l-59 59q-33-19-70.5-28T480-800q-134 0-227 93t-93 227q0 134 93 227t227 93q134 0 227-93t93-227q0-40-9-77.5T763-729l59-59q30 46 44 98.5T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-160q-100 0-170-70t-70-170q0-100 70-170t170-70q29 0 55.5 6.5T585-694l-60 60q-11-4-22-5t-23-1q-66 0-113 47t-47 113q0 66 47 113t113 47q66 0 113-47t47-113q0-12-1.5-23t-5.5-22l60-60q11 23 17.5 49.5T720-480q0 100-70 170t-170 70Zm0-160q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q7 0 13 1t13 3l-60 60 57 57 59-59q2 6 3 13t1 13q0 33-23.5 56.5T480-400Zm112-224-57-57 224-224 57 57-224 224Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `u_turn_left` (rounded). */
+export function UTurnLeftIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M560-160v-400q0-50-35-85t-85-35q-50 0-85 35t-35 85v206l84-84 56 58-180 180-180-180 56-58 84 84v-206q0-83 58.5-141.5T440-760q83 0 141.5 58.5T640-560v400h-80Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `star` (filled). */
+export function StarIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-269 314-169l44-189-147-127 194-17 75-179 75 179 194 17-147 127 44 189-166-100Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `star_outline` (outlined). */
+export function StarOutlineIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `replay` (rounded). */
+export function ReplayIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `play_arrow` (rounded, filled). */
+export function PlayArrowIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M320-200v-560l440 280-440 280Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `vertical_align_top` (rounded). */
+export function VerticalAlignTopIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M440-127v-393L327-407l-57-57 210-210 210 210-57 57-113-113v393h-80ZM200-760v-80h560v80H200Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `keyboard_double_arrow_up` (rounded). */
+export function DoubleArrowUpIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M296-224l-56-56 240-240 240 240-56 56-184-184-184 184Zm0-240l-56-56 240-240 240 240-56 56-184-184-184 184Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `edit` (outlined). */
+export function EditIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `content_copy` (outlined). */
+export function CopyIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `groups` (outlined). */
+export function GroupsIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 49 46.5t17 58.5v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Zm0-80q17 0 28.5-11.5T520-600q0-17-11.5-28.5T480-640q-17 0-28.5 11.5T440-600q0 17 11.5 28.5T480-560Zm1 240Zm-1-280Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `settings` (outlined). */
+export function SettingsIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `logout` (outlined). */
+export function LogoutIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `public` (outlined). */
+export function GlobeIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M324-111.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM440-162v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q41-45 62.5-100.5T800-480q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `schedule` (outlined). */
+export function ScheduleIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m612-292 56-56-148-148v-184h-80v216l172 172ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `close` (outlined). */
+export function CloseIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `radio_button_checked` (outlined). */
+export function RadioCheckedIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M621.5-338.5Q680-397 680-480t-58.5-141.5Q563-680 480-680t-141.5 58.5Q280-563 280-480t58.5 141.5Q397-280 480-280t141.5-58.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `radio_button_unchecked` (outlined). */
+export function RadioBlankIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `inventory_2` (outlined). */
+export function InventoryIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `menu_book` (outlined). */
+export function MenuBookIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M560-564v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-600q-38 0-73 9.5T560-564Zm0 220v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-380q-38 0-73 9t-67 27Zm0-110v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-490q-38 0-73 9.5T560-454ZM260-320q47 0 91.5 10.5T440-278v-394q-41-24-87-36t-93-12q-36 0-71.5 7T120-692v396q35-12 69.5-18t70.5-6Zm260 42q44-21 88.5-31.5T700-320q36 0 70.5 6t69.5 18v-396q-33-14-68.5-21t-71.5-7q-47 0-93 12t-87 36v394Zm-40 118q-48-38-104-59t-116-21q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752q46-24 96-36t102-12q58 0 113.5 15T480-740q51-30 106.5-45T700-800q52 0 102 12t96 36q11 5 16.5 15t5.5 21v482q0 23-19.5 35t-40.5 1q-37-20-77.5-31T700-240q-60 0-116 21t-104 59ZM280-494Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `headset_mic` (outlined). */
+export function HeadsetIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-40v-80h280v-40H600v-320h160v-40q0-116-82-198t-198-82q-116 0-198 82t-82 198v40h160v320H200q-33 0-56.5-23.5T120-240v-280q0-74 28.5-139.5T226-774q49-49 114.5-77.5T480-880q74 0 139.5 28.5T734-774q49 49 77.5 114.5T840-520v400q0 33-23.5 56.5T760-40H480ZM200-240h80v-160h-80v160Zm480 0h80v-160h-80v160ZM200-400h80-80Zm480 0h80-80Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `lock` (outlined). */
+export function LockIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm296.5-143.5Q560-327 560-360t-23.5-56.5Q513-440 480-440t-56.5 23.5Q400-393 400-360t23.5 56.5Q447-280 480-280t56.5-23.5ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `military_tech` (outlined). */
+export function MedalIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M280-880h400v314q0 23-10 41t-28 29l-142 84 28 92h152l-124 88 48 152-124-94-124 94 48-152-124-88h152l28-92-142-84q-18-11-28-29t-10-41v-314Zm80 80v234l80 48v-282h-80Zm240 0h-80v282l80-48v-234ZM480-647Zm-40-12Zm80 0Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `verified_user` (outlined). */
+export function VerifiedUserIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m438-338 226-226-57-57-169 169-84-84-57 57 141 141Zm42 258q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `whatshot` (outlined). */
+export function WhatshotIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-80q-66 0-127.5-20.5T240-160l58-58q42 29 88 43.5t94 14.5q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480H80q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127t31.5 155q0 82.5-31.5 155.5t-86 127.5q-54.5 54.5-127 86T480-80ZM159-243l163-163 120 100 198-198v104h80v-240H480v80h104L438-414 318-514 117-313q11 23 19.5 37.5T159-243Zm321-237Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `stadium` (outlined). */
+export function StadiumIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M120-680v-160l160 80-160 80Zm600 0v-160l160 80-160 80Zm-280-40v-160l160 80-160 80Zm0 640q-76-2-141.5-12.5t-114-26.5Q136-135 108-156t-28-44v-360q0-25 31.5-46.5t85.5-38q54-16.5 127-26t156-9.5q83 0 156 9.5t127 26q54 16.5 85.5 38T880-560v360q0 23-28 44t-76.5 37q-48.5 16-114 26.5T520-80v-160h-80v160Zm40-440q97 0 167.5-11.5T760-558q0-5-76-23.5T480-600q-128 0-204 18.5T200-558q42 15 112.5 26.5T480-520ZM360-166v-154h240v154q80-8 131-23.5t69-27.5v-271q-55 22-138 35t-182 13q-99 0-182-13t-138-35v271q18 12 69 27.5T360-166Zm120-161Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `workspace_premium` (outlined). */
+export function PremiumIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m387-412 35-114-92-74h114l36-112 36 112h114l-93 74 35 114-92-71-93 71ZM240-40v-309q-38-42-59-96t-21-115q0-134 93-227t227-93q134 0 227 93t93 227q0 61-21 115t-59 96v309l-240-80-240 80Zm410-350q70-70 70-170t-70-170q-70-70-170-70t-170 70q-70 70-70 170t70 170q70 70 170 70t170-70ZM320-159l160-41 160 41v-124q-35 20-75.5 31.5T480-240q-44 0-84.5-11.5T320-283v124Zm160-62Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `all_inclusive` (outlined). */
+export function InfinityIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M220-260q-92 0-156-64T0-480q0-92 64-156t156-64q37 0 71 13t61 37l68 62-60 54-62-56q-16-14-36-22t-42-8q-58 0-99 41t-41 99q0 58 41 99t99 41q22 0 42-8t36-22l310-280q27-24 61-37t71-13q92 0 156 64t64 156q0 92-64 156t-156 64q-37 0-71-13t-61-37l-68-62 60-54 62 56q16 14 36 22t42 8q58 0 99-41t41-99q0-58-41-99t-99-41q-22 0-42 8t-36 22L352-310q-27 24-61 37t-71 13Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `grid_on` (outlined). */
+export function GridOnIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h133v-133H200v133Zm213 0h134v-133H413v133Zm214 0h133v-133H627v133ZM200-413h133v-134H200v134Zm213 0h134v-134H413v134Zm214 0h133v-134H627v134ZM200-627h133v-133H200v133Zm213 0h134v-133H413v133Zm214 0h133v-133H627v133Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `style` (outlined). */
+export function StyleIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m159-168-34-14q-31-13-41.5-45t3.5-63l72-156v278Zm160 88q-33 0-56.5-23.5T239-160v-240l106 294q3 7 6 13.5t8 12.5h-40Zm206-4q-32 12-62-3t-42-47L243-622q-12-32 2-62.5t46-41.5l302-110q32-12 62 3t42 47l178 488q12 32-2 62.5T827-194L525-84Zm-57.5-487.5Q479-583 479-600t-11.5-28.5Q456-640 439-640t-28.5 11.5Q399-617 399-600t11.5 28.5Q422-560 439-560t28.5-11.5ZM497-160l302-110-178-490-302 110 178 490ZM319-650l302-110-302 110Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `lightbulb` (outlined). */
+export function LightbulbIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M423.5-103.5Q400-127 400-160h160q0 33-23.5 56.5T480-80q-33 0-56.5-23.5ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Zm24-80h252q45-32 69.5-79T700-580q0-92-64-156t-156-64q-92 0-156 64t-64 156q0 54 24.5 101t69.5 79Zm126 0Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `insights` (outlined). */
+export function InsightsIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M120-160q-33 0-56.5-23.5T40-240q0-33 23.5-56.5T120-320h10.5q4.5 0 9.5 2l182-182q-2-5-2-9.5V-520q0-33 23.5-56.5T400-600q33 0 56.5 23.5T480-520q0 2-2 20l102 102q5-2 9.5-2h21q4.5 0 9.5 2l142-142q-2-5-2-9.5V-560q0-33 23.5-56.5T840-640q33 0 56.5 23.5T920-560q0 33-23.5 56.5T840-480h-10.5q-4.5 0-9.5-2L678-340q2 5 2 9.5v10.5q0 33-23.5 56.5T600-240q-33 0-56.5-23.5T520-320v-10.5q0-4.5 2-9.5L420-442q-5 2-9.5 2H400q-2 0-20-2L198-260q2 5 2 9.5v10.5q0 33-23.5 56.5T120-160Zm40-401-25-54-54-25 54-25 25-54 25 54 54 25-54 25-25 54Zm440-39-38-82-82-38 82-38 38-82 38 82 82 38-82 38-38 82Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `show_chart` (outlined). */
+export function ShowChartIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m140-220-60-60 300-300 160 160 284-320 56 56-340 384-160-160-240 240Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `savings` (outlined). */
+export function SavingsIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M668.5-531.5Q680-543 680-560t-11.5-28.5Q657-600 640-600t-28.5 11.5Q600-577 600-560t11.5 28.5Q623-520 640-520t28.5-11.5ZM320-600h200v-80H320v80ZM180-120q-34-114-67-227.5T80-580q0-92 64-156t156-64h200q29-38 70.5-59t89.5-21q25 0 42.5 17.5T720-820q0 6-1.5 12t-3.5 11q-4 11-7.5 22.5T702-751l91 91h87v279l-113 37-67 224H480v-80h-80v80H180Zm60-80h80v-80h240v80h80l62-206 98-33v-141h-40L620-720q0-20 2.5-38.5T630-796q-29 8-51 27.5T547-720H300q-58 0-99 41t-41 99q0 98 27 191.5T240-200Zm240-298Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `collections_bookmark` (outlined). */
+export function CollectionsIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M320-320h480v-480h-80v280l-100-60-100 60v-280H320v480Zm0 80q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm360-720h200-200Zm-200 0h480-480Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `diamond` (outlined). */
+export function DiamondIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-120 80-600l120-240h560l120 240-400 480Zm-95-520h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `paid` (outlined). */
+export function PaidIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
     </Icon>
   );
 }

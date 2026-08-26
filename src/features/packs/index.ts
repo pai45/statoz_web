@@ -5,30 +5,65 @@ export { StarterPackReveal } from "./components/starter-pack-reveal";
 export type { StarterPackRevealProps } from "./components/starter-pack-reveal";
 
 export {
-  cricketStarterPackReveal,
-  starterPackReveal,
-} from "./reveal-data";
-export type { StarterRevealOptions } from "./reveal-data";
+  attackers as footballAttackers,
+  defenders as footballDefenders,
+  footballPlayerCards,
+  goalkeepers as footballGoalkeepers,
+} from "./data/football-cards";
+export {
+  cricketBattingCards,
+  cricketBowlingCards,
+  cricketPlayerCards,
+} from "./data/cricket-cards";
+export { basketballPlayerCards } from "./data/basketball-cards";
+export { tennisPlayerCards } from "./data/tennis-cards";
+export { racingPlayerCards } from "./data/racing-cards";
+export { collectionFrom, type CardCollection } from "./data/collection";
+export { rollStarterPackFor } from "./data/starter-packs";
+
+export {
+  claimPack,
+  resetClaimedPacks,
+  useClaimedPacks,
+  useIsHydrated,
+  useIsPackClaimed,
+} from "./state/claimed-packs";
+export type { ClaimedPacks, PackClaim } from "./state/claimed-packs";
 
 export {
   actionCardPool,
+  basketballStarterCardCount,
   canAddToMatchDeck,
+  cricketStarterCardCount,
   enforceMatchDeckLimit,
+  finalizePack,
+  grandPrixStarterCardCount,
   isValidMatchDeckSize,
   maxMatchDeckCards,
   packRarityForPower,
   packRarityForRating,
   packRarityOfAction,
   packRarityOfPlayer,
+  packXp,
+  pickWeighted,
+  rollBasketballStarterPack,
+  rollCricketStarterPack,
   rollDefaultStarterPack,
+  rollFootballStarterPack,
+  rollFrom,
+  rollGrandPrixStarterPack,
   rollPackRarity,
   rollStarterPack,
+  rollTennisStarterPack,
+  starterDeckActionCount,
   starterDropChance,
   starterPackActionCount,
   starterPackDefenderCount,
   starterPackKeeperCount,
+  starterPackOdds,
   starterPackStrikerCount,
   starterPackTierWeights,
+  tennisStarterCardCount,
 } from "./rolling";
 export type { RandomSource, RollStarterPackOptions } from "./rolling";
 
@@ -40,10 +75,16 @@ export {
   revealItemRating,
   revealItemShortName,
   revealItemSubtitle,
+  packCardCount,
   revealItems,
   revealItemTier,
   starterPackActions,
   starterPackPlayers,
   starterPackRarityBreakdown,
 } from "./types";
-export type { PackRevealData, PackRevealItem, StarterPack } from "./types";
+export type {
+  PackResult,
+  PackRevealData,
+  PackRevealItem,
+  StarterPack,
+} from "./types";

@@ -7,11 +7,18 @@ import {
   GameIcon,
   GlidingTabs,
   MatchIcon,
-  SignalOffIcon,
   type GlidingTab,
 } from "@/design-system";
-import { sportModuleFor, type Sport } from "@/domain/sports";
-import { SportHubTabs, type SportHubSelection } from "@/features/matches";
+import { sportOrder, type Sport } from "@/domain/sports";
+import { gameCountForSport } from "@/features/games";
+import {
+  AllSportsSelector,
+  fixtureCountsBySport,
+  SportHubTabs,
+  SportMatchFeed,
+  type SportHubSelection,
+  type SportSelectorCount,
+} from "@/features/matches";
 
 const tabs: GlidingTab[] = [
   {
@@ -52,6 +59,12 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
   const [tab, setTab] = useState(0);
   const [matchSport, setMatchSport] = useState<SportHubSelection>(null);
   const [gamesSport, setGamesSport] = useState<SportHubSelection>(null);
+  const [selectorMode, setSelectorMode] = useState<"matches" | "games" | null>(null);
+  const matchCounts = fixtureCountsBySport();
+  const gameCounts = Object.fromEntries(
+    sportOrder.map((sport) => [sport, { total: gameCountForSport(sport) }]),
+  ) as Record<Sport, SportSelectorCount>;
+  const visibleSelectorMode = selectorMode ?? (tab === 0 ? "matches" : "games");
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -64,21 +77,26 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
 
       {tab === 0 ? (
         <div role="tabpanel" aria-label="Match" className="flex min-h-0 flex-1 flex-col">
-          <SportHubTabs selected={matchSport} onSelect={setMatchSport} />
+          <SportHubTabs
+            selected={matchSport}
+            onSelect={setMatchSport}
+            onMore={() => setSelectorMode("matches")}
+          />
           <div className="flex-1 overflow-y-auto px-4 py-3">
             {matchSport === null ? (
               <div className="mx-auto w-full max-w-6xl">{matchFeed}</div>
             ) : (
-              <EmptyState
-                title={`${sportModuleFor(matchSport).label.toUpperCase()} FEED`}
-                detail="This sport's fixtures land in a later pass. Trending covers every sport today."
-              />
+              <SportMatchFeed key={matchSport} sport={matchSport} />
             )}
           </div>
         </div>
       ) : (
         <div role="tabpanel" aria-label="Games" className="flex min-h-0 flex-1 flex-col">
-          <SportHubTabs selected={gamesSport} onSelect={setGamesSport} />
+          <SportHubTabs
+            selected={gamesSport}
+            onSelect={setGamesSport}
+            onMore={() => setSelectorMode("games")}
+          />
           <div className="flex-1 overflow-y-auto px-4 py-3">
             <div className="mx-auto w-full max-w-6xl">
               {gamesSport === null ? gamesFeed : sportDecks[gamesSport]}
@@ -86,16 +104,18 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
           </div>
         </div>
       )}
-    </div>
-  );
-}
 
-function EmptyState({ title, detail }: { title: string; detail: string }) {
-  return (
-    <div className="mx-auto flex max-w-sm flex-col items-center gap-3 py-20 text-center text-muted">
-      <SignalOffIcon size={28} />
-      <p className="font-display text-sm font-black tracking-wide">{title}</p>
-      <p className="text-sm leading-body">{detail}</p>
+      <AllSportsSelector
+        open={selectorMode !== null}
+        mode={visibleSelectorMode}
+        selected={visibleSelectorMode === "matches" ? matchSport : gamesSport}
+        counts={visibleSelectorMode === "matches" ? matchCounts : gameCounts}
+        onSelect={(selection) => {
+          if (visibleSelectorMode === "matches") setMatchSport(selection);
+          else setGamesSport(selection);
+        }}
+        onClose={() => setSelectorMode(null)}
+      />
     </div>
   );
 }

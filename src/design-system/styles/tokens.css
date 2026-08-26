@@ -7,6 +7,7 @@
   --ds-color-background-elevated: #1d293d;
   --ds-color-background-muted: #070c1f;
   --ds-color-background-nav: #1a253a;
+  --ds-color-background-quiz-hub: #06152b;
 
   /* Text */
   --ds-color-text-default: #ffffff;
@@ -57,6 +58,18 @@
   /* Overlays */
   --ds-color-overlay-subtle: rgb(255 255 255 / 10%);
   --ds-color-overlay-scrim: rgb(0 0 0 / 84%);
+  --ds-color-overlay-plate: rgb(0 0 0 / 60%);
+
+  /* Fixture-card chrome */
+  --ds-color-fixture-shadow: #04060b;
+  --ds-color-fixture-base: #141c2b;
+  --ds-color-fixture-strip: #0f1826;
+  --ds-color-fixture-border: #2a3550;
+  --ds-color-fixture-predicted: #2c7a8c;
+  --ds-color-fixture-kickoff: #c8a45a;
+  --ds-color-fixture-dim-name: #aeb7c5;
+  --ds-color-fixture-score: #9fb0c2;
+  --ds-color-fixture-result: #bac5d3;
 
   /* Gradients */
   --ds-gradient-app-background: linear-gradient(135deg, #010916 0%, #0e2646 100%);
@@ -75,6 +88,7 @@
   --ds-gradient-step-current: linear-gradient(to right, #ffb13d 0%, #ff7a1a 100%);
   --ds-gradient-pack-headline: linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%);
   --ds-gradient-card-nameplate: linear-gradient(to right, #202836 0%, #121824 100%);
+  --ds-gradient-fixture-card: linear-gradient(to bottom, #1b2336 0%, #121a28 100%);
 
   /* Elevation */
   --ds-shadow-hard-drop: 0 4px 0 rgb(0 0 0 / 20%);
@@ -84,10 +98,18 @@
   --ds-shape-signal-cut: 12px;
   --ds-shape-signal-notch: 34px;
   --ds-shape-signal-lift: 6px;
+  --ds-shape-fixture-cut: 12px;
+  --ds-shape-fixture-notch-width: 96px;
+  --ds-shape-fixture-notch-depth: 22px;
+  --ds-shape-fixture-notch-slope: 12px;
+  --ds-shape-fixture-lift: 6px;
   --ds-shape-tab-chamfer: 16px;
   --ds-shape-field-cut: 10px;
+  --ds-shape-panel-cut: 12px;
   --ds-shape-hud-cut: 14px;
   --ds-shape-hud-accent-cut: 4px;
+  --ds-shape-compact-hud-cut: 12px;
+  --ds-shape-compact-hud-accent-cut: 3px;
   /* A card scales its chamfer to its own width; these are the resting values a
      card overrides. See cardCuts() in design-system/tokens/shape.ts. */
   --ds-card-cut-big: 14px;
@@ -109,6 +131,18 @@
     0 calc(100% - 8px),
     0 12px
   );
+  --ds-clip-fixture: polygon(
+    0 0,
+    calc(50% - 60px) 0,
+    calc(50% - 48px) 22px,
+    calc(50% + 48px) 22px,
+    calc(50% + 60px) 0,
+    100% 0,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
   --ds-clip-octagon: polygon(
     15% 0,
     85% 0,
@@ -129,6 +163,16 @@
     0 calc(100% - 10px),
     0 10px
   );
+  --ds-clip-panel: polygon(
+    12px 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px),
+    0 12px
+  );
   --ds-clip-hud: polygon(
     14px 0,
     calc(100% - 4px) 0,
@@ -138,6 +182,16 @@
     4px 100%,
     0 calc(100% - 4px),
     0 14px
+  );
+  --ds-clip-compact-hud: polygon(
+    12px 0,
+    calc(100% - 3px) 0,
+    100% 3px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    3px 100%,
+    0 calc(100% - 3px),
+    0 12px
   );
   /* Only correct at the resting cut sizes above: the cuts in this polygon
      resolve here on :root, so a card that overrides --ds-card-cut-* must use

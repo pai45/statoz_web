@@ -9,6 +9,8 @@ export const colors = {
     elevated: "#1d293d",
     muted: "#070c1f",
     nav: "#1a253a",
+    /** Solid navy bed beneath the two-team wash on quiz objective cards. */
+    quizHub: "#06152b",
   },
   text: {
     default: "#ffffff",
@@ -44,6 +46,20 @@ export const colors = {
   overlay: {
     subtle: "rgba(255, 255, 255, 0.1)",
     scrim: "rgba(0, 0, 0, 0.84)",
+    /** The scrim a label sits on when it lies over card art. */
+    plate: "rgba(0, 0, 0, 0.6)",
+  },
+  /** Shared fixture-card chrome, matched to the Flutter match hub. */
+  fixture: {
+    shadow: "#04060b",
+    base: "#141c2b",
+    strip: "#0f1826",
+    border: "#2a3550",
+    predicted: "#2c7a8c",
+    kickoff: "#c8a45a",
+    dimName: "#aeb7c5",
+    score: "#9fb0c2",
+    result: "#bac5d3",
   },
   /**
    * Collectible card rarity, bronze through platinum. Each tier is a catch-light,

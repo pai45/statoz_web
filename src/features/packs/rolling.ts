@@ -10,8 +10,13 @@ import {
   attackActionCards,
   defenseActionCards,
 } from "./data/action-cards";
+import { basketballPlayerCards } from "./data/basketball-cards";
+import { cricketBattingCards } from "./data/cricket-cards";
 import { attackers, defenders, goalkeepers } from "./data/football-cards";
-import type { StarterPack } from "./types";
+import { racingPlayerCards } from "./data/racing-cards";
+import { tennisPlayerCards } from "./data/tennis-cards";
+import { starterPackActions, starterPackPlayers } from "./types";
+import type { PackResult, StarterPack } from "./types";
 
 /**
  * A source of randomness in `[0, 1)`. Flutter takes a `Random`; taking the
@@ -112,7 +117,14 @@ function drawByRarity<T>(
 export const starterPackStrikerCount = 2;
 export const starterPackDefenderCount = 2;
 export const starterPackKeeperCount = 1;
+/** A freshly rolled `StarterPack` defaults to five actions… */
 export const starterPackActionCount = 5;
+/** …but the deck format requires six, so the football pack overrides it. */
+export const starterDeckActionCount = 6;
+export const cricketStarterCardCount = 5;
+export const basketballStarterCardCount = 3;
+export const tennisStarterCardCount = 1;
+export const grandPrixStarterCardCount = 1;
 
 export type RollStarterPackOptions = {
   strikerPool: PlayerCard[];
@@ -185,12 +197,197 @@ export function rollDefaultStarterPack(
     keeperPool: goalkeepers,
     attackActionPool: attackActionCards,
     defenseActionPool: defenseActionCards,
+    actionCount: starterDeckActionCount,
     ...options,
   });
 }
 
 /** Every action card, for callers rolling their own split. */
 export const actionCardPool = defaultActionCards;
+
+/* ---- The second weighting -----------------------------------------------
+ *
+ * Four of the five starter packs do not use `drawByRarity` at all. Cricket,
+ * tennis, and motorsport hand out bronze only — the ladder above it is meant to
+ * be earned in-game — and basketball rolls its own odds with a different
+ * fallback. Both rules exist in Flutter and both are needed; they are named
+ * apart here so the difference cannot be missed.
+ * ---------------------------------------------------------------------- */
+
+/**
+ * The odds the starter `CardPack` carries, which basketball rolls against.
+ * Note these are not the 55/35/4/1 of `starterPackTierWeights` — platinum is
+ * off the table entirely.
+ */
+export const starterPackOdds: Record<CardTier, number> = {
+  bronze: 70,
+  silver: 25,
+  gold: 5,
+  platinum: 0,
+};
+
+/** Picks a tier by relative weight, ignoring whether any card of it exists. */
+export function pickWeighted(
+  odds: Record<CardTier, number>,
+  random: RandomSource,
+): CardTier {
+  const total = cardTiers.reduce((sum, tier) => sum + odds[tier], 0);
+  let roll = random() * total;
+  for (const tier of cardTiers) {
+    roll -= odds[tier];
+    if (roll <= 0) return tier;
+  }
+  return "bronze";
+}
+
+/**
+ * Draws one card by rolling a tier and taking any card of it.
+ *
+ * Where `drawByRarity` falls back to the *nearest* tier by ordinal distance,
+ * this walks a fixed preference — the rolled tier, then platinum down to bronze
+ * — and takes the first tier with stock. Returns null only for an empty pool.
+ */
+export function rollFrom<T>(
+  pool: T[],
+  tierOf: (item: T) => CardTier,
+  odds: Record<CardTier, number>,
+  random: RandomSource,
+): T | null {
+  if (pool.length === 0) return null;
+
+  const wanted = pickWeighted(odds, random);
+  for (const tier of [wanted, "platinum", "gold", "silver", "bronze"] as const) {
+    const matches = pool.filter((item) => tierOf(item) === tier);
+    if (matches.length > 0) {
+      return matches[Math.floor(random() * matches.length)];
+    }
+  }
+  return pool[Math.floor(random() * pool.length)];
+}
+
+/* ---- Pack results -------------------------------------------------------- */
+
+/** A player card is worth its rating; an action is worth its power plus 30. */
+export function packXp(players: PlayerCard[], actions: ActionCard[]): number {
+  return (
+    players.reduce((sum, card) => sum + card.rating, 0) +
+    actions.reduce((sum, card) => sum + Math.max(15, 30 + card.power), 0)
+  );
+}
+
+/** Wraps a draw in its earned XP. */
+export function finalizePack(
+  playerCards: PlayerCard[],
+  actionCards: ActionCard[] = [],
+): PackResult {
+  return { playerCards, actionCards, xpGained: packXp(playerCards, actionCards) };
+}
+
+/** The football starter pack: five players and six actions. */
+export function rollFootballStarterPack(
+  random: RandomSource = Math.random,
+): PackResult {
+  const pack = rollDefaultStarterPack({ random });
+  return finalizePack(starterPackPlayers(pack), starterPackActions(pack));
+}
+
+/** Takes `count` cards uniformly from `pool`, without repeats. */
+function drawUniqueBronze(
+  pool: PlayerCard[],
+  count: number,
+  random: RandomSource,
+  failure: string,
+): PlayerCard[] {
+  const available = pool.filter((card) => card.tier === "bronze");
+  if (available.length === 0) throw new Error(failure);
+
+  const picked: PlayerCard[] = [];
+  while (picked.length < count && available.length > 0) {
+    picked.push(...available.splice(Math.floor(random() * available.length), 1));
+  }
+  return picked;
+}
+
+/**
+ * Final Over hands out five bronze batters. Always bronze, matching Tennis
+ * Rally and Grand Prix Dash: the ladder above bronze is earned in-game.
+ */
+export function rollCricketStarterPack(
+  pool: PlayerCard[] = cricketBattingCards,
+  random: RandomSource = Math.random,
+): PackResult {
+  return finalizePack(
+    drawUniqueBronze(
+      pool,
+      cricketStarterCardCount,
+      random,
+      "Cricket starter pack draw failed: no bronze batsmen.",
+    ),
+  );
+}
+
+/**
+ * Hoop Duel hands out one guard, one wing, and one big. This is the only
+ * starter pack that rolls odds, and it keeps platinum off the table.
+ */
+export function rollBasketballStarterPack(
+  pool: PlayerCard[] = basketballPlayerCards,
+  random: RandomSource = Math.random,
+): PackResult {
+  const picked: PlayerCard[] = [];
+
+  for (const role of [
+    "basketballGuard",
+    "basketballWing",
+    "basketballBig",
+  ] as const) {
+    const available = pool.filter(
+      (card) =>
+        card.role === role &&
+        card.tier !== "platinum" &&
+        !picked.some((chosen) => chosen.id === card.id),
+    );
+    const card = rollFrom(
+      available,
+      (item) => item.tier,
+      starterPackOdds,
+      random,
+    );
+    if (card) picked.push(card);
+  }
+
+  return finalizePack(picked);
+}
+
+/** Tennis Rally hands out a single bronze player. */
+export function rollTennisStarterPack(
+  pool: PlayerCard[] = tennisPlayerCards,
+  random: RandomSource = Math.random,
+): PackResult {
+  return finalizePack(
+    drawUniqueBronze(
+      pool,
+      tennisStarterCardCount,
+      random,
+      "Tennis starter pack draw failed: no bronze players.",
+    ),
+  );
+}
+
+/** Grand Prix Dash hands out a single bronze driver, from the full grid. */
+export function rollGrandPrixStarterPack(
+  pool: PlayerCard[] = racingPlayerCards,
+  random: RandomSource = Math.random,
+): PackResult {
+  return finalizePack(
+    drawUniqueBronze(
+      pool,
+      grandPrixStarterCardCount,
+      random,
+      "Grand Prix starter pack draw failed: no bronze drivers.",
+    ),
+  );
+}
 
 /* ---- Match deck constraint --------------------------------------------- */
 

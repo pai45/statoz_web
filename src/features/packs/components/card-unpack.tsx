@@ -6,18 +6,17 @@ import { cardCuts, playerCardWidths, rarityPack } from "@/design-system";
 import { cardTierRank, type CardTier } from "@/domain/cards";
 
 import {
+  cardFlipMs,
   cardPhaseMs,
+  cardSettleMs,
   dismissMs,
   flashMs,
   idleAutoAdvanceMs,
+  ovrCountMs,
+  ovrHoldMs,
   packEntryMs,
   packPulseMs,
   packShakeMs,
-  ovrCountMs,
-  ovrHoldMs,
-  platinumShimmerMs,
-  cardFlipMs,
-  cardSettleMs,
   rarityTitleMs,
 } from "../constants";
 import {
@@ -185,8 +184,11 @@ export function CardUnpack({
       {/* The white-out. Mounted from the start so its delay is its cue. */}
       <div
         aria-hidden
-        className={`${styles.flash} pointer-events-none absolute inset-0 bg-white`}
-        style={{ animationDelay: `${flashStartsAtMs}ms` }}
+        className={`${styles.flash} pointer-events-none absolute inset-0`}
+        style={{
+          animationDelay: `${flashStartsAtMs}ms`,
+          background: "var(--ds-color-text-default)",
+        }}
       />
 
       {/* While it hovers, anywhere is a dismiss target — as in the app. */}
@@ -223,7 +225,12 @@ function SealedPack({ tier }: { tier: CardTier }) {
         style={{ background: "var(--reveal-glow)", filter: "blur(8px)" }}
       />
       <PackShell tier={tier} width={196}>
-        <span className="font-display text-hero font-black text-white">?</span>
+        <span
+          className="font-display text-hero font-black"
+          style={{ color: "var(--ds-color-text-default)" }}
+        >
+          ?
+        </span>
       </PackShell>
     </div>
   );
@@ -349,8 +356,9 @@ function OvrPop({ tier, rating }: { tier: CardTier; rating: number }) {
       className={`${styles.ovrPop} pointer-events-none absolute inset-x-0 bottom-[20%] flex flex-col items-center`}
     >
       <span
-        className="ds-tabular font-display font-black leading-compact text-white"
+        className="ds-tabular font-display font-black leading-compact"
         style={{
+          color: "var(--ds-color-text-default)",
           fontSize: "var(--ds-text-celebration)",
           textShadow: `0 0 24px var(--ds-color-rarity-${tier}-base)`,
         }}
@@ -402,6 +410,3 @@ function useCountUp(target: number, durationMs: number, delayMs = 0): number {
 
   return value;
 }
-
-/** Re-exported so the flow can size its own beats to a card's. */
-export { platinumShimmerMs };

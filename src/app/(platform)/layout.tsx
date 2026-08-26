@@ -12,7 +12,7 @@ export default function PlatformLayout({ children }: LayoutProps<"/">) {
     >
       <div className="hidden shrink-0 lg:block lg:w-56">
         <div className="sticky top-0 h-dvh">
-          <PlatformNav activeId="sports" orientation="rail" />
+          <PlatformNav orientation="rail" />
         </div>
       </div>
 
@@ -23,10 +23,7 @@ export default function PlatformLayout({ children }: LayoutProps<"/">) {
         </main>
       </div>
 
-      <PlatformNav
-        activeId="sports"
-        className="sticky bottom-0 z-20 pb-[env(safe-area-inset-bottom)] lg:hidden"
-      />
+      <PlatformNav className="sticky bottom-0 z-20 pb-[env(safe-area-inset-bottom)] lg:hidden" />
     </div>
   );
 }

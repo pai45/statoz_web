@@ -18,6 +18,8 @@ export const gradients = {
   packHeadline: "linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%)",
   /** A collectible card's nameplate, under the player's name. */
   cardNameplate: "linear-gradient(to right, #202836 0%, #121824 100%)",
+  /** The neutral navy body shared by sport fixture cards. */
+  fixtureCard: "linear-gradient(to bottom, #1b2336 0%, #121a28 100%)",
 } as const;
 
 /**

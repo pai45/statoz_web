@@ -174,7 +174,7 @@ function IntroStep({
             letterSpacing: "var(--ds-tracking-max)",
           }}
         >
-          PITCH DUEL
+          {reveal.brandLabel}
         </p>
 
         <h1
@@ -238,7 +238,8 @@ function IntroStep({
       {leaving ? (
         <div
           aria-hidden
-          className={`${styles.exitFlash} pointer-events-none absolute inset-0 bg-white`}
+          className={`${styles.exitFlash} pointer-events-none absolute inset-0`}
+          style={{ background: "var(--ds-color-text-default)" }}
         />
       ) : null}
 

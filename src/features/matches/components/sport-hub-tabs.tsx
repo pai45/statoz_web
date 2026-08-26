@@ -47,7 +47,8 @@ export function SportHubTabs({
     },
   ];
 
-  const activeIndex = selected === null ? 0 : shortcuts.indexOf(selected) + 1;
+  const shortcutIndex = selected === null ? -1 : shortcuts.indexOf(selected);
+  const activeIndex = selected === null ? 0 : shortcutIndex >= 0 ? shortcutIndex + 1 : -1;
   const accent = accentVar(selected ? sportModuleFor(selected).accent : "cyan");
 
   return (

@@ -5,6 +5,9 @@ import { cardTierRank, type CardTier } from "@/domain/cards";
 
 import styles from "./reveal-effects.module.css";
 
+/** The palette's white, which several effects lighten towards. */
+const WHITE = "var(--ds-color-text-default)";
+
 /** The token backing a tier's own colour. */
 export function tierVar(tier: CardTier, shade: "light" | "base" | "deep" = "base") {
   return `var(--ds-color-rarity-${tier}-${shade})`;
@@ -12,8 +15,8 @@ export function tierVar(tier: CardTier, shade: "light" | "base" | "deep" = "base
 
 /**
  * The alternating second colour on the top tiers' rays. Flutter names white for
- * silver and a lighter hue for the rest; silver's own light shade is #f1f5f9,
- * which is that white, so one rule covers all four.
+ * silver and a lighter hue for the rest; silver's own light shade is already
+ * that near-white, so one rule covers all four.
  */
 function rayPartner(tier: CardTier) {
   return tierVar(tier, tier === "platinum" ? "deep" : "light");
@@ -232,13 +235,13 @@ function buildParticles(tier: CardTier, seed: string): Particle[] {
 
   // More confetti the rarer the pull: bronze 18, platinum 42.
   spray(18 + rank * 8, 80, 100, 2, 4, () =>
-    random() < 0.6 ? tierVar(tier) : "#ffffff", 0,
+    random() < 0.6 ? tierVar(tier) : WHITE, 0,
   );
 
   // Gold and platinum earn a second, heavier wave a beat later.
   if (rank >= 2) {
     spray(12 + (rank - 2) * 8, 60, 80, 4, 6, (index) =>
-      index % 2 === 0 ? "var(--ds-color-accent-gold)" : "#ffffff", 200,
+      index % 2 === 0 ? "var(--ds-color-accent-gold)" : WHITE, 200,
     );
   }
 
@@ -295,13 +298,13 @@ const holoBands: Record<
   { colors: string[]; intensity: number; bands: number; durationMs: number }
 > = {
   bronze: {
-    colors: [tierVar("bronze"), tierVar("bronze", "light"), "#ffffff"],
+    colors: [tierVar("bronze"), tierVar("bronze", "light"), WHITE],
     intensity: 0.35,
     bands: 1,
     durationMs: 2200,
   },
   silver: {
-    colors: [tierVar("silver"), "#ffffff", "var(--ds-color-accent-cyan)"],
+    colors: [tierVar("silver"), WHITE, "var(--ds-color-accent-cyan)"],
     intensity: 0.35,
     bands: 1,
     durationMs: 2200,
@@ -309,7 +312,7 @@ const holoBands: Record<
   gold: {
     colors: [
       tierVar("gold"),
-      "#ffffff",
+      WHITE,
       tierVar("gold", "light"),
       tierVar("gold"),
     ],
@@ -345,9 +348,10 @@ export type HoloSweepProps = {
 };
 
 /**
- * Stretched over a card face. When chamfered it clips to `--ds-clip-card`,
- * which it inherits from the wrapper the card sets, so the shimmer stops
- * exactly where the card does.
+ * Stretched over a card face. When chamfered it takes the card silhouette from
+ * `cardClipPath`, whose cuts resolve against the wrapper this sits inside — the
+ * same wrapper the card reads — so the shimmer stops exactly where the card
+ * does, with nothing measured at runtime.
  */
 export function HoloSweep({ tier, chamfered = true }: HoloSweepProps) {
   const foil = holoBands[tier];

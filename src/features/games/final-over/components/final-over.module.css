@@ -1,0 +1,168 @@
+/**
+ * Motion and pseudo-state only.
+ *
+ * Everything the chase animates per frame — the pitch, the ball, the rigs, the
+ * crowd — runs off a rAF loop into a canvas, because those are geometry rather
+ * than style. What is left here is the chrome around it: things that enter,
+ * pulse, or light up on hover, which the cascade does better than a controller.
+ *
+ * The global `prefers-reduced-motion` damper in `globals.css` already stills
+ * everything below; the canvas asks for itself.
+ */
+
+/* ---- HUD ----------------------------------------------------------------- */
+
+.liveOver {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--ds-color-accent-cyan) 35%, transparent);
+}
+
+.railEnter {
+  animation: rail-in 160ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes rail-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* A sting pops from 1.6x down onto its mark; a minor one just fades up. */
+.stingMajor,
+.stingMinor {
+  display: grid;
+  place-items: center;
+  font-family: var(--ds-font-display), sans-serif;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stingMajor {
+  animation: sting-major 520ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.stingMinor {
+  animation: sting-minor 320ms cubic-bezier(0, 0, 0.58, 1) both;
+}
+
+@keyframes sting-major {
+  from {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sting-minor {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---- Control deck -------------------------------------------------------- */
+
+.deckFace {
+  animation: deck-in 180ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes deck-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.plate {
+  transition:
+    background-color 90ms ease-out,
+    border-color 90ms ease-out,
+    color 90ms ease-out;
+}
+
+.plate:focus-visible {
+  outline: 2px solid var(--ds-color-accent-cyan);
+  outline-offset: 2px;
+}
+
+/* ---- Overlays ------------------------------------------------------------ */
+
+.overlayIn {
+  animation: overlay-in 220ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.revealIn {
+  animation: reveal-in 340ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18%);
+  }
+}
+
+/* ---- Lobby --------------------------------------------------------------- */
+
+.lobbyIn {
+  animation: lobby-in 480ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  animation-delay: var(--lobby-delay, 0ms);
+}
+
+@keyframes lobby-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.heroPulse {
+  animation: hero-pulse 2200ms ease-in-out infinite;
+}
+
+@keyframes hero-pulse {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--ds-color-accent-cyan) 40%, transparent);
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--ds-color-accent-cyan) 75%, transparent);
+  }
+}
+
+.statusDot {
+  box-shadow: 0 0 8px color-mix(in srgb, var(--ds-color-accent-cyan) 80%, transparent);
+}
+
+/* A tier tile, and the kit swatches beside it. */
+.tile {
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
+}
+
+.tile:hover {
+  border-color: color-mix(in srgb, var(--ds-color-accent-cyan) 70%, transparent);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--ds-color-accent-cyan);
+  outline-offset: 2px;
+}
+
+/* ---- Aim overlay --------------------------------------------------------- */
+
+.aim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}

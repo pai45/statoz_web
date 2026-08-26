@@ -1,0 +1,198 @@
+/**
+ * Motion and pseudo-state only.
+ *
+ * Everything the duel animates per frame — the court, the rigs, the ball, the
+ * crowd — runs off a rAF loop into a canvas, because those are geometry rather
+ * than style. What is left here is the chrome around it: things that enter,
+ * pulse, or light up, which the cascade does better than a controller.
+ *
+ * The global `prefers-reduced-motion` damper in `globals.css` already stills
+ * everything below; the canvas asks for itself.
+ */
+
+/* ---- Controls ------------------------------------------------------------- */
+
+/* The ACTION pad's copy crossfades when the cue changes under your thumb. */
+.cueSwitch {
+  animation: cue-in 140ms cubic-bezier(0, 0, 0.58, 1) both;
+}
+
+@keyframes cue-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+
+/* The first-match hints breathe up rather than appearing fully lit. */
+.hintLabel {
+  animation: hint-in 700ms ease-out both;
+}
+
+@keyframes hint-in {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- Stings --------------------------------------------------------------- */
+
+/* A major sting slams from 1.6x down onto its mark; a minor one just fades up. */
+.stingMajor,
+.stingMinor {
+  display: grid;
+  place-items: center;
+  font-family: var(--ds-font-display), sans-serif;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stingMajor {
+  animation: sting-major 1600ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.stingMinor {
+  animation: sting-minor 1100ms cubic-bezier(0, 0, 0.58, 1) both;
+}
+
+@keyframes sting-major {
+  0% {
+    opacity: 0;
+    transform: scale(1.6) translateY(8px);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes sting-minor {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Shot meter ----------------------------------------------------------- */
+
+/* The meter appears the instant a gather starts; it must not slide in late. */
+.meterEnter {
+  animation: meter-in 120ms ease-out both;
+}
+
+@keyframes meter-in {
+  from {
+    opacity: 0;
+    transform: scaleY(0.7);
+  }
+}
+
+/* ---- Overlays ------------------------------------------------------------- */
+
+.overtimeStinger {
+  animation: overtime-in 600ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes overtime-in {
+  from {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+/* Each beat of the result reveal rises as it lands. */
+.revealIn {
+  animation: reveal-in 340ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8%);
+  }
+}
+
+/* ---- Lobby ---------------------------------------------------------------- */
+
+/* The lobby deals itself in, each block on its own delay. */
+.rise {
+  animation: rise-in 460ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* The emblem's idle breathing — the lobby's one glow. */
+.emblemPulse {
+  animation: emblem-pulse 2600ms ease-in-out infinite alternate;
+}
+
+@keyframes emblem-pulse {
+  from {
+    box-shadow: 0 0 18px -4px color-mix(in srgb, var(--ds-color-accent-gold) 20%, transparent);
+    border-color: color-mix(in srgb, var(--ds-color-accent-gold) 26%, transparent);
+  }
+  to {
+    box-shadow: 0 0 22px -4px color-mix(in srgb, var(--ds-color-accent-gold) 28%, transparent);
+    border-color: color-mix(in srgb, var(--ds-color-accent-gold) 38%, transparent);
+  }
+}
+
+/* The live dot on the lobby's status strip. */
+.courtOpen {
+  box-shadow: 0 0 8px color-mix(in srgb, var(--ds-color-success) 60%, transparent);
+}
+
+/* ---- Matchmaking ---------------------------------------------------------- */
+
+.queueSweep {
+  animation: queue-sweep 1200ms linear infinite;
+}
+
+@keyframes queue-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.rivalLock {
+  animation: rival-lock 360ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes rival-lock {
+  from {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}

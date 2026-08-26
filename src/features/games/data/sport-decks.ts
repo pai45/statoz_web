@@ -38,3 +38,22 @@ export function deckFor(sport: Sport): SportDeck {
     quick: games.filter((id) => gameRegistry[id].kind === "quick"),
   };
 }
+
+/** Small summary used by the shared All Sports picker. */
+export function gameCountForSport(sport: Sport): number {
+  return sportGameDecks[sport].length;
+}
+
+/**
+ * Which sport a game belongs to, inverted from the decks above so the two can
+ * never disagree about it.
+ */
+const sportByGame: Record<GameId, Sport> = Object.fromEntries(
+  Object.entries(sportGameDecks).flatMap(([sport, games]) =>
+    games.map((id) => [id, sport as Sport] as const),
+  ),
+) as Record<GameId, Sport>;
+
+export function sportForGame(game: GameId): Sport {
+  return sportByGame[game];
+}

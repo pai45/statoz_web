@@ -1,3 +1,7 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 import {
   accentVar,
   FootballIcon,
@@ -10,7 +14,8 @@ import {
 import { navDestinations, type NavDestinationId } from "@/shared/config";
 
 export type PlatformNavProps = {
-  activeId: NavDestinationId;
+  /** Overrides the destination derived from the URL. */
+  activeId?: NavDestinationId;
   orientation?: "bar" | "rail";
   className?: string;
 };
@@ -25,12 +30,40 @@ const icons: Record<NavDestinationId, React.ReactNode> = {
 /** Platform destinations share one violet accent so no single tab dominates. */
 const NAV_ACCENT = accentVar("violet");
 
+/**
+ * Which destination the current URL belongs to.
+ *
+ * Longest matching href wins, so `/profile/history` still lights PROFILE, and
+ * the root href is only ever an exact match — otherwise it would claim every
+ * page in the app.
+ */
+function destinationForPath(pathname: string): NavDestinationId {
+  let best: NavDestinationId = "sports";
+  let bestLength = 0;
+
+  for (const destination of navDestinations) {
+    if (destination.href === "/") continue;
+    const matches =
+      pathname === destination.href ||
+      pathname.startsWith(`${destination.href}/`);
+    if (matches && destination.href.length > bestLength) {
+      best = destination.id;
+      bestLength = destination.href.length;
+    }
+  }
+
+  return best;
+}
+
 /** The platform's primary navigation, in either presentation. */
 export function PlatformNav({
   activeId,
   orientation = "bar",
   className,
 }: PlatformNavProps) {
+  const pathname = usePathname();
+  const active = activeId ?? destinationForPath(pathname);
+
   const items: NavRailItem[] = navDestinations.map((destination) => ({
     id: destination.id,
     label: destination.label,
@@ -43,7 +76,7 @@ export function PlatformNav({
     <NavRail
       label="Primary"
       items={items}
-      activeId={activeId}
+      activeId={active}
       orientation={orientation}
       className={className}
     />

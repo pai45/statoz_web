@@ -1,5 +1,12 @@
 export { ArenaBackdrop, type ArenaBackdropProps } from "./components/arena-backdrop";
 export { BannerVisual, type BannerVisualProps } from "./components/banner-visual";
+/**
+ * The club pickers are part of the public surface because the profile edits the
+ * same choices later, against the same league data this feature owns. Two
+ * copies of a control that follows a league would be one too many.
+ */
+export { LeaguePills, type LeaguePillsProps } from "./components/league-pills";
+export { SportPills, type SportPillsProps } from "./components/sport-pills";
 export {
   LaunchCountdown,
   type LaunchCountdownProps,

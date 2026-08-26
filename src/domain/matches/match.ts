@@ -8,6 +8,15 @@ export type SportTeam = {
   shortName: string;
   /** Identity color, as a hex value. */
   color: string;
+  /** Secondary identity color used by two-tone badges. */
+  secondaryColor?: string;
+  /** Contrast-safe badge label color when white is unsuitable. */
+  badgeTextColor?: string;
+};
+
+export type TennisSetScore = {
+  homeScore: number;
+  awayScore: number;
 };
 
 export type SportMatch = {
@@ -21,8 +30,13 @@ export type SportMatch = {
   status: MatchStatus;
   /** ISO 8601 timestamp. */
   kickoff: string;
-  homeScore?: number;
-  awayScore?: number;
+  /** Display-ready score. Cricket innings include wickets and overs. */
+  homeScore?: number | string;
+  awayScore?: number | string;
+  /** Optional human-readable outcome shown below a finished fixture. */
+  resultLine?: string;
+  /** Per-set detail for tennis fixtures. */
+  tennisSets?: TennisSetScore[];
   /** Minutes played, when live. */
   liveMinute?: number;
   /** XP a correct call on this match is worth. */

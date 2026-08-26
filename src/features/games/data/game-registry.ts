@@ -19,6 +19,12 @@ export type GameEntry = {
   accent: AccentName;
   /** Casts the accent bloom. Only the featured game sets it. */
   glow?: boolean;
+  /**
+   * Whether the game fields a deck of cards. Those games hand the player their
+   * sport's starter pack the first time they enter; quizzes and the guessing
+   * games need no cards and so have no gate.
+   */
+  requiresDeck?: true;
   /** The illustration this game shows; formats that repeat share one. */
   scene: GameSceneId;
   href: string;
@@ -46,6 +52,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     glow: true,
     scene: "pitch-duel",
     href: "/play/pitch-duel",
+    requiresDeck: true,
   },
   "penalty-shootout": {
     kind: "hero",
@@ -57,6 +64,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     accent: "lime",
     scene: "penalty-shootout",
     href: "/play/penalty-shootout",
+    requiresDeck: true,
   },
   "football-chess": {
     kind: "hero",
@@ -68,6 +76,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     accent: "gold",
     scene: "football-chess",
     href: "/play/football-chess",
+    requiresDeck: true,
   },
   "football-quiz": {
     kind: "quick",
@@ -103,12 +112,13 @@ export const gameRegistry: Record<GameId, GameEntry> = {
   "final-over": {
     kind: "hero",
     title: "FINAL OVER",
-    subtitle: "SIX-BALL CRICKET CHASE",
-    badgeLabel: "FEATURED // SIX BALLS",
+    subtitle: "THREE-OVER CHASE",
+    badgeLabel: "FEATURED // THREE OVERS",
     ctaLabel: "START THE CHASE",
     accent: "cyan",
     scene: "final-over",
     href: "/play/final-over",
+    requiresDeck: true,
   },
   "cricket-quiz": {
     kind: "quick",
@@ -137,6 +147,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     accent: "gold",
     scene: "hoop-duel",
     href: "/play/basketball",
+    requiresDeck: true,
   },
   "basketball-quiz": {
     kind: "quick",
@@ -165,6 +176,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     accent: "lime",
     scene: "tennis-rally",
     href: "/play/tennis",
+    requiresDeck: true,
   },
   "tennis-quiz": {
     kind: "quick",
@@ -194,6 +206,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     accent: "racing",
     scene: "grand-prix-dash",
     href: "/play/grand-prix",
+    requiresDeck: true,
   },
   "motorsport-quiz": {
     kind: "quick",
@@ -216,4 +229,25 @@ export const gameRegistry: Record<GameId, GameEntry> = {
 /** The registry entry for a game, or `undefined` when it has no tile yet. */
 export function gameEntryFor(id: GameId): GameEntry | undefined {
   return gameRegistry[id];
+}
+
+/**
+ * Every game addressable under `/play`, and the game each href names.
+ *
+ * Built from the registry rather than kept alongside it, so a game that changes
+ * its href cannot end up unreachable.
+ */
+const gameByHref: Record<string, GameId> = Object.fromEntries(
+  Object.entries(gameRegistry).map(([id, entry]) => [entry.href, id as GameId]),
+);
+
+export function playableGameHrefs(): string[] {
+  return Object.keys(gameByHref);
+}
+
+export function gameForHref(
+  href: string,
+): { game: GameId; entry: GameEntry } | null {
+  const game = gameByHref[href];
+  return game ? { game, entry: gameRegistry[game] } : null;
 }

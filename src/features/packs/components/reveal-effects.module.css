@@ -76,13 +76,14 @@
   height: 200vmax;
   background: var(--ray-gradient);
   /* Flutter fades each wedge along its own length; one radial mask over the
-     whole burst does the same thing, and keeps the rays from running hard to
-     the corners of a wide window. */
+     whole burst does the same. Its radius is an explicit length rather than a
+     percentage, because a percentage resolves against this 200vmax element and
+     so would never reach a visible falloff on a wide window. */
   mask-image: radial-gradient(
-    circle at 50% 50%,
+    circle clamp(340px, 55vmin, 720px) at 50% 50%,
     #000 0%,
-    rgb(0 0 0 / 60%) 20%,
-    transparent 45%
+    rgb(0 0 0 / 55%) 35%,
+    transparent 100%
   );
   mix-blend-mode: plus-lighter;
   animation:
