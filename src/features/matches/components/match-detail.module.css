@@ -17,23 +17,23 @@
   min-height: 0;
   flex-direction: column;
   overflow: hidden;
-  background: var(--ds-color-background-primary);
+  background: var(--ds-color-background-quiz-hub);
   box-shadow: 0 0 40px rgb(0 0 0 / 34%);
 }
 
 .topBar {
   display: flex;
-  height: 48px;
+  height: 50px;
   flex: none;
   align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid var(--ds-color-border-subtle);
-  background: rgb(7 12 31 / 92%);
+  justify-content: flex-start;
+  border-bottom: 0;
+  background: var(--ds-color-background-muted);
 }
 
 .backLink {
   position: absolute;
-  left: 12px;
+  left: 8px;
   display: grid;
   width: 36px;
   height: 34px;
@@ -68,21 +68,24 @@
   letter-spacing: .08em;
 }
 
-.topTitle { font-size: 11px; color: var(--ds-color-text-subtle); }
+.topTitle { margin-left: 49px; color: var(--ds-color-text-default); font-size: 16px; letter-spacing: .12em; }
 
 .summary {
   flex: none;
-  padding: 8px 12px 0;
-  background: var(--ds-color-background-primary);
+  padding: 0 18px 12px;
+  background: var(--ds-color-background-muted);
 }
 
 .summaryBracket {
+  --summary-bracket: color-mix(in srgb, var(--ds-color-accent-cyan) 46%, transparent);
   position: relative;
-  overflow: hidden;
-  padding: 9px 12px 0;
-  clip-path: var(--ds-clip-signal);
-  background: var(--ds-color-background-secondary);
-  box-shadow: inset 0 0 0 1px var(--ds-color-border-muted);
+  padding: 11px 10px 0;
+  background:
+    linear-gradient(var(--summary-bracket), var(--summary-bracket)) left top / 17px 1px no-repeat,
+    linear-gradient(var(--summary-bracket), var(--summary-bracket)) left top / 1px 17px no-repeat,
+    linear-gradient(var(--summary-bracket), var(--summary-bracket)) right top / 17px 1px no-repeat,
+    linear-gradient(var(--summary-bracket), var(--summary-bracket)) right top / 1px 17px no-repeat;
+  background-color: transparent;
 }
 
 .summaryStatus {
@@ -90,7 +93,7 @@
   min-height: 14px;
   text-align: center;
   font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif);
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 900;
   letter-spacing: .1em;
 }
@@ -100,16 +103,16 @@
   min-height: 65px;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 9px;
 }
 
 .teamName {
   max-width: min(25vw, 130px);
   overflow: hidden;
   color: var(--ds-color-text-default);
-  font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif);
-  font-size: 12px;
-  font-weight: 900;
+  font-family: var(--ds-font-body);
+  font-size: 13px;
+  font-weight: 800;
   line-height: 1.1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -122,7 +125,7 @@
   text-align: center;
   color: var(--ds-color-text-default);
   font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif);
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 900;
   letter-spacing: -.06em;
 }
@@ -158,7 +161,7 @@
   letter-spacing: -.04em;
 }
 
-.summarySplit { display: flex; height: 4px; margin: 0 -12px; }
+.summarySplit { display: flex; height: 3px; margin: 0 -2px; }
 .summarySplit span { flex: 1; }
 
 .tabsBody {
@@ -166,7 +169,7 @@
   min-height: 0;
   flex: 1;
   flex-direction: column;
-  background: var(--ds-color-background-primary);
+  background: var(--ds-color-background-quiz-hub);
 }
 
 .mainTabs { min-height: 50px; }
@@ -191,22 +194,28 @@
 
 .lockLine {
   display: flex;
-  min-height: 29px;
+  min-height: 38px;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   padding: 0 10px;
-  border: 1px solid color-mix(in srgb, var(--ds-color-accent-gold) 30%, transparent);
-  background: color-mix(in srgb, var(--ds-color-accent-gold) 8%, transparent);
+  border: 0;
+  background: transparent;
   color: var(--ds-color-accent-gold);
-  font-size: 9px;
+  font-size: 11px;
+  letter-spacing: .12em;
 }
 
-.lockPulse { width: 6px; height: 6px; background: currentcolor; box-shadow: 0 0 8px currentcolor; }
+.lockLineLive { color: var(--ds-color-danger); }
+.lockPulse { display: none; width: 6px; height: 6px; background: currentcolor; box-shadow: 0 0 8px currentcolor; }
+.lockIcon { flex: none; }
+.desktopLockLabel { display: none; }
 .quizList { display: grid; gap: 14px; margin-top: 14px; }
 
 .quizCard { position: relative; isolation: isolate; padding: 0 5px 5px 0; }
 .quizHardShadow { position: absolute; inset: 5px 0 0 5px; z-index: -1; background: color-mix(in srgb, var(--card-accent) 38%, var(--ds-color-fixture-shadow)); clip-path: var(--ds-clip-card); }
 .quizFrame { position: relative; overflow: hidden; min-height: 211px; padding: 12px; clip-path: var(--ds-clip-card); background: var(--ds-color-background-quiz-hub); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 48%, var(--ds-color-border-muted)); }
+.quizCardLocked { --card-accent: var(--ds-color-danger) !important; }
 .quizWashes { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, color-mix(in srgb, var(--home-color) 20%, transparent), transparent 41%, color-mix(in srgb, var(--away-color) 20%, transparent)); }
 .quizWashes::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgb(0 0 0 / 20%)); }
 .quizTopline,
@@ -291,11 +300,12 @@
 
 .topsPanel { padding-bottom: 122px; }
 .quizBoardTabs { display: flex; gap: 6px; padding-bottom: 12px; overflow-x: auto; border-bottom: 1px solid var(--ds-color-border-subtle); }
-.quizBoardTabs button { min-height: 30px; flex: none; padding: 0 10px; border: 1px solid var(--ds-color-border-default); background: var(--ds-color-background-secondary); color: var(--ds-color-text-muted); font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif); font-size: 8px; font-weight: 900; letter-spacing: .07em; cursor: pointer; }
+.quizBoardTabs button { min-height: 40px; flex: none; padding: 0 10px; border: 1px solid var(--ds-color-border-default); background: var(--ds-color-background-secondary); color: var(--ds-color-text-muted); font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif); font-size: 8px; font-weight: 900; letter-spacing: .07em; cursor: pointer; }
 .quizBoardTabs button:hover { border-color: var(--ds-color-accent-cyan); color: var(--ds-color-text-default); }
 .quizBoardTabs .quizBoardTabActive { border-color: var(--ds-color-accent-cyan); background: color-mix(in srgb, var(--ds-color-accent-cyan) 14%, var(--ds-color-background-secondary)); color: var(--ds-color-accent-cyan); }
 .boardMeta { display: flex; justify-content: space-between; gap: 12px; padding: 12px 2px; color: var(--ds-color-text-muted); font-size: 9px; }
 .boardMeta span:first-child { display: inline-flex; align-items: center; gap: 5px; color: var(--ds-color-accent-gold); }
+.boardState { padding: 0 2px 9px; border-bottom: 1px solid color-mix(in srgb, var(--ds-color-accent-gold) 22%, transparent); color: var(--ds-color-accent-gold); font-family: var(--ds-font-display); font-size: 10px; font-weight: 900; letter-spacing: .16em; }
 
 .podium { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 7px; min-height: 163px; padding: 12px 10px 0; background: linear-gradient(to bottom, color-mix(in srgb, var(--ds-color-accent-violet) 10%, transparent), transparent); }
 .podiumSpot { position: relative; display: flex; min-height: 113px; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 5px 8px; background: var(--ds-color-background-secondary); box-shadow: inset 0 0 0 1px var(--ds-color-border-muted); }
@@ -349,6 +359,9 @@
 .factsList dt { color: var(--ds-color-text-muted); font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif); font-size: 8px; font-weight: 900; letter-spacing: .05em; }
 .factsList dd { margin: 4px 0 0; color: var(--ds-color-text-default); font-size: 11px; font-weight: 700; }
 .statsLegend { display: flex; justify-content: space-between; margin-bottom: 12px; font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif); font-size: 10px; font-weight: 900; }
+.momentumHeading { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin-bottom: 16px; font-family: var(--ds-font-display); font-size: 11px; font-weight: 900; }
+.momentumHeading span:last-child { text-align: right; }
+.momentumHeading small { color: var(--ds-color-text-muted); font-size: 8px; letter-spacing: .12em; }
 .teamStat + .teamStat { margin-top: 12px; }
 .teamStat > div:first-child { display: grid; grid-template-columns: 30px 1fr 30px; align-items: center; gap: 7px; margin-bottom: 5px; }
 .teamStat span { color: var(--ds-color-text-default); font-size: 11px; font-weight: 800; }
@@ -429,9 +442,14 @@
 @media (min-width: 1024px) {
   .page { position: static; z-index: auto; display: block; overflow: visible; padding: 30px clamp(20px, 3vw, 52px) 44px; background: transparent; }
   .frame { display: grid; width: min(100%, 1440px); max-width: none; height: auto; min-height: 700px; margin: 0 auto; grid-template-columns: minmax(0, 1fr) clamp(320px, 25vw, 352px); grid-template-areas: "topbar rail" "summary rail" "tabs rail"; align-items: start; column-gap: 24px; overflow: visible; background: transparent; box-shadow: none; }
-  .topBar { grid-area: topbar; height: 45px; clip-path: var(--ds-clip-signal); border: 1px solid var(--ds-color-border-subtle); background: var(--ds-color-background-secondary); }
+  .topBar { grid-area: topbar; height: 45px; justify-content: center; clip-path: var(--ds-clip-signal); border: 1px solid var(--ds-color-border-subtle); background: var(--ds-color-background-secondary); }
+  .topTitle { margin-left: 0; color: var(--ds-color-text-subtle); font-size: 11px; letter-spacing: .08em; }
+  .backLink { left: 12px; }
   .summary { grid-area: summary; padding: 12px 0 0; }
-  .summaryBracket { padding-top: 12px; }
+  .summaryBracket { overflow: hidden; padding: 12px 12px 0; clip-path: var(--ds-clip-signal); background: var(--ds-color-background-secondary); box-shadow: inset 0 0 0 1px var(--ds-color-border-muted); }
+  .summaryStatus { font-size: 10px; }
+  .summaryScore { font-size: 22px; }
+  .summarySplit { height: 4px; margin: 0 -12px; }
   .tabsBody { grid-area: tabs; min-height: 640px; margin-top: 12px; border: 1px solid var(--ds-color-border-subtle); clip-path: var(--ds-clip-signal); background: var(--ds-color-background-primary); }
   .tabPanel { min-height: 590px; }
   .scrollPanel,
@@ -440,6 +458,12 @@
   .scoreboardScroll { padding: 18px 18px 24px; }
   .quizList { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .quizFrame { min-height: 238px; }
+  .quizCardLocked { --card-accent: var(--ds-color-accent-gold) !important; }
+  .lockLine { min-height: 29px; justify-content: flex-start; border: 1px solid color-mix(in srgb, var(--ds-color-accent-gold) 30%, transparent); background: color-mix(in srgb, var(--ds-color-accent-gold) 8%, transparent); color: var(--ds-color-accent-gold); font-size: 9px; letter-spacing: .08em; }
+  .lockPulse { display: block; }
+  .lockIcon,
+  .mobileLockLabel { display: none; }
+  .desktopLockLabel { display: inline; }
   .marketGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .pickBody { min-height: 277px; }
   .pickOutcomes { gap: 6px; }

@@ -12,7 +12,8 @@ import {
   type TrackXp,
 } from "@/domain/progression";
 import { useGameCareer } from "@/features/games";
-import { collectionFrom, useClaimedPacks } from "@/features/packs";
+import { useEconomy } from "@/features/economy";
+import { collectionFromIds } from "@/features/packs";
 
 import type { AchievementStats, CareerRecord } from "../types";
 
@@ -46,10 +47,13 @@ export function trackLevel(xpByTrack: TrackXp, track: ProgressTrack): number {
 
 export function usePlayerProgress(): PlayerProgress {
   const games = useGameCareer();
-  const claimed = useClaimedPacks();
+  const economy = useEconomy();
 
   return useMemo(() => {
-    const collection = collectionFrom(claimed);
+    const collection = collectionFromIds(
+      economy.owned.playerCardIds,
+      economy.owned.actionCardIds,
+    );
 
     // Opening packs is the one thing that earns XP off the pitch, which is
     // exactly what the app's Cards / Meta track is for.
@@ -88,7 +92,7 @@ export function usePlayerProgress(): PlayerProgress {
       pickProfit: 0,
       ownedCards: collection.totalCards,
       platinumOwned: collection.platinumOwned,
-      coins: 0,
+      coins: economy.coins,
     };
 
     return {
@@ -100,5 +104,5 @@ export function usePlayerProgress(): PlayerProgress {
       career,
       achievements,
     };
-  }, [games, claimed]);
+  }, [economy, games]);
 }

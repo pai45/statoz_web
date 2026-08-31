@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { getMockMatch } from "@/features/matches/data/mock-match";
-import { matchDetailFor } from "@/features/matches/data/match-detail-catalog";
+import { matchById, matchDetailFor } from "@/mocks/matches";
 import { MatchSummaryHeader } from "@/features/matches/components/match-summary-header";
 import { MatchTabsView } from "@/features/matches/components/match-tabs-view";
 import { MatchDetailContext } from "@/features/matches/components/match-detail-context";
-import { allMockMatchIds } from "@/features/matches/data/fixtures";
+import { allMockMatchIds } from "@/mocks/matches";
 import { ChevronLeftIcon } from "@/design-system";
 import { notFound } from "next/navigation";
 
@@ -20,7 +19,7 @@ export default async function MatchDetailPage({
   params: Promise<{ matchId: string }>;
 }) {
   const resolvedParams = await params;
-  const match = getMockMatch(resolvedParams.matchId);
+  const match = matchById(resolvedParams.matchId);
 
   if (!match) {
     notFound();

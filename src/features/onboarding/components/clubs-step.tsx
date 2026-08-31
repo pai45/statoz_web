@@ -1,7 +1,7 @@
 import { Monogram, SelectableTile } from "@/design-system";
 import type { Sport } from "@/domain/sports";
 
-import { followableLeagueById } from "../data/followable-leagues";
+import { followableLeagueById } from "@/mocks/onboarding";
 import type { FollowableLeague } from "../types";
 
 import { LeaguePills } from "./league-pills";

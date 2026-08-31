@@ -36,7 +36,9 @@ export function Monogram({
     clipPath: "var(--ds-clip-octagon)",
     background: `color-mix(in srgb, ${accent} 22%, var(--ds-color-background-primary))`,
     color: accent,
-    fontSize: Math.round(size * 0.36),
+    // Two initials get the full step; a longer label — a club code such as FCB
+    // or S04 — is set smaller so it still clears the octagon's cut corners.
+    fontSize: Math.round(size * (label.length > 2 ? 0.26 : 0.36)),
   } satisfies CSSProperties;
 
   return (

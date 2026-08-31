@@ -6,8 +6,7 @@ import {
   SignalPanel,
 } from "@/design-system";
 
-import { marketById, matchById } from "../data/fixtures";
-import { matchTrendingCatalog, type TrendingTileConfig } from "../data/trending-catalog";
+import { marketById, matchById, matchTrendingCatalog, type TrendingTileConfig } from "@/mocks/matches";
 import { TrendingMarketCard } from "./trending-market-card";
 import { TrendingMatchCard } from "./trending-match-card";
 import { TrendingPredictCard } from "./trending-predict-card";
@@ -54,9 +53,11 @@ function Unavailable({ kind }: { kind: TrendingTileConfig["kind"] }) {
     <SignalPanel
       accent={MUTED}
       lifted={false}
+      pad={false}
       tag={<Badge accent={MUTED}>{kind.toUpperCase()}</Badge>}
+      footer={<span className="font-display text-2xs font-extrabold tracking-wide text-muted">NO DATA</span>}
     >
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 text-muted">
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3.5 text-muted">
         <SignalOffIcon size={22} />
         <p className="text-center font-display text-2xs font-extrabold leading-tight tracking-wide">
           SIGNAL

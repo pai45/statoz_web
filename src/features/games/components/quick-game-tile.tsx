@@ -1,15 +1,19 @@
+"use client";
+
 import type { ReactElement } from "react";
 
 import {
   accentVar,
   GridViewIcon,
   HudPanel,
+  LockIcon,
   PersonSearchIcon,
   QuizIcon,
   type IconProps,
 } from "@/design-system";
+import { useAuthSession, useRequireAuth } from "@/features/auth";
 
-import { gameRegistry, type GameEntry } from "../data/game-registry";
+import { gameRegistry, type GameEntry } from "@/mocks/games";
 import type { GameId, GameSceneId } from "../types";
 import { GameScene } from "./game-scenes";
 
@@ -36,11 +40,29 @@ export type QuickGameTileProps = {
  * quieter than the arcade heroes — the scene is texture here, not the subject.
  */
 export function QuickGameTile({ game, entry }: QuickGameTileProps) {
+  const session = useAuthSession();
+  const requireAuth = useRequireAuth();
   const accent = accentVar(entry.accent);
   const Glyph = icons[gameRegistry[game].scene];
+  const authenticated = session.status === "authenticated";
+  const guest = session.status === "guest";
 
   return (
-    <HudPanel accent={accent} href={entry.href} label={`${entry.title}, free to play`}>
+    <HudPanel
+      accent={accent}
+      href={authenticated ? entry.href : undefined}
+      onClick={
+        authenticated
+          ? undefined
+          : () =>
+              requireAuth({
+                intent: "play",
+                message: `Log in to play ${entry.title} and save your progress.`,
+                returnTo: entry.href,
+              })
+      }
+      label={`${entry.title}, ${guest ? "log in to play" : "free to play"}`}
+    >
       <div
         className="relative flex h-full min-h-40 flex-col p-3.25"
         style={{
@@ -79,12 +101,13 @@ export function QuickGameTile({ game, entry }: QuickGameTileProps) {
               background: `color-mix(in srgb, ${accent} 14%, transparent)`,
             }}
           >
+            {guest ? <LockIcon size={12} /> : null}
             <span
               aria-hidden
               className="size-1.25 rounded-pill"
               style={{ background: accent }}
             />
-            FREE
+            {guest ? "LOG IN" : "FREE"}
           </span>
         </div>
 

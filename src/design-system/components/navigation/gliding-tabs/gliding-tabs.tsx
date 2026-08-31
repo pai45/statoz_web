@@ -52,7 +52,7 @@ export function GlidingTabs({
       role="tablist"
       aria-label={label}
       className={[
-        "relative h-[61px] shrink-0 border-t border-black/15 bg-surface-nav",
+        "relative h-[61px] min-h-10 shrink-0 border-t border-black/15 bg-surface-nav",
         className ?? "",
       ]
         .filter(Boolean)
@@ -87,7 +87,7 @@ export function GlidingTabs({
                   focusTab(index - 1);
                 }
               }}
-              className="flex flex-1 flex-col items-center justify-center gap-[5px]"
+              className="flex min-h-10 flex-1 flex-col items-center justify-center gap-[5px]"
               style={{
                 color: active
                   ? "var(--ds-color-text-inverse)"

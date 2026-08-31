@@ -17,16 +17,20 @@ export {
 } from "./components/onboarding-screen";
 export { WelcomeReveal, type WelcomeRevealProps } from "./components/welcome-reveal";
 export { afterOnboardingHref, setupSteps, type SetupStep } from "./constants";
-export { avatarOptionById, avatarOptions } from "./data/avatars";
+export {
+  avatarForName,
+  avatarOptionById,
+  avatarOptions,
+} from "@/mocks/onboarding";
 export {
   profileBannerOptionById,
   profileBannerOptions,
-} from "./data/banners";
+} from "@/mocks/onboarding";
 export {
   followableLeagueById,
   followableLeagues,
   followableLeaguesForSport,
-} from "./data/followable-leagues";
+} from "@/mocks/onboarding";
 export type {
   AvatarOption,
   FollowableLeague,

@@ -9,3 +9,21 @@ export type AuthHeroMedia = {
   /** Describes the artwork; leave unset when it is purely decorative. */
   alt?: string;
 };
+
+export type AuthStatus = "hydrating" | "guest" | "authenticated";
+
+export type AuthSessionSnapshot = {
+  status: AuthStatus;
+  isAuthenticated: boolean;
+  /** Normalized local-demo account identity, unavailable while signed out. */
+  email: string | null;
+  /** True until this email has completed the profile setup flow. */
+  needsOnboarding: boolean;
+};
+
+export type AuthGateRequest = {
+  intent: string;
+  message?: string;
+  /** Navigation target after login; mutations should omit this and be retried. */
+  returnTo?: string;
+};

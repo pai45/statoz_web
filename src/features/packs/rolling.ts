@@ -9,12 +9,8 @@ import {
   actionCards as defaultActionCards,
   attackActionCards,
   defenseActionCards,
-} from "./data/action-cards";
-import { basketballPlayerCards } from "./data/basketball-cards";
-import { cricketBattingCards } from "./data/cricket-cards";
-import { attackers, defenders, goalkeepers } from "./data/football-cards";
-import { racingPlayerCards } from "./data/racing-cards";
-import { tennisPlayerCards } from "./data/tennis-cards";
+} from "@/mocks/packs";
+import { attackers, basketballPlayerCards, cricketBattingCards, defenders, goalkeepers, racingPlayerCards, tennisPlayerCards } from "@/mocks/packs";
 import { starterPackActions, starterPackPlayers } from "./types";
 import type { PackResult, StarterPack } from "./types";
 

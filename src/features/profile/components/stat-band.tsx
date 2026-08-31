@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 
-import { accentVar, FlameIcon, withAlpha } from "@/design-system";
-import { usePrefersReducedMotion } from "@/shared/hooks";
+import { accentVar, ChevronRightIcon, FlameIcon, withAlpha } from "@/design-system";
+import { useCountUp } from "@/shared/hooks";
 
 import type { ProfileStat } from "../types";
 
@@ -15,8 +16,8 @@ import { ProfilePanel } from "./profile-panel";
  * instrument because they share it.
  *
  * Flutter puts a HISTORY link in the header when there is an archive to open.
- * The prop is here for the same reason it is optional there — no archive, no
- * link — and none of the three archives has been built on the web yet.
+ * The web keeps that affordance as a real link so keyboard and touch users can
+ * reach the corresponding profile history route.
  */
 
 const gold = accentVar("gold");
@@ -28,9 +29,18 @@ export type StatBandProps = {
   stats: ProfileStat[];
   /** A running streak, shown only while one is actually running. */
   streak?: number;
+  /** Profile history route for this telemetry band. */
+  historyHref?: string;
 };
 
-export function StatBand({ title, accent, icon, stats, streak = 0 }: StatBandProps) {
+export function StatBand({
+  title,
+  accent,
+  icon,
+  stats,
+  streak = 0,
+  historyHref,
+}: StatBandProps) {
   return (
     <ProfilePanel>
       <div className="p-3.5">
@@ -45,6 +55,16 @@ export function StatBand({ title, accent, icon, stats, streak = 0 }: StatBandPro
             {title}
           </h2>
           {streak > 0 ? <StreakBadge value={streak} /> : null}
+          {historyHref ? (
+            <Link
+              href={historyHref}
+              className="ml-auto flex min-h-11 items-center gap-1 px-1.5 font-display text-2xs font-black tracking-label text-muted transition-colors hover:text-foreground"
+              aria-label={`${title} history`}
+            >
+              HISTORY
+              <ChevronRightIcon size={14} />
+            </Link>
+          ) : null}
         </div>
 
         <div className="mt-3 flex gap-2">
@@ -118,39 +138,4 @@ function StatCell({ stat, accent }: { stat: ProfileStat; accent: string }) {
       </div>
     </div>
   );
-}
-
-const countUpMs = 600;
-
-/**
- * Eases a figure up from zero once, on mount.
- *
- * The state held is how far the run has got, not the figure itself, so a cell
- * with nothing to count to — a zero, or a viewer who asked for less motion —
- * simply renders its target and never schedules a frame. The page-wide reduced
- * motion rule only flattens CSS, so a number ticking in JavaScript would
- * otherwise be the one thing that ignored it.
- */
-function useCountUp(target: number | undefined): number {
-  const reduced = usePrefersReducedMotion();
-  const animate = target !== undefined && target > 0 && !reduced;
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    if (!animate) return;
-
-    let frame = 0;
-    const started = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - started) / countUpMs);
-      setProgress(t);
-      if (t < 1) frame = window.requestAnimationFrame(tick);
-    };
-    frame = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(frame);
-  }, [animate, target]);
-
-  if (!animate) return target ?? 0;
-  // easeOutCubic, so the figure decelerates into its final value.
-  return Math.round(target * (1 - Math.pow(1 - progress, 3)));
 }

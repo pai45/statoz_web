@@ -2,6 +2,8 @@
 
 import { useSyncExternalStore } from "react";
 
+import { recordStreakActivity } from "@/features/streaks/activity";
+
 /**
  * What this browser has done in the shootout, and the level the CPU is scaled
  * to because of it.
@@ -215,6 +217,8 @@ export function recordShootout(outcome: ShootoutOutcome): number {
     played: current.played + 1,
     history: [entry, ...current.history].slice(0, historyLimit),
   });
+
+  recordStreakActivity("penaltyShootout", new Date(entry.playedAt));
 
   return gained;
 }

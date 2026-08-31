@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CSSProperties } from "react";
 
 import { Glyph, type GlyphName } from "../../../icons";
@@ -90,6 +91,8 @@ export type PlayerCardProps = {
   trait: string;
   tier: PlayerCardTier;
   icon: GlyphName;
+  /** Optional portrait artwork. The glyph remains the automatic fallback. */
+  portraitSrc?: string;
   /** CSS color for the role chip — the feature decides what a role means. */
   roleAccent: string;
   /** Which sport's markings sit behind the glyph. */
@@ -122,6 +125,7 @@ export function PlayerCard({
   trait,
   tier,
   icon,
+  portraitSrc,
   roleAccent,
   markings = "none",
   size = "sm",
@@ -225,12 +229,22 @@ export function PlayerCard({
             background: cardIconFallback(tierColor),
           }}
         >
-          <span
-            aria-hidden
-            className="absolute inset-0 grid place-items-center text-inverse"
-          >
-            <Glyph name={icon} size={Math.round(step.width * 0.34)} />
-          </span>
+          {portraitSrc ? (
+            <Image
+              src={portraitSrc}
+              alt=""
+              fill
+              sizes={`${step.width}px`}
+              className="object-cover object-top"
+            />
+          ) : (
+            <span
+              aria-hidden
+              className="absolute inset-0 grid place-items-center text-inverse"
+            >
+              <Glyph name={icon} size={Math.round(step.width * 0.34)} />
+            </span>
+          )}
           <RoleSignal markings={markings} accent={roleAccent} />
         </div>
 

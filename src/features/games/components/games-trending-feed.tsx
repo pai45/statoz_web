@@ -1,7 +1,6 @@
 import { Badge, BentoGrid, BentoTile, SignalOffIcon, SignalPanel } from "@/design-system";
 
-import { gameEntryFor } from "../data/game-registry";
-import { gamesTrendingCatalog } from "../data/trending-catalog";
+import { gameEntryFor, gamesTrendingCatalog } from "@/mocks/games";
 import type { GamesTrendingTileConfig } from "../types";
 import { ArcadeHeroTile } from "./arcade-hero-tile";
 import { QuickGameTile } from "./quick-game-tile";
@@ -35,8 +34,13 @@ const MUTED = "var(--ds-color-text-muted)";
 /** `_TrendingGameUnavailable` — a catalog entry the registry does not cover. */
 function Offline({ id }: { id: string }) {
   return (
-    <SignalPanel accent={MUTED} lifted={false} tag={<Badge accent={MUTED}>GAME</Badge>}>
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3 text-muted">
+    <SignalPanel
+      accent={MUTED}
+      lifted={false}
+      pad={false}
+      tag={<Badge accent={MUTED}>GAME</Badge>}
+    >
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3.5 text-muted">
         <SignalOffIcon size={22} />
         <p className="text-center font-display text-2xs font-extrabold leading-tight tracking-wide">
           MODE OFFLINE

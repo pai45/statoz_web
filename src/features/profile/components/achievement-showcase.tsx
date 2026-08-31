@@ -261,7 +261,7 @@ function AchievementCatalogue({
               role="tab"
               aria-selected={active}
               onClick={() => setGroup(entry)}
-              className="relative flex-1 cursor-pointer py-3.5 font-display font-black leading-none transition-colors"
+              className="relative min-h-10 flex-1 cursor-pointer py-3.5 font-display font-black leading-none transition-colors"
               style={{
                 fontSize: "10px",
                 letterSpacing: "var(--ds-tracking-wide)",

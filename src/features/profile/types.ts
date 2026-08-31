@@ -11,6 +11,8 @@ import type { Sport } from "@/domain/sports";
  * wants and a partial write can never leave two keys disagreeing.
  */
 export type ProfileIdentity = {
+  /** The name chosen during first-run setup. */
+  displayName: string;
   avatarId: string;
   bannerId: string;
   primarySport: Sport;

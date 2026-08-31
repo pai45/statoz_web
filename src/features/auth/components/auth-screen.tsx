@@ -1,4 +1,5 @@
 import { accentVar } from "@/design-system";
+import { Suspense } from "react";
 
 import { authHeroMedia } from "../constants";
 
@@ -23,7 +24,15 @@ export function AuthScreen() {
           borderColor: `color-mix(in srgb, ${accentVar("cyan")} 22%, transparent)`,
         }}
       >
-        <AuthPanel className="mx-auto w-full max-w-md" />
+        <Suspense
+          fallback={
+            <div className="grid min-h-96 place-items-center font-display text-2xs font-black tracking-ultra text-muted">
+              CHECKING ACCOUNT...
+            </div>
+          }
+        >
+          <AuthPanel className="mx-auto w-full max-w-md" />
+        </Suspense>
       </div>
     </div>
   );

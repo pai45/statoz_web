@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { accentVar, Glyph, withAlpha } from "@/design-system";
 
 import { opponentHoldMs, opponentLockMs, opponentSearchMs } from "../constants";
-import { targetRatingForLevel } from "../engine/opponent";
+import { targetRatingForLevel } from "../../shared/engine/opponent";
 import type { ShootoutState } from "../types";
 
 import styles from "./penalty-shootout.module.css";

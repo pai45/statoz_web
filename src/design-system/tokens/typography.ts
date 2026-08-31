@@ -5,11 +5,13 @@
  */
 export const typography = {
   family: {
-    body: '"Onest", var(--font-onest), system-ui, sans-serif',
-    display: '"Orbitron", var(--font-orbitron), "Onest", system-ui, sans-serif',
+    body: 'var(--font-onest), "Onest", system-ui, sans-serif',
+    display:
+      'var(--font-orbitron), "Orbitron", var(--font-onest), "Onest", system-ui, sans-serif',
     mono: 'ui-monospace, "SFMono-Regular", monospace',
   },
   size: {
+    micro: "0.5625rem",
     "2xs": "0.625rem",
     xs: "0.6875rem",
     sm: "0.8125rem",

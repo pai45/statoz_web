@@ -14,12 +14,20 @@ export const gradients = {
   stepPassed: "linear-gradient(to right, #00c850 0%, #009865 100%)",
   /** The segment the player is on — the only one that glows. */
   stepCurrent: "linear-gradient(to right, #ffb13d 0%, #ff7a1a 100%)",
+  /**
+   * A segment the player got wrong. Only a graded meter has one — a plain
+   * step flow has nothing to fail — which is why it joins the set last.
+   */
+  stepFailed: "linear-gradient(to right, #ff6b6b 0%, #c81e30 100%)",
   /** The headline a pack announces itself with, cyan raking into acid green. */
   packHeadline: "linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%)",
   /** A collectible card's nameplate, under the player's name. */
   cardNameplate: "linear-gradient(to right, #202836 0%, #121824 100%)",
   /** The neutral navy body shared by sport fixture cards. */
   fixtureCard: "linear-gradient(to bottom, #1b2336 0%, #121a28 100%)",
+  /** Earned streak milestone surface, warming from gold into the dark stack. */
+  streakMilestone:
+    "linear-gradient(135deg, color-mix(in srgb, var(--ds-color-accent-gold) 24%, transparent) 0%, var(--ds-color-background-secondary) 50%, var(--ds-color-background-elevated) 100%)",
 } as const;
 
 /**

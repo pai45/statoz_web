@@ -5,10 +5,11 @@ const CYAN = accentVar("cyan");
 export type SetupTopBarProps = {
   skipLabel: string;
   onSkip: () => void;
+  showSkip?: boolean;
 };
 
 /** Setup's own chrome: a cyan tally, the screen's name, and the way out. */
-export function SetupTopBar({ skipLabel, onSkip }: SetupTopBarProps) {
+export function SetupTopBar({ skipLabel, onSkip, showSkip = true }: SetupTopBarProps) {
   return (
     <header
       className="relative z-10 flex h-15 shrink-0 items-center gap-3 border-b pl-[18px] pr-2.5"
@@ -38,14 +39,14 @@ export function SetupTopBar({ skipLabel, onSkip }: SetupTopBarProps) {
         </p>
       </div>
 
-      <button
+      {showSkip ? <button
         type="button"
         onClick={onSkip}
         className="shrink-0 px-3 py-2 font-display text-xs font-extrabold transition-opacity hover:opacity-75"
         style={{ color: CYAN, letterSpacing: "var(--ds-tracking-mega)" }}
       >
         {skipLabel}
-      </button>
+      </button> : null}
     </header>
   );
 }

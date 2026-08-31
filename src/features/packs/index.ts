@@ -1,6 +1,19 @@
 export { CardUnpack } from "./components/card-unpack";
 export type { CardUnpackProps } from "./components/card-unpack";
+export {
+  PackRevealSequence,
+  type PackRevealSequenceProps,
+} from "./components/pack-reveal-sequence";
 export { RevealCardFace } from "./components/reveal-card-face";
+/**
+ * The reveal's bed and its ray burst. Public because a flawless quiz run earns
+ * the same celebration — the app reaches for these exact two there as well.
+ */
+export {
+  PackRevealBackdrop,
+  RayBurst,
+  type PackRevealBackdropProps,
+} from "./components/reveal-effects";
 export { StarterPackReveal } from "./components/starter-pack-reveal";
 export type { StarterPackRevealProps } from "./components/starter-pack-reveal";
 
@@ -9,17 +22,26 @@ export {
   defenders as footballDefenders,
   footballPlayerCards,
   goalkeepers as footballGoalkeepers,
-} from "./data/football-cards";
+} from "@/mocks/packs";
 export {
   cricketBattingCards,
   cricketBowlingCards,
   cricketPlayerCards,
-} from "./data/cricket-cards";
-export { basketballPlayerCards } from "./data/basketball-cards";
-export { tennisPlayerCards } from "./data/tennis-cards";
-export { racingPlayerCards } from "./data/racing-cards";
-export { collectionFrom, type CardCollection } from "./data/collection";
+} from "@/mocks/packs";
+export { basketballPlayerCards } from "@/mocks/packs";
+export { tennisPlayerCards } from "@/mocks/packs";
+export { racingPlayerCards } from "@/mocks/packs";
+export { collectionFrom, collectionFromIds, type CardCollection } from "./data/collection";
 export { rollStarterPackFor } from "./data/starter-packs";
+export { portraitAssets, portraitForCard } from "./data/portraits";
+export {
+  actionCardForId,
+  allActionCards,
+  allPlayerCards,
+  playerCardCoinPrice,
+  playerCardForId,
+  playerCardInrPrice,
+} from "./data/catalog";
 
 export {
   claimPack,

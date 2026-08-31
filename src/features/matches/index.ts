@@ -7,9 +7,9 @@ export { SportMatchFeed } from "./components/sport-match-feed";
 export { SportHubTabs, type SportHubSelection } from "./components/sport-hub-tabs";
 export { SportIcon } from "./components/sport-icon";
 export { TrendingFeed } from "./components/trending-feed";
-export { matchTrendingCatalog } from "./data/trending-catalog";
-export { matchDetailFor } from "./data/match-detail-catalog";
-export type { TrendingTileConfig, TrendingTileKind } from "./data/trending-catalog";
+export { matchTrendingCatalog } from "@/mocks/matches";
+export { matchDetailFor } from "@/mocks/matches";
+export type { TrendingTileConfig, TrendingTileKind } from "@/mocks/matches";
 export {
   allMockMatchIds,
   fixtureCountsBySport,
@@ -17,13 +17,11 @@ export {
   leagueById,
   matchById,
   matchDemoAnchor,
-} from "./data/fixtures";
+} from "@/mocks/matches";
 export type {
   MatchDetailData,
-  MatchDetailMarket,
-  MatchDetailOutcome,
   MatchDetailQuiz,
   MatchDetailScoreboard,
   MatchLeague,
   SportFixtureCount,
-} from "./types";
+} from "@/domain/matches";

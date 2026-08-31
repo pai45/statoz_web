@@ -1,7 +1,6 @@
 import { sportModuleFor, type Sport } from "@/domain/sports";
 
-import { gameRegistry } from "../data/game-registry";
-import { deckFor } from "../data/sport-decks";
+import { deckFor, gameRegistry } from "@/mocks/games";
 import { ArcadeHeroTile } from "./arcade-hero-tile";
 import { QuickGameTile } from "./quick-game-tile";
 import { QuickPlayHeader } from "./quick-play-header";

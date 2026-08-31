@@ -1,6 +1,6 @@
 import { SelectableTile } from "@/design-system";
 
-import { profileBannerOptions } from "../data/banners";
+import { profileBannerOptions } from "@/mocks/onboarding";
 
 import { BannerVisual } from "./banner-visual";
 import styles from "./motion.module.css";

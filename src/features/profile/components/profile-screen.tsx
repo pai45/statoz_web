@@ -3,6 +3,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
 
 import { accentVar, GameIcon, MatchIcon, PickIcon } from "@/design-system";
+import { AdSlot } from "@/features/ads";
+import { AuthBoundary } from "@/features/auth";
 
 import {
   loadOrCreatePlayerTag,
@@ -11,6 +13,7 @@ import {
   useIsHydrated,
   useProfileIdentity,
 } from "../state/profile-identity";
+import { playerDisplayName } from "../state/player-standing";
 import { usePlayerProgress } from "../state/player-progress";
 import type { ProfileStat } from "../types";
 
@@ -46,6 +49,18 @@ const orange = accentVar("orange");
 type Editing = "avatar" | "banner" | null;
 
 export function ProfileScreen() {
+  return (
+    <AuthBoundary
+      intent="view your profile"
+      message="Log in to see your profile, history, achievements, and loadouts."
+      returnTo="/profile"
+    >
+      <ProfileDossier />
+    </AuthBoundary>
+  );
+}
+
+function ProfileDossier() {
   const hydrated = useIsHydrated();
   const identity = useProfileIdentity();
   const progress = usePlayerProgress();
@@ -93,6 +108,7 @@ export function ProfileScreen() {
       <div className="mx-auto w-full max-w-160 lg:max-w-260">
         <ProfileHero
           progress={progress}
+          displayName={identity.displayName || playerDisplayName}
           avatarId={identity.avatarId}
           bannerId={identity.bannerId}
           playerTag={identity.playerTag}
@@ -110,12 +126,17 @@ export function ProfileScreen() {
               <AchievementShowcase stats={achievements} />
             </Section>
 
+            <Section delay={90}>
+              <AdSlot placement="profile-dossier" />
+            </Section>
+
             <Section delay={120}>
               <StatBand
                 title="PREDICTS"
                 accent={cyan}
                 icon={<MatchIcon size={20} />}
                 stats={predictStats}
+                historyHref="/profile/history/predict"
               />
             </Section>
 
@@ -125,6 +146,7 @@ export function ProfileScreen() {
                 accent={lime}
                 icon={<PickIcon size={20} />}
                 stats={pickStats}
+                historyHref="/profile/history/pick"
               />
             </Section>
 
@@ -135,6 +157,7 @@ export function ProfileScreen() {
                 icon={<GameIcon size={20} />}
                 stats={gameStats}
                 streak={career.currentStreak}
+                historyHref="/profile/history/games"
               />
             </Section>
           </div>

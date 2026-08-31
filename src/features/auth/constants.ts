@@ -7,5 +7,5 @@ import type { AuthHeroMedia } from "./types";
  */
 export const authHeroMedia: AuthHeroMedia | null = null;
 
-/** Where a completed sign-in lands the player: first-run profile setup. */
-export const afterSignInHref = "/onboarding";
+/** Fallback when sign-in was not opened for a protected destination. */
+export const afterSignInHref = "/";

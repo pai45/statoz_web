@@ -72,10 +72,11 @@ export function InputField({
           style={{ ...clip, background: "var(--ds-color-background-muted)" }}
         />
         <input
+          data-ds-input-field
           id={id}
           aria-describedby={message ? messageId : undefined}
           aria-invalid={error ? true : undefined}
-          className="relative h-13 w-full bg-transparent px-4 text-base text-foreground outline-none placeholder:text-disabled"
+          className="relative h-13 w-full bg-transparent px-4 text-base text-foreground outline-none placeholder:text-disabled focus-visible:outline-none"
           {...input}
         />
       </div>

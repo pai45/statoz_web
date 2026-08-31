@@ -1,8 +1,8 @@
 import { accentVar, Badge, Monogram, SignalPanel } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
-import { sportModuleFor } from "@/domain/sports";
 
-import { SportIcon } from "./sport-icon";
+import { TileFooter } from "./tile-footer";
+import { TileMetaRow } from "./tile-meta-row";
 
 export type TrendingPredictCardProps = {
   match: SportMatch;
@@ -17,58 +17,50 @@ export function TrendingPredictCard({
   match,
   answered = false,
 }: TrendingPredictCardProps) {
-  const sportModule = sportModuleFor(match.sport);
-  const sportAccent = accentVar(sportModule.accent);
-
   return (
     <SignalPanel
       accent={VIOLET}
       tag={<Badge accent={VIOLET}>PREDICT</Badge>}
       href={`/matches/${match.id}`}
       label={`Predict ${match.home.name} versus ${match.away.name}`}
+      footer={
+        <TileFooter
+          status={answered ? "ANSWERS LOCKED" : `+${match.rewardXp} XP MISSION`}
+          accent={answered ? "var(--ds-color-success)" : VIOLET}
+          volumeOz={match.volumeOz}
+        />
+      }
     >
-      <div className="flex flex-1 flex-col px-3 pb-2 pt-8.5">
-        <div className="flex items-center gap-1.5">
-          <SportIcon sport={match.sport} size={13} style={{ color: sportAccent }} />
-          <span className="truncate font-display text-2xs font-extrabold tracking-wide text-muted">
-            {match.leagueLabel}
-          </span>
-        </div>
+      <TileMetaRow sport={match.sport} leagueLabel={match.leagueLabel} />
 
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <Monogram
-            name={match.home.name}
-            initials={match.home.shortName}
-            accent={match.home.color}
-            size={30}
-          />
-          <span
-            className="font-display text-2xs font-black tracking-label"
-            style={{ color: VIOLET }}
-          >
-            VS
-          </span>
-          <Monogram
-            name={match.away.name}
-            initials={match.away.shortName}
-            accent={match.away.color}
-            size={30}
-          />
-        </div>
-
-        <p className="mt-1.5 truncate font-display text-base font-black tracking-tight">
-          {match.home.shortName}
-          {" // "}
-          {match.away.shortName}
-        </p>
-
-        <p
-          className="mt-1 truncate text-2xs font-bold leading-tight"
-          style={{ color: answered ? "var(--ds-color-success)" : VIOLET }}
+      {/* The matchup is this tile's focal element, so it carries the weight the
+          other kinds give to a figure. */}
+      <div className="flex flex-1 items-center justify-between gap-2">
+        <Monogram
+          name={match.home.name}
+          initials={match.home.shortName}
+          accent={match.home.color}
+          size={32}
+        />
+        <span
+          className="font-display text-2xs font-black tracking-label"
+          style={{ color: VIOLET }}
         >
-          {answered ? "ANSWERS LOCKED" : "+XP MISSION OPEN"}
-        </p>
+          VS
+        </span>
+        <Monogram
+          name={match.away.name}
+          initials={match.away.shortName}
+          accent={match.away.color}
+          size={32}
+        />
       </div>
+
+      <p className="truncate font-display text-sm font-black tracking-label">
+        {match.home.shortName}
+        {" // "}
+        {match.away.shortName}
+      </p>
     </SignalPanel>
   );
 }

@@ -21,6 +21,8 @@ export type UnderlineTabsProps = {
   label: string;
   /** Trailing cell pinned to the end of the strip, outside the scroll area. */
   trailing?: ReactNode;
+  /** Minimum width for each tab. When set, the strip scrolls horizontally. */
+  minTabWidth?: number;
   className?: string;
 };
 
@@ -36,6 +38,7 @@ export function UnderlineTabs({
   accent,
   label,
   trailing,
+  minTabWidth,
   className,
 }: UnderlineTabsProps) {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -47,7 +50,7 @@ export function UnderlineTabs({
   }
 
   // The underline spans the middle 64% of the active tab's cell.
-  const cell = 100 / tabs.length;
+  const cell = 100 / Math.max(tabs.length, 1);
   const underline = {
     left: `${cell * activeIndex + cell * 0.18}%`,
     width: `${cell * 0.64}%`,
@@ -58,7 +61,7 @@ export function UnderlineTabs({
   return (
     <div
       className={[
-        "flex h-12.5 shrink-0 border-b bg-background/40",
+        "flex h-12.5 min-h-10 shrink-0 border-b bg-background/40",
         className ?? "",
       ]
         .filter(Boolean)
@@ -67,10 +70,12 @@ export function UnderlineTabs({
         borderColor: `color-mix(in srgb, ${accent} 22%, transparent)`,
       }}
     >
+      <div className="h-full min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <div
         role="tablist"
         aria-label={label}
-        className="relative flex min-w-0 flex-1"
+        className="relative flex h-full min-w-full"
+        style={minTabWidth ? { width: "max-content" } : undefined}
       >
         {tabs.map((tab, index) => {
           const active = index === activeIndex;
@@ -96,8 +101,9 @@ export function UnderlineTabs({
                   move(index, -1);
                 }
               }}
-              className="flex flex-1 items-center justify-center transition-colors duration-200"
+              className="flex min-h-10 flex-1 items-center justify-center transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
               style={{
+                minWidth: minTabWidth,
                 color: active ? accent : "var(--ds-color-text-muted)",
                 background: active
                   ? `color-mix(in srgb, ${accent} 7%, transparent)`
@@ -121,10 +127,11 @@ export function UnderlineTabs({
           />
         ) : null}
       </div>
+      </div>
 
       {trailing ? (
         <div
-          className="grid w-12 shrink-0 place-items-center border-l"
+          className="grid min-h-10 w-12 shrink-0 place-items-center border-l"
           style={{
             borderColor: `color-mix(in srgb, ${accent} 22%, transparent)`,
           }}

@@ -1,11 +1,19 @@
 import type { SportMatch } from "@/domain/matches";
-import { formatKickoffDate, formatKickoffTime, formatOzCompact } from "@/shared/utils";
+import {
+  formatKickoffDate,
+  formatKickoffTime,
+  formatOzCompact,
+} from "@/shared/utils";
 
 import { MatchCircleCta } from "./match-circle-cta";
 import styles from "./match-detail.module.css";
 
 export function MatchDetailContext({ match }: { match: SportMatch }) {
-  const status = match.status === "live" ? `LIVE ${match.liveMinute ? `${match.liveMinute}'` : "NOW"}` : match.status === "finished" ? "FINAL" : "UPCOMING";
+  const status = match.status === "live"
+    ? `LIVE ${match.liveMinute ? `${match.liveMinute}'` : "NOW"}`
+    : match.status === "finished"
+      ? "FINAL"
+      : "UPCOMING";
 
   return (
     <aside className={styles.contextRail} aria-label="Match context">

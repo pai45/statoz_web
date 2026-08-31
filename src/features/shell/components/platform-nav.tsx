@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 import {
   accentVar,
   FootballIcon,
+  LockIcon,
   NavRail,
   ProfileIcon,
   ShopIcon,
   TrophyIcon,
   type NavRailItem,
 } from "@/design-system";
+import { useAuthSession, useRequireAuth } from "@/features/auth";
 import { navDestinations, type NavDestinationId } from "@/shared/config";
 
 export type PlatformNavProps = {
@@ -62,15 +64,37 @@ export function PlatformNav({
   className,
 }: PlatformNavProps) {
   const pathname = usePathname();
+  const session = useAuthSession();
+  const requireAuth = useRequireAuth();
   const active = activeId ?? destinationForPath(pathname);
 
-  const items: NavRailItem[] = navDestinations.map((destination) => ({
-    id: destination.id,
-    label: destination.label,
-    href: destination.href,
-    icon: icons[destination.id],
-    accent: NAV_ACCENT,
-  }));
+  const items: NavRailItem[] = navDestinations.map((destination) => {
+    const base = {
+      id: destination.id,
+      label: destination.id === "profile" && session.status === "guest"
+        ? "LOG IN"
+        : destination.label,
+      icon:
+        destination.id === "profile" && session.status === "guest"
+          ? <LockIcon size={20} />
+          : icons[destination.id],
+      accent: NAV_ACCENT,
+    };
+
+    if (destination.id === "profile" && session.status !== "authenticated") {
+      return {
+        ...base,
+        onSelect: () =>
+          requireAuth({
+            intent: "view your profile",
+            message: "Log in to see your profile, history, achievements, and loadouts.",
+            returnTo: "/profile",
+          }),
+      };
+    }
+
+    return { ...base, href: destination.href };
+  });
 
   return (
     <NavRail

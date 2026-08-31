@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { tennisPlayerCards, useClaimedPacks } from "@/features/packs";
+import { useDecks } from "@/features/cards-decks";
+import { settleCoinReward } from "@/features/economy";
+import { tennisPlayerCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
-import { sportForGame } from "../../data/sport-decks";
-import type { GameEntry } from "../../data/game-registry";
+import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { playColumnMaxWidth, resultDelayMs } from "../constants";
 import { tennisAthleteById } from "../data/athletes";
@@ -89,14 +90,14 @@ export function TennisRally({ game }: TennisRallyProps) {
   const [config, setConfig] = useState<TennisMatchConfig | null>(null);
   const [resume, setResume] = useState<MatchSnapshot | null>(null);
 
-  const claimed = useClaimedPacks();
+  const decks = useDecks();
   const hydrated = useIsHydrated();
   const progress = useTennisProgress();
   const gamesHref = `/games/${sportForGame(game)}`;
 
   const athlete = useMemo(
-    () => athleteFromClaim(claimed.tennis?.playerCardIds),
-    [claimed.tennis?.playerCardIds],
+    () => athleteFromClaim(decks.loadouts.tennis?.playerId ? [decks.loadouts.tennis.playerId] : undefined),
+    [decks.loadouts.tennis],
   );
 
   const canResume =
@@ -247,6 +248,7 @@ function TennisMatch({
           athlete.archetype,
           athlete.archetype === "serveAndVolley",
         );
+        settleCoinReward({ id: `tennis:${summary.matchId}`, coins: reward.coins, title: "TENNIS RALLY", subtitle: summary.won ? "WIN" : "LOSS" });
 
         window.setTimeout(() => setResult({ summary, reward }), resultDelayMs);
       },

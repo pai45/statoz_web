@@ -1,6 +1,9 @@
-import { accentVar, BrandIcon, HudPanel } from "@/design-system";
+"use client";
 
-import type { GameEntry } from "../data/game-registry";
+import { accentVar, BrandIcon, HudPanel, LockIcon } from "@/design-system";
+import { useAuthSession, useRequireAuth } from "@/features/auth";
+
+import type { GameEntry } from "@/mocks/games";
 import type { GameId } from "../types";
 import { GameScene } from "./game-scenes";
 
@@ -32,16 +35,30 @@ export function ArcadeHeroTile({
   layout = "portrait",
   streak = 0,
 }: ArcadeHeroTileProps) {
+  const session = useAuthSession();
+  const requireAuth = useRequireAuth();
   const accent = accentVar(entry.accent);
   const lines = entry.titleLines ?? [entry.title];
   const landscape = layout === "landscape";
+  const authenticated = session.status === "authenticated";
+  const guest = session.status === "guest";
 
   return (
     <HudPanel
       accent={accent}
       glow={entry.glow}
-      href={entry.href}
-      label={`${entry.title}, ${entry.ctaLabel}`}
+      href={authenticated ? entry.href : undefined}
+      onClick={
+        authenticated
+          ? undefined
+          : () =>
+              requireAuth({
+                intent: "play",
+                message: `Log in to play ${entry.title} and save your progress.`,
+                returnTo: entry.href,
+              })
+      }
+      label={`${entry.title}, ${guest ? "log in to play" : entry.ctaLabel}`}
     >
       <div
         className={[
@@ -63,7 +80,17 @@ export function ArcadeHeroTile({
             landscape ? "px-4.25 pt-4.25" : "px-3.25 pb-1.5 pt-3.5",
           ].join(" ")}
         >
-          {entry.badgeLabel ? (
+          {guest ? (
+            <span
+              className="inline-flex max-w-full items-center gap-1.5 px-1.75 py-1 font-display text-2xs font-black leading-compact"
+              style={{
+                color: accent,
+                background: `color-mix(in srgb, ${accent} 16%, transparent)`,
+              }}
+            >
+              <LockIcon size={12} /> LOG IN REQUIRED
+            </span>
+          ) : entry.badgeLabel ? (
             <span
               className="max-w-full truncate px-1.75 py-1 font-display text-2xs font-black leading-compact"
               style={{
@@ -119,7 +146,7 @@ export function ArcadeHeroTile({
           ].join(" ")}
           style={{ color: `color-mix(in srgb, ${accent} 84%, transparent)` }}
         >
-          {entry.ctaLabel}
+          {guest ? "LOG IN TO PLAY" : entry.ctaLabel}
         </p>
       </div>
     </HudPanel>

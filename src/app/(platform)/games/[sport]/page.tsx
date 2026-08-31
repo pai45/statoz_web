@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { sportModules, sportOrder, type Sport } from "@/domain/sports";
+import { AdSlot } from "@/features/ads";
 import { SportGameDeck } from "@/features/games";
 
 /** Every sport is known up front, so all five decks prerender. */
@@ -36,6 +37,9 @@ export default async function SportGamesPage({ params }: PageProps<"/games/[spor
         <h1 className="mb-5 font-display text-xl font-black leading-compact tracking-wide">
           {sportModules[sport].label.toUpperCase()} GAMES
         </h1>
+        <div className="mb-5">
+          <AdSlot placement="games-catalog" />
+        </div>
         <SportGameDeck sport={sport} />
       </div>
     </div>

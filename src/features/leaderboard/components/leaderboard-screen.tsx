@@ -1,0 +1,270 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, type CSSProperties } from "react";
+
+import {
+  accentVar,
+  UnderlineTabs,
+  withAlpha,
+  type UnderlineTab,
+} from "@/design-system";
+import { sportModuleFor, sportOrder, type Sport } from "@/domain/sports";
+import { AdSlot } from "@/features/ads";
+import { useAuthSession, useRequireAuth } from "@/features/auth";
+import { SportIcon } from "@/features/matches";
+import {
+  RivalDossierOverlay,
+  usePlayerStanding,
+  type PlayerStanding,
+} from "@/features/profile";
+
+import { isPro, rivalSeedByName } from "@/mocks/leaderboard";
+import { leaderboardTypeOrder } from "../scoring";
+import { useBoardEntries } from "../state/use-board-entries";
+import type {
+  GameMode,
+  LeaderboardEntry,
+  LeaderboardType,
+  TournamentBoard,
+  TournamentScope,
+} from "../types";
+
+import { LeaderboardEmpty } from "./leaderboard-empty";
+import { LeaderboardFilters } from "./leaderboard-filters";
+import styles from "./leaderboard.module.css";
+import { RankPodium } from "./rank-podium";
+import { RankRow } from "./rank-row";
+import { RankUserBar } from "./rank-user-bar";
+
+/**
+ * LEADERBOARD — where you stand.
+ *
+ * Two strips over one board: the sport, then what is being ranked. The sport
+ * only ever changes the accent, which is true of the app too — there is one
+ * field of players, and the boards are six different lenses on their single
+ * canonical XP rather than six different tables.
+ *
+ * The phone is the app exactly: strips, filters, a scrolling podium and rows,
+ * and your own rank docked below so it never scrolls away. Once there is room
+ * the board keeps its proportions and the things you *set* — the filters — move
+ * out of the reading column into a sidebar, where your rank simply stays in
+ * view instead of having to be pinned.
+ */
+
+const typeLabels: Record<LeaderboardType, string> = {
+  matchDay: "MATCH DAY",
+  tournament: "TOURNEY",
+  games: "GAMES",
+};
+
+const typeTabs: UnderlineTab[] = leaderboardTypeOrder.map((id) => ({
+  id,
+  label: typeLabels[id],
+}));
+
+const sportTabs: UnderlineTab[] = sportOrder.map((sport) => ({
+  id: sport,
+  label: sportModuleFor(sport).label.toUpperCase(),
+  icon: <SportIcon sport={sport} size={21} />,
+}));
+
+/** Rows are dealt in behind the three podium cards. */
+function delay(index: number): CSSProperties {
+  return { "--enter-delay": `${(index + 3) * 70}ms` } as CSSProperties;
+}
+
+type OpenRival = { name: string; rank: number; xp: number; pro: boolean };
+
+export function LeaderboardScreen() {
+  const session = useAuthSession();
+  if (session.status === "authenticated") return <PersonalizedLeaderboard />;
+  return <LeaderboardBoard />;
+}
+
+function PersonalizedLeaderboard() {
+  const player = usePlayerStanding();
+  return <LeaderboardBoard player={player} authenticated />;
+}
+
+function LeaderboardBoard({
+  player = null,
+  authenticated = false,
+}: {
+  player?: PlayerStanding | null;
+  authenticated?: boolean;
+}) {
+  const router = useRouter();
+  const requireAuth = useRequireAuth();
+  const [sport, setSport] = useState<Sport>("football");
+  const [type, setType] = useState<LeaderboardType>("matchDay");
+  const [board, setBoard] = useState<TournamentBoard>("teams");
+  const [scope, setScope] = useState<TournamentScope>("weekly");
+  const [mode, setMode] = useState<GameMode>("quiz");
+  const [openRival, setOpenRival] = useState<OpenRival | null>(null);
+
+  const accent = accentVar(sportModuleFor(sport).accent);
+  const { entries, meta, user, isTeamBoard } = useBoardEntries({
+    type,
+    board,
+    scope,
+    mode,
+    player,
+  });
+
+  /**
+   * Your own row is your profile; a rival's opens their dossier. A team has no
+   * player behind it, so a team board's rows are inert — as they are in the app.
+   */
+  function open(entry: LeaderboardEntry) {
+    if (entry.team) return;
+    if (!authenticated) {
+      requireAuth({
+        intent: "compare profiles",
+        message: "Log in to compare your standing with other players.",
+        returnTo: "/leaderboard",
+      });
+      return;
+    }
+    if (entry.isUser) {
+      router.push("/profile");
+      return;
+    }
+    const seed = rivalSeedByName(entry.name);
+    if (!seed) return;
+    setOpenRival({
+      name: seed.name,
+      rank: entry.rank,
+      xp: seed.base,
+      pro: isPro(seed),
+    });
+  }
+
+  const onOpen = isTeamBoard ? undefined : open;
+
+  // A short board (under three) has no podium to build and lists everyone.
+  const hasPodium = entries.length >= 3;
+  const podium = hasPodium ? entries.slice(0, 3) : [];
+  const rows = hasPodium ? entries.slice(3) : entries;
+
+  const filters = (
+    <LeaderboardFilters
+      type={type}
+      accent={accent}
+      board={board}
+      onBoard={setBoard}
+      scope={scope}
+      onScope={setScope}
+      mode={mode}
+      onMode={setMode}
+    />
+  );
+
+  const userBar = user ? (
+    <RankUserBar
+      user={user}
+      meta={meta}
+      accent={accent}
+      avatarSrc={player?.avatarSrc}
+      onOpen={user.team ? undefined : () => router.push("/profile")}
+    />
+  ) : null;
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <UnderlineTabs
+        label="Browse by sport"
+        tabs={sportTabs}
+        activeIndex={sportOrder.indexOf(sport)}
+        accent={accent}
+        onChange={(index) => setSport(sportOrder[index])}
+        className="shrink-0"
+      />
+      <UnderlineTabs
+        label="Leaderboard"
+        tabs={typeTabs}
+        activeIndex={leaderboardTypeOrder.indexOf(type)}
+        accent={accent}
+        onChange={(index) => setType(leaderboardTypeOrder[index])}
+        className="shrink-0"
+      />
+
+      <div
+        /* A new board is a new element, so it arrives rather than mutating. */
+        key={`${type}-${board}-${scope}-${mode}`}
+        className={`${styles.boardIn} mx-auto flex w-full max-w-160 flex-col gap-4.5 px-4 pb-3.5 pt-2 lg:grid lg:max-w-260 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-5 lg:px-6 lg:pb-8 lg:pt-5`}
+      >
+        <aside className="flex flex-col gap-2.5 lg:sticky lg:top-5 lg:col-start-2 lg:row-start-1 lg:gap-3.5">
+          {filters}
+          <div className="hidden lg:block">{userBar}</div>
+          {entries.length > 0 ? <AdSlot placement="leaderboard-rail" /> : null}
+        </aside>
+
+        <div className="lg:col-start-1 lg:row-start-1">
+          {entries.length === 0 ? (
+            <LeaderboardEmpty type={type} accent={accent} />
+          ) : (
+            <>
+              <RankPodium
+                entries={podium}
+                meta={meta}
+                accent={accent}
+                userAvatarSrc={player?.avatarSrc}
+                onOpen={onOpen}
+              />
+
+              {rows.length > 0 ? (
+                <div className={`flex flex-col gap-2.5 ${hasPodium ? "mt-6" : ""}`}>
+                  {rows.map((entry, index) => (
+                    <div
+                      key={entry.name}
+                      className={styles.dealIn}
+                      style={delay(index)}
+                    >
+                      <RankRow
+                        entry={entry}
+                        accent={accent}
+                        meta={meta}
+                        avatarSrc={player?.avatarSrc}
+                        onOpen={onOpen}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/*
+        Docked so it never scrolls away, as the app pins it. The bar nav is
+        sticky and floats over the page, so this sticks exactly its height
+        above it — and lands in flow beside it at the end of the scroll.
+      */}
+      {userBar ? (
+        <div
+          className="sticky z-10 mt-auto border-t bg-background px-4 pb-3 pt-2.5 lg:hidden"
+          style={{
+            bottom:
+              "calc(var(--platform-nav-height) + env(safe-area-inset-bottom))",
+            borderColor: withAlpha("var(--ds-color-border-strong)", 0.32),
+          }}
+        >
+          {userBar}
+        </div>
+      ) : null}
+
+      {openRival && authenticated ? (
+        <RivalDossierOverlay
+          name={openRival.name}
+          rank={openRival.rank}
+          xp={openRival.xp}
+          pro={openRival.pro}
+          userRank={user?.rank ?? openRival.rank}
+          onClose={() => setOpenRival(null)}
+        />
+      ) : null}
+    </div>
+  );
+}

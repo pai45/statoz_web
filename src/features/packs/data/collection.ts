@@ -3,12 +3,7 @@ import type { ActionCard, PlayerCard } from "@/domain/cards";
 import { packXp } from "../rolling";
 import type { ClaimedPacks } from "../state/claimed-packs";
 
-import { actionCards } from "./action-cards";
-import { basketballPlayerCards } from "./basketball-cards";
-import { cricketPlayerCards } from "./cricket-cards";
-import { footballPlayerCards } from "./football-cards";
-import { racingPlayerCards } from "./racing-cards";
-import { tennisPlayerCards } from "./tennis-cards";
+import { actionCards, basketballPlayerCards, cricketPlayerCards, footballPlayerCards, racingPlayerCards, tennisPlayerCards } from "@/mocks/packs";
 
 /**
  * What this browser owns, resolved from the ids the pack claims recorded.
@@ -55,19 +50,26 @@ const emptyCollection: CardCollection = Object.freeze({
 
 /** Resolves every claimed id back to its card, skipping any that no longer exist. */
 export function collectionFrom(claims: ClaimedPacks): CardCollection {
+  return collectionFromIds(
+    Object.values(claims).flatMap((claim) => claim?.playerCardIds ?? []),
+    Object.values(claims).flatMap((claim) => claim?.actionCardIds ?? []),
+  );
+}
+
+/** Resolves a unified-economy inventory into catalog cards. */
+export function collectionFromIds(
+  playerCardIds: string[],
+  actionCardIds: string[],
+): CardCollection {
   const players: PlayerCard[] = [];
   const actions: ActionCard[] = [];
-
-  for (const claim of Object.values(claims)) {
-    if (!claim) continue;
-    for (const id of claim.playerCardIds) {
-      const card = playersById.get(id);
-      if (card) players.push(card);
-    }
-    for (const id of claim.actionCardIds) {
-      const card = actionsById.get(id);
-      if (card) actions.push(card);
-    }
+  for (const id of new Set(playerCardIds)) {
+    const card = playersById.get(id);
+    if (card) players.push(card);
+  }
+  for (const id of new Set(actionCardIds)) {
+    const card = actionsById.get(id);
+    if (card) actions.push(card);
   }
 
   if (players.length === 0 && actions.length === 0) return emptyCollection;

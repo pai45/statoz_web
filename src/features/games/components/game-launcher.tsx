@@ -1,9 +1,12 @@
 "use client";
 
 import type { ComponentType } from "react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { accentVar } from "@/design-system";
+import { AuthBoundary } from "@/features/auth";
+import { isLoadoutComplete, useDecks } from "@/features/cards-decks";
 import {
   claimPack,
   rollStarterPackFor,
@@ -15,10 +18,15 @@ import type { Sport } from "@/domain/sports";
 
 import { HoopDuel } from "../basketball";
 import { FinalOver } from "../final-over";
+import { FootballBingo } from "../football-bingo";
+import { FootballChess } from "../football-chess";
+import { GrandPrix } from "../grand-prix";
+import { GuessPlayer } from "../guess-player";
 import { PenaltyShootout } from "../penalty-shootout";
+import { PitchDuel } from "../pitch-duel";
+import { SportQuiz } from "../quiz";
 import { TennisRally } from "../tennis";
-import type { GameEntry } from "../data/game-registry";
-import { sportForGame } from "../data/sport-decks";
+import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../types";
 
 import { GamePlaceholder } from "./game-placeholder";
@@ -34,9 +42,25 @@ export type GameLauncherProps = {
  */
 const renderers: Partial<Record<GameId, ComponentType<GameLauncherProps>>> = {
   "penalty-shootout": PenaltyShootout,
+  "pitch-duel": PitchDuel,
   "final-over": FinalOver,
+  "football-chess": FootballChess,
+  "football-bingo": FootballBingo,
+  // One screen serves all three: the sport it was launched as picks the route
+  // table, the pool it searches, and the archive it keys.
+  "guess-player": GuessPlayer,
+  "cricket-guess-player": GuessPlayer,
+  "basketball-guess-player": GuessPlayer,
   "hoop-duel": HoopDuel,
+  "grand-prix-dash": GrandPrix,
   "tennis-rally": TennisRally,
+  // One screen serves all five: it reads its sport from the game it was
+  // launched as, exactly as the ladder data is keyed.
+  "football-quiz": SportQuiz,
+  "cricket-quiz": SportQuiz,
+  "basketball-quiz": SportQuiz,
+  "tennis-quiz": SportQuiz,
+  "motorsport-quiz": SportQuiz,
 };
 
 function GameSurface({ game, entry }: GameLauncherProps) {
@@ -54,9 +78,23 @@ function GameSurface({ game, entry }: GameLauncherProps) {
  * than a bloc.
  */
 export function GameLauncher({ game, entry }: GameLauncherProps) {
+  return (
+    <AuthBoundary
+      intent="play"
+      message={`Log in to play ${entry.title} and save your progress.`}
+      returnTo={entry.href}
+      fullScreen
+    >
+      <AuthenticatedGameLauncher game={game} entry={entry} />
+    </AuthBoundary>
+  );
+}
+
+function AuthenticatedGameLauncher({ game, entry }: GameLauncherProps) {
   const sport = sportForGame(game);
   const hydrated = useIsHydrated();
   const claimed = useIsPackClaimed(sport);
+  const decks = useDecks();
 
   // Storage is not readable on the server, so the gate cannot be decided there.
   // Rendering the game first would flash it before the pack, so the prerendered
@@ -67,7 +105,16 @@ export function GameLauncher({ game, entry }: GameLauncherProps) {
     return <StarterPackGate game={game} entry={entry} sport={sport} />;
   }
 
+  if (entry.requiresDeck && !isLoadoutComplete(decks.loadouts[sport])) {
+    return <DeckRequired sport={sport} entry={entry} />;
+  }
+
   return <GameSurface game={game} entry={entry} />;
+}
+
+function DeckRequired({ sport, entry }: { sport: Sport; entry: GameEntry }) {
+  const accent = accentVar(entry.accent);
+  return <div className="grid min-h-dvh place-items-center px-5 text-center"><div className="max-w-md border border-border bg-surface-raised p-6"><p className="font-display text-2xs font-black tracking-ultra text-muted">{"// LOADOUT REQUIRED"}</p><h1 className="mt-3 font-display text-2xl font-black" style={{ color: accent }}>{entry.title}</h1><p className="mt-3 text-xs leading-relaxed text-muted">Your saved lineup is incomplete or stale. Repair every required slot before entering the game.</p><Link href={`/decks/${sport}`} className="mt-6 grid h-12 place-items-center font-display text-xs font-black text-background" style={{ background: accent }}>OPEN LOADOUT EDITOR</Link></div></div>;
 }
 
 /**

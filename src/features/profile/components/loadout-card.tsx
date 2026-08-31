@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   accentVar,
   CheckIcon,
@@ -9,8 +11,8 @@ import {
   withAlpha,
 } from "@/design-system";
 import { sportModuleFor, sportOrder, type Sport } from "@/domain/sports";
+import { isLoadoutComplete, useDecks } from "@/features/cards-decks";
 import { SportIcon } from "@/features/matches";
-import { useClaimedPacks } from "@/features/packs";
 
 import { ProfilePanel } from "./profile-panel";
 
@@ -31,8 +33,8 @@ const cyan = accentVar("cyan");
 const success = feedbackVar("success");
 
 export function LoadoutCard() {
-  const claimed = useClaimedPacks();
-  const ready = sportOrder.filter((sport) => claimed[sport] !== undefined);
+  const decks = useDecks();
+  const ready = sportOrder.filter((sport) => isLoadoutComplete(decks.loadouts[sport]));
   const allReady = ready.length === sportOrder.length;
   const accent = allReady ? success : cyan;
 
@@ -87,7 +89,7 @@ export function LoadoutCard() {
             <li key={sport} className="min-w-0 flex-1">
               <SportReadyNode
                 sport={sport}
-                ready={claimed[sport] !== undefined}
+                ready={isLoadoutComplete(decks.loadouts[sport])}
               />
             </li>
           ))}
@@ -119,7 +121,8 @@ function SportReadyNode({ sport, ready }: { sport: Sport; ready: boolean }) {
   const accent = accentVar(entry.accent);
 
   return (
-    <div
+    <Link
+      href={`/decks/${sport}`}
       className="relative grid h-9.5 place-items-center border"
       style={{
         background: ready
@@ -141,6 +144,6 @@ function SportReadyNode({ sport, ready }: { sport: Sport; ready: boolean }) {
           style={{ color: success }}
         />
       ) : null}
-    </div>
+    </Link>
   );
 }

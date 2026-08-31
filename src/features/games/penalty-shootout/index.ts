@@ -6,8 +6,8 @@ export { cpuDirection, cpuSmartness, readChanceForLevel } from "./engine/cpu";
 export {
   generateShootoutOpponent,
   targetRatingForLevel,
-  type ShootoutOpponent,
-} from "./engine/opponent";
+  type OpponentSquad,
+} from "../shared/engine/opponent";
 export {
   earlyOut,
   initialShootout,

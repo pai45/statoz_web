@@ -42,6 +42,7 @@ export type FollowableLeague = {
 
 /** Everything the player chose, handed over in one piece when setup ends. */
 export type ProfileSetupResult = {
+  displayName: string;
   avatarId: string;
   bannerId: string;
   primarySport: Sport;
@@ -50,4 +51,4 @@ export type ProfileSetupResult = {
   favoriteTeams: Record<string, string>;
 };
 
-export type SetupStepId = "avatar" | "banner" | "clubs";
+export type SetupStepId = "name" | "avatar" | "banner" | "clubs";

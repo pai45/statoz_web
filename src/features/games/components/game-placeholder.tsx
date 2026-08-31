@@ -3,8 +3,7 @@ import Link from "next/link";
 import { accentVar, Button, withAlpha } from "@/design-system";
 import { sportModuleFor } from "@/domain/sports";
 
-import type { GameEntry } from "../data/game-registry";
-import { sportForGame } from "../data/sport-decks";
+import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../types";
 
 import { GameScene } from "./game-scenes";

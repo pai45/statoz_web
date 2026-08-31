@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, type ReactNode } from "react";
 
@@ -14,8 +15,7 @@ import {
   StyleIcon,
   withAlpha,
 } from "@/design-system";
-
-import { resetProfileIdentity } from "../state/profile-identity";
+import { signOut } from "@/features/auth";
 
 import { ProfileOverlay } from "./profile-overlay";
 import styles from "./profile.module.css";
@@ -40,7 +40,20 @@ export function ProfileActions() {
     <>
       <ul className="flex flex-col gap-2.5">
         <li>
-          <NavRow icon={<StyleIcon size={20} />} label="All Cards" pending />
+          <Link
+            href="/cards"
+            className={`flex w-full items-center gap-3 border px-4 py-4 text-left ${styles.pressable} cursor-pointer`}
+            style={{
+              background: withAlpha("var(--ds-color-background-secondary)", 0.5),
+              borderColor: "var(--ds-color-border-default)",
+            }}
+          >
+            <span aria-hidden style={{ color: cyan }}>
+              <StyleIcon size={20} />
+            </span>
+            <span className="flex-1 text-base font-semibold leading-none">All Cards</span>
+            <ChevronRightIcon size={20} className="text-muted" />
+          </Link>
         </li>
         <li>
           <NavRow icon={<MenuBookIcon size={20} />} label="How To Play" pending />
@@ -156,7 +169,7 @@ function SettingsSheet({ onClose }: { onClose: () => void }) {
             LOG OUT
           </span>
           <span className="mt-1 block text-xs leading-none text-muted">
-            Return to avatar selection
+            Hide your player data and return to sports
           </span>
         </span>
         <ChevronRightIcon size={20} style={{ color: danger }} />
@@ -166,9 +179,8 @@ function SettingsSheet({ onClose }: { onClose: () => void }) {
 }
 
 /**
- * The promise this dialog makes is precise, so the action has to be too: only
- * the setup choices are cleared. Cards, mode progress and every other key are
- * left where they are.
+ * Signing out only removes the local demo session. Player data remains stored
+ * but is unreachable until the next sign-in.
  */
 function LogoutConfirm({
   onCancel,
@@ -180,9 +192,9 @@ function LogoutConfirm({
   const router = useRouter();
 
   const logOut = useCallback(() => {
-    resetProfileIdentity();
     onClose();
-    router.push("/onboarding");
+    signOut();
+    router.replace("/");
   }, [onClose, router]);
 
   return (
@@ -223,11 +235,11 @@ function LogoutConfirm({
           className="font-display font-black leading-tight"
           style={{ fontSize: "16px", letterSpacing: "var(--ds-tracking-label)" }}
         >
-          RETURN TO AVATAR SELECTION?
+          LOG OUT OF STATOZ?
         </p>
         <p className="mt-2.5 text-sm leading-body text-muted">
-          Your profile setup choices will be cleared. Your cards, matches and
-          mode progress stay saved.
+          Your profile, coins, cards, matches, and progress will be hidden but
+          remain saved in this browser for your next sign-in.
         </p>
       </div>
     </ProfileOverlay>

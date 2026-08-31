@@ -17,7 +17,9 @@ export function TeamLockup({ team, alignEnd = false }: TeamLockupProps) {
       ].join(" ")}
     >
       <Monogram name={team.name} initials={team.shortName} accent={team.color} />
-      <span className="w-full truncate font-display text-base font-black tracking-tight">
+      {/* One step below the tile's clock or score: the teams identify the
+          fixture, the figure is what the tile is about. */}
+      <span className="w-full truncate font-display text-sm font-black tracking-tight">
         {team.shortName}
       </span>
     </div>

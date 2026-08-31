@@ -1,0 +1,8 @@
+import type { SportMatch } from "@/domain/matches";
+import { fixture, team } from "./definitions";
+const teams = {
+  chelsea: team("chelsea", "Chelsea", "CHE", "#034694", "#ffffff"), newcastle: team("newcastle", "Newcastle United", "NEW", "#241f20", "#ffffff"), united: team("man-utd", "Manchester United", "MUN", "#da291c", "#fbe122"), arsenal: team("arsenal", "Arsenal", "ARS", "#ef0107", "#ffffff"), liverpool: team("liverpool", "Liverpool", "LIV", "#c8102e", "#00b2a9"), city: team("man-city", "Manchester City", "MCI", "#6cabdd", "#1c2c5b"), spurs: team("spurs", "Tottenham Hotspur", "TOT", "#132257", "#ffffff"), villa: team("villa", "Aston Villa", "AVL", "#670e36", "#95bfe5"), france: team("france", "France", "FRA", "#1e5aa8", "#ef4135"), england: team("england", "England", "ENG", "#ffffff", "#cf081f", "#081019"),
+};
+export const footballFixtures: SportMatch[] = [
+  fixture("epl_cfc_new", "football", "epl", teams.chelsea, teams.newcastle, "2026-08-25T19:00:00.000Z", "live", 120, 48200, { homeScore: 2, awayScore: 1, liveMinute: 67 }), fixture("epl_liv_mci", "football", "epl", teams.liverpool, teams.city, "2026-08-25T21:00:00.000Z", "scheduled", 110, 96500), fixture("epl_tot_avl", "football", "epl", teams.spurs, teams.villa, "2026-08-25T17:30:00.000Z", "scheduled", 80, 21600), fixture("epl_mu_ars_today", "football", "epl", teams.united, teams.arsenal, "2026-08-25T15:00:00.000Z", "scheduled", 90, 31400), fixture("epl_mu_ars", "football", "epl", teams.united, teams.arsenal, "2026-08-26T16:30:00.000Z", "scheduled", 90, 31400), fixture("fifa_fra_eng_result", "football", "fifa", teams.france, teams.england, "2026-08-24T18:30:00.000Z", "finished", 160, 128000, { homeScore: 4, awayScore: 6, resultLine: "England won 6-4 to take third place" }),
+];

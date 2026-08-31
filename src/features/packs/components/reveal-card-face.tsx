@@ -14,6 +14,7 @@ import {
 } from "@/domain/cards";
 
 import type { PackRevealItem } from "../types";
+import { portraitForCard } from "../data/portraits";
 
 /**
  * The accent a role is identified by. This mapping is football-and-friends
@@ -90,6 +91,7 @@ export function RevealCardFace({ item, size = "md" }: RevealCardFaceProps) {
       trait={card.trait}
       tier={card.tier}
       icon={toGlyph(card.icon)}
+      portraitSrc={portraitForCard(card)}
       roleAccent={roleAccents[card.role]}
       markings={sportMarkings[playerRoleSports[card.role]] ?? "none"}
       size={size}

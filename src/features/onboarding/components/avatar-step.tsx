@@ -3,7 +3,7 @@ import Image from "next/image";
 import { SelectableTile } from "@/design-system";
 import { publicAsset } from "@/shared/config";
 
-import { avatarOptions } from "../data/avatars";
+import { avatarOptions } from "@/mocks/onboarding";
 
 import styles from "./motion.module.css";
 import { StepShell } from "./step-shell";

@@ -19,6 +19,7 @@ import {
   type SportHubSelection,
   type SportSelectorCount,
 } from "@/features/matches";
+import { AdSlot } from "@/features/ads";
 
 const tabs: GlidingTab[] = [
   {
@@ -84,9 +85,15 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
           />
           <div className="flex-1 overflow-y-auto px-4 py-3">
             {matchSport === null ? (
-              <div className="mx-auto w-full max-w-6xl">{matchFeed}</div>
+              <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+                <AdSlot placement="home-feed" />
+                {matchFeed}
+              </div>
             ) : (
-              <SportMatchFeed key={matchSport} sport={matchSport} />
+              <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+                <AdSlot placement="home-feed" />
+                <SportMatchFeed key={matchSport} sport={matchSport} />
+              </div>
             )}
           </div>
         </div>
@@ -98,7 +105,8 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
             onMore={() => setSelectorMode("games")}
           />
           <div className="flex-1 overflow-y-auto px-4 py-3">
-            <div className="mx-auto w-full max-w-6xl">
+            <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+              <AdSlot placement="home-feed" />
               {gamesSport === null ? gamesFeed : sportDecks[gamesSport]}
             </div>
           </div>

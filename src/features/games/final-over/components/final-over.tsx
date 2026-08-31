@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { accentVar, feedbackVar } from "@/design-system";
-import { cricketBattingCards, useClaimedPacks } from "@/features/packs";
+import { useDecks } from "@/features/cards-decks";
+import { settleCoinReward } from "@/features/economy";
+import { cricketBattingCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
-import { sportForGame } from "../../data/sport-decks";
-import type { GameEntry } from "../../data/game-registry";
+import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { resultDelayMs, stingMajorMs, stingMinorMs } from "../constants";
 import { kitById, opponentKit as opponentKitFor } from "../data/kits";
@@ -74,14 +75,14 @@ function squadFromClaim(
 export function FinalOver({ game }: FinalOverProps) {
   const [view, setView] = useState<"lobby" | "playing">("lobby");
   const [session, setSession] = useState(0);
-  const claimed = useClaimedPacks();
+  const decks = useDecks();
   const hydrated = useIsHydrated();
   const stats = useFinalOverStats();
   const gamesHref = `/games/${sportForGame(game)}`;
 
   const squad = useMemo(
-    () => squadFromClaim(claimed.cricket?.playerCardIds),
-    [claimed.cricket?.playerCardIds],
+    () => squadFromClaim(decks.loadouts.cricket?.batterIds),
+    [decks.loadouts.cricket],
   );
 
   const play = useCallback(() => {
@@ -139,6 +140,7 @@ function FinalOverSession({
   onExit,
 }: SessionProps) {
   const tuning = tierTuning[tier];
+  const rewardId = `final-over-${useId()}`;
 
   // Drawn once, in the browser, when the session mounts — never during a server
   // render, where the roll would differ from the client's. The tier chooses
@@ -379,11 +381,12 @@ function FinalOverSession({
       fours: tally.fours,
       bestCombo: tally.bestCombo,
     });
+    settleCoinReward({ id: rewardId, coins: hud.won ? 50 : 10, title: "FINAL OVER", subtitle: hud.won ? "WIN" : "LOSS" });
     setAward({ xp: gained });
 
     const timer = window.setTimeout(() => setResultShown(true), resultDelayMs);
     return () => window.clearTimeout(timer);
-  }, [hud.over, hud.won, controller, tier, tally]);
+  }, [hud.over, hud.won, controller, tier, tally, rewardId]);
 
   /* ---- Input ------------------------------------------------------------ */
 

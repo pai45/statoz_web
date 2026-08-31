@@ -13,6 +13,7 @@ export type SetupDockProps = {
   /** Whether the forward action still advances, rather than completing setup. */
   isNext: boolean;
   canGoPrevious: boolean;
+  canAdvance?: boolean;
   helper: string;
   onPrevious: () => void;
   onNext: () => void;
@@ -28,6 +29,7 @@ export function SetupDock({
   ctaLabel,
   isNext,
   canGoPrevious,
+  canAdvance = true,
   helper,
   onPrevious,
   onNext,
@@ -40,7 +42,7 @@ export function SetupDock({
         label="Profile setup progress"
       />
 
-      <div className="mt-3.5 flex w-full max-w-[32.5rem] gap-3.5">
+      <div className="mt-3.5 flex w-full gap-3.5">
         {canGoPrevious ? (
           <Button
             variant="tonal"
@@ -60,6 +62,7 @@ export function SetupDock({
           fullWidth
           glow
           onClick={onNext}
+          disabled={!canAdvance}
           trailingIcon={isNext ? <ArrowRightIcon size={20} /> : undefined}
           className="flex-1"
         >

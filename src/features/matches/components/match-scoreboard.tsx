@@ -17,7 +17,7 @@ import { sportModuleFor } from "@/domain/sports";
 import type { MatchDetailScoreboard, MatchDetailTimelineEvent } from "../types";
 import styles from "./match-detail.module.css";
 
-type ScoreboardView = "facts" | "lineup" | "commentary";
+type ScoreboardView = "overview" | "momentum" | "events" | "lineup" | "commentary";
 
 export function MatchScoreboard({
   match,
@@ -26,7 +26,7 @@ export function MatchScoreboard({
   match: SportMatch;
   scoreboard: MatchDetailScoreboard;
 }) {
-  const [active, setActive] = useState<ScoreboardView>("facts");
+  const [active, setActive] = useState<ScoreboardView>("overview");
   const labels = scoreTabs(match).map((tab) => ({ id: tab.id, label: tab.label }));
   const activeIndex = labels.findIndex((tab) => tab.id === active);
   const accent = accentVar(sportModuleFor(match.sport).accent);
@@ -39,10 +39,13 @@ export function MatchScoreboard({
         onChange={(index) => setActive(labels[index].id as ScoreboardView)}
         accent={accent}
         label="Match scoreboard views"
+        minTabWidth={match.sport === "football" ? 92 : undefined}
         className={styles.scoreboardTabs}
       />
       <div className={styles.scoreboardScroll}>
-        {active === "facts" ? <FactsView match={match} scoreboard={scoreboard} /> : null}
+        {active === "overview" ? <FactsView match={match} scoreboard={scoreboard} /> : null}
+        {active === "momentum" ? <MomentumView match={match} scoreboard={scoreboard} /> : null}
+        {active === "events" ? <EventsView scoreboard={scoreboard} /> : null}
         {active === "lineup" ? <LineupsView match={match} scoreboard={scoreboard} /> : null}
         {active === "commentary" ? <CommentaryView scoreboard={scoreboard} /> : null}
       </div>
@@ -51,12 +54,63 @@ export function MatchScoreboard({
 }
 
 function scoreTabs(match: SportMatch): Array<{ id: ScoreboardView; label: string }> {
+  if (match.sport === "football") {
+    return [
+      { id: "overview", label: "OVERVIEW" },
+      { id: "momentum", label: "MOMENTUM" },
+      { id: "events", label: "EVENTS" },
+      { id: "lineup", label: "LINEUPS" },
+      { id: "commentary", label: "COMMENTARY" },
+    ];
+  }
   const first = match.sport === "basketball" ? "BOX SCORE" : match.sport === "tennis" ? "SETS" : "FACTS";
   return [
-    { id: "facts", label: first },
+    { id: "overview", label: first },
     { id: "lineup", label: "LINEUP" },
     { id: "commentary", label: "COMMENTARY" },
   ];
+}
+
+function MomentumView({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
+  const accent = accentVar(sportModuleFor(match.sport).accent);
+  return (
+    <div className={styles.statsGrid}>
+      <Panel title="MATCH MOMENTUM" accent={accent} className={styles.teamStatsPanel}>
+        <div className={styles.momentumHeading}>
+          <span style={{ color: match.home.color }}>{match.home.shortName}</span>
+          <small>LIVE PRESSURE</small>
+          <span style={{ color: match.away.color }}>{match.away.shortName}</span>
+        </div>
+        {scoreboard.stats.map((stat) => {
+          const total = stat.homeValue + stat.awayValue;
+          const homeShare = total === 0 ? 50 : (stat.homeValue / total) * 100;
+          return (
+            <div key={stat.label} className={styles.teamStat}>
+              <div><span>{stat.home}</span><small>{stat.label}</small><span>{stat.away}</span></div>
+              <div className={styles.teamStatMeter}>
+                <span style={{ width: `${homeShare}%`, background: match.home.color }} />
+                <span style={{ width: `${100 - homeShare}%`, background: match.away.color }} />
+              </div>
+            </div>
+          );
+        })}
+      </Panel>
+    </div>
+  );
+}
+
+function EventsView({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
+  return (
+    <div className={styles.statsGrid}>
+      <Panel title="MATCH EVENT LOG" accent="var(--ds-color-accent-cyan)" className={styles.timelinePanel}>
+        {scoreboard.timeline.length ? (
+          <div className={styles.timelineList}>
+            {scoreboard.timeline.map((event) => <TimelineRow key={`${event.minute}-${event.player}`} event={event} />)}
+          </div>
+        ) : <EmptyState title="Event log pending" message="Goals, cards, and substitutions will appear here." />}
+      </Panel>
+    </div>
+  );
 }
 
 function FactsView({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {

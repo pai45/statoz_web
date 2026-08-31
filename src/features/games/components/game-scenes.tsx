@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { publicAsset } from "@/shared/config";
 
-import { gameRegistry } from "../data/game-registry";
+import { gameRegistry } from "@/mocks/games";
 import type { GameId, GameSceneId } from "../types";
 
 /* -------------------------------------------------------------------------

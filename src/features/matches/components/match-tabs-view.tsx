@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type CSSProperties, type ComponentType } from "react";
+import { useEffect, useState, type CSSProperties, type ComponentType } from "react";
 
 import {
   ArrowRightIcon,
   BoltIcon,
   CheckIcon,
   FlagIcon,
+  LockIcon,
   PickIcon,
   QuizIcon,
   TrophyIcon,
@@ -17,12 +18,12 @@ import {
 } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
 import { sportModuleFor } from "@/domain/sports";
-import { formatOzCompact } from "@/shared/utils";
+import { useAuthSession, useRequireAuth } from "@/features/auth";
+import { MatchPicksPanel } from "@/features/picks";
 
 import type {
   MatchDetailBoardEntry,
   MatchDetailData,
-  MatchDetailMarket,
   MatchDetailQuiz,
 } from "../types";
 import { MatchScoreboard } from "./match-scoreboard";
@@ -38,7 +39,14 @@ const mainTabs: { id: MainTab; label: string; icon: ComponentType<IconProps> }[]
 ];
 
 export function MatchTabsView({ match, detail }: { match: SportMatch; detail: MatchDetailData }) {
+  const session = useAuthSession();
+  const requireAuth = useRequireAuth();
   const [activeTab, setActiveTab] = useState<MainTab>("predict");
+  useEffect(() => {
+    if (window.location.hash !== "#picks") return;
+    const task = window.setTimeout(() => setActiveTab("picks"), 0);
+    return () => window.clearTimeout(task);
+  }, []);
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);
   const accent = accentVar(sportModuleFor(match.sport).accent);
   const tabs = mainTabs.map(({ id, label, icon: Icon }) => ({
@@ -59,28 +67,44 @@ export function MatchTabsView({ match, detail }: { match: SportMatch; detail: Ma
       />
 
       <div className={styles.tabPanel}>
-        {activeTab === "predict" ? <PredictTab match={match} quizzes={detail.quizzes} /> : null}
-        {activeTab === "picks" ? <PicksTab match={match} markets={detail.markets} /> : null}
-        {activeTab === "tops" ? <TopsTab detail={detail} /> : null}
+        {activeTab === "predict" ? <PredictTab match={match} quizzes={detail.quizzes} guest={session.status === "guest"} onStart={() => requireAuth({ intent: "predict", message: "Log in to answer match missions and save your prediction history." })} /> : null}
+        {activeTab === "picks" ? <MatchPicksPanel matchId={match.id} /> : null}
+        {activeTab === "tops" ? <TopsTab match={match} detail={detail} /> : null}
         {activeTab === "stats" ? <MatchScoreboard match={match} scoreboard={detail.scoreboard} /> : null}
       </div>
     </section>
   );
 }
 
-function PredictTab({ match, quizzes }: { match: SportMatch; quizzes: MatchDetailQuiz[] }) {
+function PredictTab({ match, quizzes, guest, onStart }: { match: SportMatch; quizzes: MatchDetailQuiz[]; guest: boolean; onStart: () => void }) {
   const seconds = useLockCountdown(match.kickoff);
+  const mobileLockLabel = match.status === "live"
+    ? "PREDICTIONS LOCKED"
+    : match.status === "finished"
+      ? "MATCH COMPLETE"
+      : `LOCKS IN ${formatRemaining(seconds)}`;
+  const desktopLockLabel = match.status === "live"
+    ? "LIVE QUIZZES LOCKED"
+    : mobileLockLabel;
 
   return (
     <div className={[styles.scrollPanel, styles.predictPanel].join(" ")}>
-      <div className={styles.lockLine}>
+      <div
+        className={[
+          styles.lockLine,
+          match.status === "live" ? styles.lockLineLive : "",
+        ].filter(Boolean).join(" ")}
+        role="status"
+      >
         <span className={styles.lockPulse} aria-hidden="true" />
-        <span>{match.status === "live" ? "LIVE QUIZZES LOCKED" : match.status === "finished" ? "MATCH COMPLETE" : `LOCKS IN ${formatRemaining(seconds)}`}</span>
+        <LockIcon className={styles.lockIcon} size={13} aria-hidden="true" />
+        <span className={styles.mobileLockLabel}>{mobileLockLabel}</span>
+        <span className={styles.desktopLockLabel}>{desktopLockLabel}</span>
       </div>
 
       <div className={styles.quizList}>
         {quizzes.map((quiz, index) => (
-          <QuizHubCard key={quiz.id} quiz={quiz} index={index + 1} homeColor={match.home.color} awayColor={match.away.color} />
+          <QuizHubCard key={quiz.id} quiz={quiz} index={index + 1} homeColor={match.home.color} awayColor={match.away.color} guest={guest} onStart={onStart} />
         ))}
       </div>
     </div>
@@ -92,11 +116,15 @@ function QuizHubCard({
   index,
   homeColor,
   awayColor,
+  guest,
+  onStart,
 }: {
   quiz: MatchDetailQuiz;
   index: number;
   homeColor: string;
   awayColor: string;
+  guest: boolean;
+  onStart: () => void;
 }) {
   const visual = quizVisual(quiz);
   const progress = Math.min(100, Math.round((quiz.answered / quiz.questions) * 100));
@@ -104,7 +132,11 @@ function QuizHubCard({
 
   return (
     <article
-      className={[styles.quizCard, quiz.state === "finished" ? styles.quizCardFinished : ""].filter(Boolean).join(" ")}
+      className={[
+        styles.quizCard,
+        styles[`quizCard${quiz.state[0].toUpperCase()}${quiz.state.slice(1)}`],
+        quiz.state === "finished" ? styles.quizCardFinished : "",
+      ].filter(Boolean).join(" ")}
       style={{ "--home-color": homeColor, "--away-color": awayColor, "--card-accent": visual.accent } as CSSProperties}
     >
       <div className={styles.quizHardShadow} aria-hidden="true" />
@@ -142,8 +174,8 @@ function QuizHubCard({
           <b>{quiz.answered}/{quiz.questions}</b>
         </div>
         <div className={styles.hudDivider} aria-hidden="true" />
-        <button type="button" className={styles.quizCta} disabled={quiz.state !== "open"}>
-          <span>{visual.action}</span>
+        <button type="button" className={styles.quizCta} disabled={quiz.state !== "open"} onClick={quiz.state === "open" ? onStart : undefined}>
+          <span>{guest && quiz.state === "open" ? "LOG IN TO START" : visual.action}</span>
           {quiz.state === "finished" ? <CheckIcon size={16} aria-hidden="true" /> : <ArrowRightIcon size={16} aria-hidden="true" />}
         </button>
       </div>
@@ -151,122 +183,18 @@ function QuizHubCard({
   );
 }
 
-function PicksTab({ match, markets }: { match: SportMatch; markets: MatchDetailMarket[] }) {
-  const [held, setHeld] = useState<Record<string, string>>({});
-  const colors = { primary: match.home.color, secondary: match.away.color };
-
-  function selectOutcome(market: MatchDetailMarket, outcomeId: string) {
-    if (market.status !== "open") return;
-    setHeld((current) => ({ ...current, [market.id]: current[market.id] === outcomeId ? "" : outcomeId }));
-  }
-
-  return (
-    <div className={[styles.scrollPanel, styles.picksPanel].join(" ")}>
-      <section className={styles.allPicks}>
-        <div>
-          <span className={styles.sectionEyebrow}>PICK MARKETS</span>
-          <h2>Find your edge</h2>
-          <p>Hold an open outcome to save your match call.</p>
-        </div>
-        <PickIcon size={24} aria-hidden="true" />
-      </section>
-
-      <div className={styles.marketGrid}>
-        {markets.map((market) => (
-          <PickMarketCard
-            key={market.id}
-            match={match}
-            market={market}
-            heldOutcome={held[market.id]}
-            colors={colors}
-            onSelect={(outcomeId) => selectOutcome(market, outcomeId)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PickMarketCard({
-  match,
-  market,
-  heldOutcome,
-  colors,
-  onSelect,
-}: {
-  match: SportMatch;
-  market: MatchDetailMarket;
-  heldOutcome?: string;
-  colors: { primary: string; secondary: string };
-  onSelect: (outcomeId: string) => void;
-}) {
-  const statusText = market.status === "live" ? market.liveLabel ?? "LIVE" : market.status === "closed" ? "CLOSED" : market.closesLabel ?? "OPEN";
-  const isFuture = market.type === "future";
-
-  return (
-    <article className={[styles.pickCard, isFuture ? styles.pickCardFuture : ""].filter(Boolean).join(" ")}>
-      <div className={styles.pickShadow} aria-hidden="true" />
-      <div className={styles.pickFrame}>
-        <span className={[styles.pickStatusTag, market.status === "live" ? styles.pickStatusLive : market.status === "closed" ? styles.pickStatusClosed : ""].join(" ")}>
-          {market.status === "live" ? <i className={styles.liveDot} aria-hidden="true" /> : null}
-          {statusText}
-        </span>
-        <div className={styles.pickBody}>
-          <div className={styles.pickMetaRow}>
-            <span className={styles.leagueMark}>{market.leagueId.slice(0, 2)}</span>
-            <span>{market.leagueLabel}</span>
-            <span className={styles.pickType}>{market.type === "future" ? "FUTURE" : "MATCH"}</span>
-          </div>
-          <div className={styles.pickTeams}>
-            <span style={{ color: colors.primary }}>{match.home.shortName}</span>
-            <span>VS</span>
-            <span style={{ color: colors.secondary }}>{match.away.shortName}</span>
-          </div>
-          <h2 className={styles.pickQuestion}>{market.question}</h2>
-          {market.context ? <p className={styles.pickContext}>{market.context}</p> : null}
-
-          <div className={[styles.pickOutcomes, isFuture ? styles.pickOutcomesFuture : ""].filter(Boolean).join(" ")}>
-            {market.outcomes.map((outcome) => {
-              const selected = heldOutcome === outcome.id;
-              return (
-                <button
-                  key={outcome.id}
-                  type="button"
-                  className={[styles.outcomeButton, selected ? styles.outcomeHeld : ""].filter(Boolean).join(" ")}
-                  style={{ "--outcome-color": outcome.color, "--outcome-ink": outcome.ink } as CSSProperties}
-                  aria-pressed={selected}
-                  aria-label={`Hold ${outcome.label}, ${outcome.probability}% probability, ${outcome.delta}`}
-                  disabled={market.status !== "open"}
-                  onClick={() => onSelect(outcome.id)}
-                >
-                  <span className={styles.outcomeCode}>{outcome.code}</span>
-                  <span className={styles.outcomeCopy}>
-                    <strong>{outcome.label}</strong>
-                    <small>{outcome.probability}%</small>
-                  </span>
-                  <span className={styles.outcomeDelta}>{outcome.delta}</span>
-                  {selected ? <CheckIcon className={styles.heldCheck} size={14} aria-hidden="true" /> : null}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div className={styles.pickFooter}>
-          <span><PickIcon size={14} aria-hidden="true" /> {formatOzCompact(market.volumeOz)} VOL.</span>
-          <span>{heldOutcome ? "HELD" : market.status === "open" ? "TAP TO HOLD" : "MARKET LOCKED"}</span>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function TopsTab({ detail }: { detail: MatchDetailData }) {
+function TopsTab({ match, detail }: { match: SportMatch; detail: MatchDetailData }) {
   const [quizId, setQuizId] = useState(detail.quizzes[0]?.id ?? "");
   const quiz = detail.quizzes.find((entry) => entry.id === quizId) ?? detail.quizzes[0];
   if (!quiz) return null;
   const entries = detail.leaderboard[quiz.id] ?? [];
   const podium = entries.slice(0, 3);
   const rows = entries.slice(3);
+  const boardMode = match.status === "finished"
+    ? "FINAL RESULTS"
+    : match.status === "live"
+      ? "LOCKED PICKS"
+      : "JOIN BEFORE LOCK";
 
   return (
     <div className={[styles.scrollPanel, styles.topsPanel].join(" ")}>
@@ -281,6 +209,8 @@ function TopsTab({ detail }: { detail: MatchDetailData }) {
         <span><TrophyIcon size={16} aria-hidden="true" /> {quiz.title.toUpperCase()}</span>
         <span>{entries.length + 48} PLAYERS · {quiz.questions} PREDICTIONS</span>
       </div>
+
+      <div className={styles.boardState}>{boardMode}</div>
 
       <section className={styles.podium} aria-label="Top three">
         {[podium[1], podium[0], podium[2]].map((entry, slot) => entry ? <PodiumSpot key={entry.name} entry={entry} rank={entry.rank} slot={slot} /> : null)}

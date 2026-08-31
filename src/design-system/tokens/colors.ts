@@ -26,6 +26,8 @@ export const colors = {
     subtle: "#20293e",
     strong: "#45556c",
     active: "rgba(173, 70, 255, 0.5)",
+    /** Neutral edge for inactive streak surfaces. */
+    inactive: "#94a3b8",
   },
   accent: {
     cyan: "#5cdfff",

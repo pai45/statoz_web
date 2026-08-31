@@ -1,6 +1,7 @@
 export { ArcadeHeroTile, type HeroLayout } from "./components/arcade-hero-tile";
 export { GameLauncher } from "./components/game-launcher";
 export { GamePlaceholder } from "./components/game-placeholder";
+export { PitchDuel } from "./pitch-duel";
 export { GameScene, gameSceneAssets, type GameSceneProps } from "./components/game-scenes";
 export { GamesTrendingFeed } from "./components/games-trending-feed";
 export { QuickGameTile } from "./components/quick-game-tile";
@@ -12,15 +13,15 @@ export {
   gameRegistry,
   playableGameHrefs,
   type GameEntry,
-} from "./data/game-registry";
+} from "@/mocks/games";
 export {
   deckFor,
   gameCountForSport,
   sportForGame,
   sportGameDecks,
   type SportDeck,
-} from "./data/sport-decks";
-export { gamesTrendingCatalog } from "./data/trending-catalog";
+} from "@/mocks/games";
+export { gamesTrendingCatalog } from "@/mocks/games";
 export { useGameCareer, type GameCareer } from "./state/game-career";
 export type {
   GameId,

@@ -24,6 +24,7 @@ const storageKey = "statoz.profile.v1";
 
 /** What an untouched browser looks like — and what the server always sees. */
 const noIdentity: ProfileIdentity = Object.freeze({
+  displayName: "",
   avatarId: "",
   bannerId: "",
   primarySport: "football",
@@ -67,6 +68,7 @@ function parse(raw: string): ProfileIdentity {
   }
 
   return {
+    displayName: typeof record.displayName === "string" ? record.displayName.trim() : "",
     avatarId: typeof record.avatarId === "string" ? record.avatarId : "",
     bannerId: typeof record.bannerId === "string" ? record.bannerId : "",
     primarySport:
@@ -230,6 +232,7 @@ export function saveFollowing(following: {
 
 /** What finishing onboarding hands over, in one write. */
 export function saveProfileSetup(setup: {
+  displayName: string;
   avatarId: string;
   bannerId: string;
   primarySport: Sport;

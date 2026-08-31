@@ -23,6 +23,7 @@
   --ds-color-border-subtle: #20293e;
   --ds-color-border-strong: #45556c;
   --ds-color-border-active: rgb(173 70 255 / 50%);
+  --ds-color-border-inactive: #94a3b8;
 
   /* Accents */
   --ds-color-accent-cyan: #5cdfff;
@@ -86,13 +87,21 @@
   );
   --ds-gradient-step-passed: linear-gradient(to right, #00c850 0%, #009865 100%);
   --ds-gradient-step-current: linear-gradient(to right, #ffb13d 0%, #ff7a1a 100%);
+  --ds-gradient-step-failed: linear-gradient(to right, #ff6b6b 0%, #c81e30 100%);
   --ds-gradient-pack-headline: linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%);
   --ds-gradient-card-nameplate: linear-gradient(to right, #202836 0%, #121824 100%);
   --ds-gradient-fixture-card: linear-gradient(to bottom, #1b2336 0%, #121a28 100%);
+  --ds-gradient-streak-milestone: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ds-color-accent-gold) 24%, transparent) 0%,
+    var(--ds-color-background-secondary) 50%,
+    var(--ds-color-background-elevated) 100%
+  );
 
   /* Elevation */
   --ds-shadow-hard-drop: 0 4px 0 rgb(0 0 0 / 20%);
   --ds-shadow-panel: 0 2px 12px rgb(0 0 0 / 35%);
+  --ds-shadow-streak-card: 0 5px 0 var(--ds-color-fixture-shadow);
 
   /* Shape — StatOz cuts corners instead of rounding them. */
   --ds-shape-signal-cut: 12px;
@@ -127,8 +136,8 @@
     100% 8px,
     100% calc(100% - 12px),
     calc(100% - 12px) 100%,
-    8px 100%,
-    0 calc(100% - 8px),
+    12px 100%,
+    0 calc(100% - 12px),
     0 12px
   );
   --ds-clip-fixture: polygon(
@@ -234,11 +243,12 @@
   --ds-space-64: 4rem;
 
   /* Typography */
-  --ds-font-body: "Onest", var(--font-onest), system-ui, sans-serif;
-  --ds-font-display: "Orbitron", var(--font-orbitron), "Onest", system-ui,
-    sans-serif;
+  --ds-font-body: var(--font-onest), "Onest", system-ui, sans-serif;
+  --ds-font-display: var(--font-orbitron), "Orbitron", var(--font-onest),
+    "Onest", system-ui, sans-serif;
   --ds-font-mono: ui-monospace, "SFMono-Regular", monospace;
   --ds-text-2xs: 0.625rem;
+  --ds-text-micro: 0.5625rem;
   --ds-text-xs: 0.6875rem;
   --ds-text-sm: 0.8125rem;
   --ds-text-md: 0.875rem;

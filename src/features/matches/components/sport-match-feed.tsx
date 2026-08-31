@@ -21,7 +21,7 @@ import {
   fixturesForSport,
   leagueById,
   matchDemoAnchor,
-} from "../data/fixtures";
+} from "@/mocks/matches";
 import type { MatchLeague } from "../types";
 import { SportFixtureCard } from "./sport-fixture-card";
 import styles from "./sport-match-feed.module.css";

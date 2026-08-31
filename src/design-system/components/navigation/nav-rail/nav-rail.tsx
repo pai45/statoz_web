@@ -1,14 +1,19 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-export type NavRailItem = {
+type NavRailItemBase = {
   id: string;
   label: string;
-  href: string;
   icon: ReactNode;
   /** Color the item takes when it is the current destination. */
   accent: string;
 };
+
+export type NavRailItem = NavRailItemBase &
+  (
+    | { href: string; onSelect?: never }
+    | { href?: never; onSelect: () => void }
+  );
 
 export type NavRailProps = {
   items: NavRailItem[];
@@ -53,37 +58,56 @@ export function NavRail({
       >
         {items.map((item) => {
           const active = item.id === activeId;
+          const itemClassName = [
+            "flex min-h-15 w-full transition-colors duration-200",
+            rail
+              ? "flex-row items-center gap-3 px-4 py-3"
+              : "flex-col items-center justify-center gap-1.5 px-1",
+          ].join(" ");
+          const itemStyle = {
+            color: active ? item.accent : "var(--ds-color-text-disabled)",
+            background: active
+              ? `color-mix(in srgb, ${item.accent} 10%, transparent)`
+              : undefined,
+          };
+          const content = (
+            <>
+              <span className="grid size-5 shrink-0 place-items-center">
+                {item.icon}
+              </span>
+              <span
+                className={[
+                  "font-display leading-tight",
+                  rail ? "text-xs" : "text-2xs",
+                  active ? "font-black" : "font-semibold",
+                ].join(" ")}
+              >
+                {item.label}
+              </span>
+            </>
+          );
           return (
             <li key={item.id} className={rail ? "" : "flex-1"}>
-              <Link
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={[
-                  "flex min-h-15 transition-colors duration-200",
-                  rail
-                    ? "flex-row items-center gap-3 px-4 py-3"
-                    : "flex-col items-center justify-center gap-1.5 px-1",
-                ].join(" ")}
-                style={{
-                  color: active ? item.accent : "var(--ds-color-text-disabled)",
-                  background: active
-                    ? `color-mix(in srgb, ${item.accent} 10%, transparent)`
-                    : undefined,
-                }}
-              >
-                <span className="grid size-5 shrink-0 place-items-center">
-                  {item.icon}
-                </span>
-                <span
-                  className={[
-                    "font-display leading-tight",
-                    rail ? "text-xs" : "text-2xs",
-                    active ? "font-black" : "font-semibold",
-                  ].join(" ")}
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={itemClassName}
+                  style={itemStyle}
                 >
-                  {item.label}
-                </span>
-              </Link>
+                  {content}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={item.onSelect}
+                  aria-current={active ? "page" : undefined}
+                  className={itemClassName}
+                  style={itemStyle}
+                >
+                  {content}
+                </button>
+              )}
             </li>
           );
         })}

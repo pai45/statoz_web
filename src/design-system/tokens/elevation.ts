@@ -30,6 +30,8 @@ export const elevation = {
   hardDrop: "0 4px 0 rgb(0 0 0 / 20%)",
   /** Standard resting shadow for stacked panels. */
   panel: "0 2px 12px rgb(0 0 0 / 35%)",
+  /** Flutter streak cards sit on a crisp five-pixel ink ledge. */
+  streakCard: "0 5px 0 #04060b",
 } as const;
 
 export type ElevationTokens = typeof elevation;

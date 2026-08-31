@@ -1,9 +1,9 @@
 import { accentVar, Badge, Progress, SignalPanel } from "@/design-system";
 import { isHot, leadingOutcome, type PickMarket } from "@/domain/predictions";
-import { sportModuleFor } from "@/domain/sports";
-import { formatOzCompact } from "@/shared/utils";
+import { pickMarketById } from "@/mocks/picks";
 
-import { SportIcon } from "./sport-icon";
+import { TileFooter } from "./tile-footer";
+import { TileMetaRow } from "./tile-meta-row";
 
 export type TrendingMarketCardProps = {
   market: PickMarket;
@@ -19,10 +19,9 @@ export function TrendingMarketCard({
   kind,
   detailed = false,
 }: TrendingMarketCardProps) {
+  market = pickMarketById(market.id) ?? market;
   const future = kind === "future";
   const accent = accentVar(future ? "gold" : "lime");
-  const sportModule = sportModuleFor(market.sport);
-  const sportAccent = accentVar(sportModule.accent);
   const leader = leadingOutcome(market);
   const hot = isHot(market);
 
@@ -32,76 +31,78 @@ export function TrendingMarketCard({
       tag={<Badge accent={accent}>{future ? "FUTURE" : "PICK"}</Badge>}
       href={`/picks/${market.id}`}
       label={market.question}
+      footer={
+        <TileFooter
+          status={market.resolved ? "SETTLED" : "MARKET OPEN"}
+          accent={market.resolved ? "var(--ds-color-success)" : accent}
+          volumeOz={market.volumeOz}
+        />
+      }
     >
-      <div className="flex flex-1 flex-col px-3 pb-3 pt-9.5">
-        <div className="flex items-center gap-1.5">
-          <SportIcon sport={market.sport} size={13} style={{ color: sportAccent }} />
-          <span
-            className="truncate font-display text-2xs font-extrabold tracking-wide"
-            style={{ color: accent }}
-          >
-            {market.leagueLabel}
-          </span>
-        </div>
+      <TileMetaRow sport={market.sport} leagueLabel={market.leagueLabel} />
 
-        <p className="mt-2 line-clamp-3 text-base font-extrabold leading-tight">
-          {market.question}
-        </p>
+      {/* A full sentence, so it takes the body face. Everything else on the
+          trending tiles is an identifier or a figure, and takes the display. */}
+      <p
+        className={[
+          "font-sans text-sm font-bold leading-tight",
+          detailed ? "line-clamp-3" : "line-clamp-2",
+        ].join(" ")}
+      >
+        {market.question}
+      </p>
 
-        {detailed ? (
-          <ul className="mt-4 space-y-1.75">
-            {market.outcomes.slice(0, 4).map((outcome) => {
-              const leading = outcome.id === leader.id;
-              const color = leading ? accent : "var(--ds-color-text-muted)";
-              return (
-                <li key={outcome.id}>
-                  <div className="flex items-baseline gap-2">
-                    <span
-                      className="flex-1 truncate font-display text-2xs font-extrabold tracking-tight"
-                      style={{ color }}
-                    >
-                      {outcome.label.toUpperCase()}
-                    </span>
-                    <span
-                      className="ds-tabular font-display text-2xs font-black"
-                      style={{ color }}
-                    >
-                      {outcome.probabilityPercent}%
-                    </span>
-                  </div>
-                  <Progress
-                    className="mt-0.75"
-                    value={outcome.probabilityPercent / 100}
-                    accent={color}
-                    label={`${outcome.label} ${outcome.probabilityPercent} percent`}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className="mt-3">
-            <p className="truncate font-display text-2xs font-black tracking-label">
-              {leader.label.toUpperCase()}
-            </p>
-            <div className="mt-1 flex items-end gap-1.5">
-              <span
-                className="ds-tabular font-display text-2xl font-black leading-compact"
-                style={{ color: accent }}
-              >
-                {leader.probabilityPercent}%
-              </span>
-              {leader.delta !== undefined ? (
-                <DeltaBadge delta={leader.delta} hot={hot} />
-              ) : null}
-            </div>
+      {detailed ? (
+        <ul className="mt-1 flex flex-col gap-2">
+          {market.outcomes.slice(0, 4).map((outcome) => {
+            const leading = outcome.id === leader.id;
+            const color = leading ? accent : "var(--ds-color-text-muted)";
+            return (
+              <li key={outcome.id} className="flex flex-col gap-1">
+                <div className="flex items-baseline gap-2">
+                  <span
+                    className="min-w-0 flex-1 truncate font-display text-2xs font-extrabold tracking-label"
+                    style={{ color }}
+                  >
+                    {outcome.label.toUpperCase()}
+                  </span>
+                  <span
+                    className={[
+                      "ds-tabular shrink-0 font-display font-black leading-compact",
+                      leading ? "text-base" : "text-2xs",
+                    ].join(" ")}
+                    style={{ color }}
+                  >
+                    {outcome.probabilityPercent}%
+                  </span>
+                </div>
+                <Progress
+                  value={outcome.probabilityPercent / 100}
+                  accent={color}
+                  label={`${outcome.label} ${outcome.probabilityPercent} percent`}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="mt-auto flex flex-col gap-1">
+          <p className="truncate font-display text-2xs font-extrabold tracking-label">
+            {leader.label.toUpperCase()}
+          </p>
+          <div className="flex items-end gap-1.5">
+            <span
+              className="ds-tabular font-display text-xl font-black leading-compact"
+              style={{ color: accent }}
+            >
+              {leader.probabilityPercent}%
+            </span>
+            {leader.delta !== undefined ? (
+              <DeltaBadge delta={leader.delta} hot={hot} />
+            ) : null}
           </div>
-        )}
-
-        <p className="ds-tabular mt-auto pt-2 text-2xs font-semibold leading-tight text-muted">
-          VOL {formatOzCompact(market.volumeOz)} OZ
-        </p>
-      </div>
+        </div>
+      )}
     </SignalPanel>
   );
 }

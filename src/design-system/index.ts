@@ -3,8 +3,10 @@ export * from "./icons";
 
 export * from "./components/actions/button";
 export * from "./components/data-display/action-card";
+export * from "./components/data-display/avatar";
 export * from "./components/data-display/badge";
 export * from "./components/data-display/hud-panel";
+export * from "./components/data-display/fixture-panel";
 export * from "./components/data-display/monogram";
 export * from "./components/data-display/player-card";
 export * from "./components/data-display/signal-panel";
@@ -19,3 +21,4 @@ export * from "./components/layout/divider";
 export * from "./components/navigation/gliding-tabs";
 export * from "./components/navigation/nav-rail";
 export * from "./components/navigation/underline-tabs";
+export * from "./components/overlays/drawer";

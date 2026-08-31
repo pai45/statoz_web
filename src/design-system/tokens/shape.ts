@@ -50,6 +50,9 @@ export const shape = {
 /**
  * The signature panel silhouette: cut corners, plus a notch stepped into the
  * top-right edge.
+ *
+ * All four plain corners carry the same cut, so the notch is the one deliberate
+ * asymmetry in the shape rather than one of two.
  */
 export const signalClipPath = [
   `polygon(`,
@@ -59,8 +62,8 @@ export const signalClipPath = [
   `100% 8px,`,
   `100% calc(100% - ${shape.signalCut}px),`,
   `calc(100% - ${shape.signalCut}px) 100%,`,
-  `8px 100%,`,
-  `0 calc(100% - 8px),`,
+  `${shape.signalCut}px 100%,`,
+  `0 calc(100% - ${shape.signalCut}px),`,
   `0 ${shape.signalCut}px`,
   `)`,
 ].join(" ");
@@ -161,7 +164,17 @@ export function cardCuts(width: number): { big: number; small: number } {
   return { big, small: big / 2 };
 }
 
+/**
+ * Square across the top with both bottom corners cut — the silhouette a plate
+ * wears when it hangs from something above it. The active tab plate and the
+ * quiz's panels are the same shape at different depths.
+ */
+export function bottomCutPath(cut: number): string {
+  const c = `${cut}px`;
+  return `polygon(0 0, 100% 0, 100% calc(100% - ${c}), calc(100% - ${c}) 100%, ${c} 100%, 0 calc(100% - ${c}))`;
+}
+
 /** Active tab plate: square on top, cut on both bottom corners. */
-export const tabPlateClipPath = `polygon(0 0, 100% 0, 100% calc(100% - ${shape.tabChamfer}px), calc(100% - ${shape.tabChamfer}px) 100%, ${shape.tabChamfer}px 100%, 0 calc(100% - ${shape.tabChamfer}px))`;
+export const tabPlateClipPath = bottomCutPath(shape.tabChamfer);
 
 export type ShapeTokens = typeof shape;

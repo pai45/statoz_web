@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 
-import { accentVar, CopyIcon, EditIcon, Progress, withAlpha } from "@/design-system";
+import { accentVar, CopyIcon, EditIcon, withAlpha } from "@/design-system";
 import {
   levelFromXp,
   trackShortLabels,
@@ -14,7 +14,7 @@ import { avatarOptionById, BannerVisual, profileBannerOptionById } from "@/featu
 import { publicAsset } from "@/shared/config";
 
 import type { PlayerProgress } from "../state/player-progress";
-
+import { LevelChip, XpMeter } from "./level-badges";
 import { ProfilePanel } from "./profile-panel";
 import styles from "./profile.module.css";
 
@@ -37,6 +37,7 @@ const cyan = accentVar("cyan");
 
 export type ProfileHeroProps = {
   progress: PlayerProgress;
+  displayName: string;
   avatarId: string;
   bannerId: string;
   playerTag: string | null;
@@ -46,6 +47,7 @@ export type ProfileHeroProps = {
 
 export function ProfileHero({
   progress,
+  displayName,
   avatarId,
   bannerId,
   playerTag,
@@ -97,7 +99,7 @@ export function ProfileHero({
                     letterSpacing: "var(--ds-tracking-label)",
                   }}
                 >
-                  PLAYER ONE
+                  {displayName}
                 </h1>
                 <p
                   className="mt-1 font-display font-black leading-none text-muted"
@@ -107,7 +109,7 @@ export function ProfileHero({
                 </p>
 
                 <div className="mt-4.5 lg:max-w-90">
-                  <XpMeter progress={progress} />
+                  <XpMeter band={progress.band} />
                 </div>
               </div>
 
@@ -212,82 +214,6 @@ function Avatar({
  * shadow rather than a neon halo, so it reads as hardware sitting proud of the
  * card.
  */
-function LevelChip({ level }: { level: number }) {
-  return (
-    <span
-      className="relative inline-flex"
-      aria-label={`Level ${level}`}
-      style={{ filter: "drop-shadow(0 3px 6px rgb(0 0 0 / 50%))" }}
-    >
-      <span
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          clipPath: "var(--ds-clip-field)",
-          background: withAlpha(cyan, 0.85),
-        }}
-      />
-      <span
-        aria-hidden
-        className="absolute inset-[1.4px]"
-        style={{
-          clipPath: "var(--ds-clip-field)",
-          background:
-            "linear-gradient(to bottom, var(--ds-color-background-elevated), var(--ds-color-background-secondary))",
-        }}
-      />
-      <span className="relative flex items-baseline gap-1.5 px-3.5 py-1.5">
-        <span
-          className="font-display font-black leading-none"
-          style={{
-            fontSize: "9px",
-            letterSpacing: "var(--ds-tracking-ultra)",
-            color: withAlpha(cyan, 0.85),
-          }}
-        >
-          LVL
-        </span>
-        <span
-          className="ds-tabular font-display font-black leading-none"
-          style={{ fontSize: "20px", color: cyan }}
-        >
-          {level}
-        </span>
-      </span>
-    </span>
-  );
-}
-
-function XpMeter({ progress }: { progress: PlayerProgress }) {
-  const { band } = progress;
-  return (
-    <div>
-      <div className="flex items-baseline">
-        <span
-          className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-wide)" }}
-        >
-          XP
-        </span>
-        <span
-          className="ds-tabular ml-auto font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-tight)" }}
-        >
-          {band.intoLevel} / {band.levelSpan}
-        </span>
-      </div>
-      <div className="mt-1.75">
-        <Progress
-          value={band.fraction}
-          accent={cyan}
-          label={`${band.intoLevel} of ${band.levelSpan} XP into level ${band.level}`}
-          height={6}
-        />
-      </div>
-    </div>
-  );
-}
-
 /**
  * One chip per track carrying XP. Flat and matte — the level chip stays the
  * focus — and absent entirely until a mode has actually been played.

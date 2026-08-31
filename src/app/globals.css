@@ -21,6 +21,7 @@
   --color-line-muted: var(--ds-color-border-muted);
   --color-line-subtle: var(--ds-color-border-subtle);
   --color-line-strong: var(--ds-color-border-strong);
+  --color-line-inactive: var(--ds-color-border-inactive);
 
   /* Accents */
   --color-accent: var(--ds-color-accent-cyan);
@@ -57,6 +58,7 @@
   --font-display: var(--ds-font-display);
   --font-mono: var(--ds-font-mono);
   --text-2xs: var(--ds-text-2xs);
+  --text-micro: var(--ds-text-micro);
   --text-xs: var(--ds-text-xs);
   --text-sm: var(--ds-text-sm);
   --text-md: var(--ds-text-md);
@@ -84,6 +86,8 @@
   --radius-sm: var(--ds-radius-sm);
   --radius-md: var(--ds-radius-md);
   --radius-pill: var(--ds-radius-pill);
+  --shadow-streak-card: var(--ds-shadow-streak-card);
+  --background-image-streak-milestone: var(--ds-gradient-streak-milestone);
 }
 
 body {
@@ -101,6 +105,12 @@ body {
 :focus-visible {
   outline: 2px solid var(--ds-color-accent-cyan);
   outline-offset: 2px;
+}
+
+/* InputField paints its own chamfered focus edge; a rectangular browser
+   outline would make the two focus treatments compete. */
+input[data-ds-input-field]:focus-visible {
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -264,7 +264,7 @@ export function CheckIcon(props: IconProps) {
   );
 }
 
-/** Material Symbols `arrow_back` (rounded). */
+/** Material Symbols `arrow_back_ios` (rounded) — the bare chevron. */
 export function ArrowLeftIcon(props: IconProps) {
   return (
     <Icon viewBox="0 -960 960 960" {...props}>
@@ -843,6 +843,51 @@ export function PaidIcon(props: IconProps) {
   return (
     <Icon viewBox="0 -960 960 960" {...props}>
       <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `sports_kabaddi` (outlined filled) — the sliding tackle. */
+export function KabaddiIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M552-720q-30 0-51-21t-21-51q0-30 21-51t51-21q30 0 51 21t21 51q0 30-21 51t-51 21ZM390-80l58-291-70-27-118 78-42-64 165-114 145 62q26 11 41 33.5t15 50.5v52l128 220h-72L520-256l-58 26v150h-72ZM212-80l-72-14 42-220-70-72v-134h64v106l142 146-34 174-72 14Zm-4-576q-30 0-51-21t-21-51q0-30 21-51t51-21q30 0 51 21t21 51q0 30-21 51t-51 21Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `history` (outlined). */
+export function HistoryIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `favorite` (filled) — one life on the lifeline bar. */
+export function HeartIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `verified` (filled) — the checked seal on a solved grid. */
+export function VerifiedIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm94-278 226-226-56-58-170 170-86-84-56 56 142 142Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `ios_share` (rounded) — sharing a spoiler-free result. */
+export function ShareIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M264-80q-35 0-59.5-24.5T180-164v-388q0-35 24.5-59.5T264-636h84q17 0 28.5 11.5T388-596q0 17-11.5 28.5T348-556h-84v392h432v-392h-84q-17 0-28.5-11.5T572-596q0-17 11.5-28.5T612-636h84q35 0 59.5 24.5T780-552v388q0 35-24.5 59.5T696-80H264Zm176-540-51 51q-12 12-28 11.5T332-570q-11-12-11.5-28t11.5-28l119-119q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l120 120q12 12 11.5 28T627-569q-12 12-28.5 12T570-569l-50-51v336q0 17-11.5 28.5T480-244q-17 0-28.5-11.5T440-284v-336Z" />
     </Icon>
   );
 }

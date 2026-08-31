@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-import { useClaimedPacks } from "@/features/packs";
+import { useDecks } from "@/features/cards-decks";
+import { settleCoinReward } from "@/features/economy";
 
-import { sportForGame } from "../../data/sport-decks";
-import type { GameEntry } from "../../data/game-registry";
+import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import { randomOpponentName } from "../../shared/data/opponent-names";
@@ -80,14 +80,14 @@ function rosterFromClaim(playerCardIds: string[] | undefined): BasketballAthlete
 export function HoopDuel({ game }: HoopDuelProps) {
   const [view, setView] = useState<"lobby" | "playing">("lobby");
   const [session, setSession] = useState(0);
-  const claimed = useClaimedPacks();
+  const decks = useDecks();
   const hydrated = useIsHydrated();
   const stats = useHoopDuelStats();
   const gamesHref = `/games/${sportForGame(game)}`;
 
   const roster = useMemo(
-    () => rosterFromClaim(claimed.basketball?.playerCardIds),
-    [claimed.basketball?.playerCardIds],
+    () => rosterFromClaim(decks.loadouts.basketball?.playerIds),
+    [decks.loadouts.basketball],
   );
 
   const play = useCallback(() => {
@@ -139,6 +139,7 @@ type SessionProps = {
 
 function HoopDuelSession({ roster, stats, onRematch, onExit }: SessionProps) {
   const reducedMotion = usePrefersReducedMotion();
+  const rewardId = `hoop-duel-${useId()}`;
 
   /**
    * Drawn once, in the browser, when the session mounts — never during a server
@@ -182,11 +183,12 @@ function HoopDuelSession({ roster, stats, onRematch, onExit }: SessionProps) {
             const finished = game.summary();
             setSummary(finished);
             setAward(recordHoopDuel(finished));
+            settleCoinReward({ id: rewardId, coins: finished.playerScore > finished.cpuScore ? 50 : 10, title: "HOOP DUEL", subtitle: finished.playerScore > finished.cpuScore ? "WIN" : "LOSS" });
             setPhase("finished");
           }
         }
       },
-      [game],
+      [game, rewardId],
     ),
   );
 

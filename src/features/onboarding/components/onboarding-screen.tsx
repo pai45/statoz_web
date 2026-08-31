@@ -4,12 +4,11 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import type { Sport } from "@/domain/sports";
+import { AuthBoundary, completeOnboarding } from "@/features/auth";
 import { saveProfileSetup } from "@/features/profile";
 
 import { afterOnboardingHref, setupSteps } from "../constants";
-import { avatarOptionById } from "../data/avatars";
-import { profileBannerOptions } from "../data/banners";
-import { followableLeaguesForSport } from "../data/followable-leagues";
+import { avatarOptionById, followableLeaguesForSport, profileBannerOptions } from "@/mocks/onboarding";
 import type { FollowableLeague, ProfileSetupResult } from "../types";
 
 import { ArenaBackdrop } from "./arena-backdrop";
@@ -17,6 +16,7 @@ import { AvatarStep } from "./avatar-step";
 import { BannerStep } from "./banner-step";
 import { ClubsStep } from "./clubs-step";
 import { LaunchCountdown } from "./launch-countdown";
+import { NameStep } from "./name-step";
 import styles from "./motion.module.css";
 import { SetupDock } from "./setup-dock";
 import { SetupTopBar } from "./setup-top-bar";
@@ -46,11 +46,31 @@ export function OnboardingScreen({
   initialAvatarId,
   onComplete,
 }: OnboardingScreenProps) {
+  return (
+    <AuthBoundary
+      intent="set up your profile"
+      message="Log in before choosing a profile avatar, banner, and clubs."
+      returnTo="/onboarding"
+      fullScreen
+    >
+      <ProfileSetupScreen
+        initialAvatarId={initialAvatarId}
+        onComplete={onComplete}
+      />
+    </AuthBoundary>
+  );
+}
+
+function ProfileSetupScreen({
+  initialAvatarId,
+  onComplete,
+}: OnboardingScreenProps) {
   const router = useRouter();
 
   const [phase, setPhase] = useState<Phase>("welcome");
   const [step, setStep] = useState(0);
 
+  const [displayName, setDisplayName] = useState("");
   const [avatarId, setAvatarId] = useState(avatarOptionById(initialAvatarId).id);
   const [bannerId, setBannerId] = useState(profileBannerOptions[0].id);
   const [primarySport, setPrimarySport] = useState<Sport>("football");
@@ -63,8 +83,10 @@ export function OnboardingScreen({
   const availableLeagues = followableLeaguesForSport(primarySport);
   const isLastStep = step === setupSteps.length - 1;
   const activeStep = setupSteps[step];
+  const canAdvance = activeStep.id !== "name" || displayName.trim().length > 0;
 
   function next() {
+    if (!canAdvance) return;
     if (isLastStep) {
       setPhase("launch");
       return;
@@ -78,6 +100,7 @@ export function OnboardingScreen({
 
   /** SKIP moves on; DECIDE LATER on the last step drops the club picks. */
   function skip() {
+    if (activeStep.id === "name") return;
     if (!isLastStep) {
       next();
       return;
@@ -95,6 +118,7 @@ export function OnboardingScreen({
    */
   const enterApp = useCallback(() => {
     const result: ProfileSetupResult = {
+      displayName: displayName.trim(),
       avatarId,
       bannerId,
       primarySport,
@@ -102,12 +126,14 @@ export function OnboardingScreen({
       favoriteTeams,
     };
     saveProfileSetup(result);
+    completeOnboarding();
     onComplete?.(result);
     router.push(afterOnboardingHref);
   }, [
     onComplete,
     router,
     avatarId,
+    displayName,
     bannerId,
     primarySport,
     followedLeagueIds,
@@ -175,6 +201,7 @@ export function OnboardingScreen({
       <SetupTopBar
         skipLabel={isLastStep ? "DECIDE LATER" : "SKIP"}
         onSkip={skip}
+        showSkip={activeStep.id !== "name"}
       />
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-y-auto">
@@ -183,7 +210,9 @@ export function OnboardingScreen({
           key={`${activeStep.id}-${activeLeagueId}`}
           className={`${styles.stepEnter} mx-auto flex w-full max-w-[32.5rem] flex-1 flex-col lg:max-w-4xl lg:justify-center`}
         >
-          {activeStep.id === "avatar" ? (
+          {activeStep.id === "name" ? (
+            <NameStep value={displayName} onChange={setDisplayName} />
+          ) : activeStep.id === "avatar" ? (
             <AvatarStep selectedId={avatarId} onSelect={setAvatarId} />
           ) : activeStep.id === "banner" ? (
             <BannerStep selectedId={bannerId} onSelect={setBannerId} />
@@ -209,6 +238,7 @@ export function OnboardingScreen({
         ctaLabel={isLastStep ? "FINISH SETUP" : "NEXT"}
         isNext={!isLastStep}
         canGoPrevious={step > 0}
+        canAdvance={canAdvance}
         helper={activeStep.helper}
         onPrevious={previous}
         onNext={next}

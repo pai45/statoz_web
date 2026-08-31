@@ -4,8 +4,14 @@ import type { CSSProperties, ReactNode } from "react";
 export type SignalPanelProps = {
   /** CSS color that drives the panel's edge, hairline, wash, and lift. */
   accent: string;
-  /** Small label pinned to the panel's top-left corner. */
+  /** Small label pinned to the left of the panel's top rail. */
   tag?: ReactNode;
+  /** Sits opposite the tag on the top rail — a clock, a count, a status. */
+  meta?: ReactNode;
+  /** Fills the bottom rail: the panel's stakes, volume, or state line. */
+  footer?: ReactNode;
+  /** Applies the standard content inset. Off for panels that centre their own. */
+  pad?: boolean;
   /** Casts the accent-tinted shadow that makes the panel sit above the page. */
   lifted?: boolean;
   href?: string;
@@ -18,6 +24,9 @@ export type SignalPanelProps = {
 
 const clip: CSSProperties = { clipPath: "var(--ds-clip-signal)" };
 
+/** The single horizontal inset every rail and the body share. */
+const RAIL_INSET = "px-3.5";
+
 /**
  * The signature StatOz surface: a chamfered plate with a notched top-right
  * edge, an accent hairline across the top, and an accent shadow beneath.
@@ -25,12 +34,22 @@ const clip: CSSProperties = { clipPath: "var(--ds-clip-signal)" };
  * Built from three stacked layers that share one clip path — a lift, an accent
  * edge, and the inset fill — so the cut corners stay crisp at any size.
  *
+ * Content sits in three regions: a fixed top rail carrying the tag, a flexible
+ * body, and an optional bottom rail. The rails are structural rather than
+ * absolutely positioned, so panels never have to guess how much padding clears
+ * the tag, and every panel in a grid ends on the same baseline.
+ *
  * When interactive, the hit area is a stretched overlay rather than a wrapper,
- * so panel content stays flow-level regardless of which element it uses.
+ * so panel content stays flow-level regardless of which element it uses. The
+ * overlay is clipped, which would swallow a focus outline — so the focus ring
+ * is drawn by the panel's own layers instead.
  */
 export function SignalPanel({
   accent,
   tag,
+  meta,
+  footer,
+  pad = true,
   lifted = true,
   href,
   onClick,
@@ -66,44 +85,94 @@ export function SignalPanel({
           .filter(Boolean)
           .join(" ")}
       >
-        {/* Accent edge — the inset fill below leaves 1px of it showing. */}
+        {/* Accent edge — the inset fill below leaves 1px of it showing. It
+            brightens on hover and goes solid under keyboard focus. Background
+            comes from classes, not inline style, so the variants can win. */}
         <div
           aria-hidden
-          className="absolute inset-0"
-          style={{
-            ...clip,
-            background:
-              "color-mix(in srgb, var(--panel-accent) 55%, transparent)",
-          }}
+          className={[
+            "absolute inset-0 transition-[background-color] duration-150",
+            "bg-[color-mix(in_srgb,var(--panel-accent)_55%,transparent)]",
+            interactive
+              ? "group-hover:bg-[color-mix(in_srgb,var(--panel-accent)_74%,transparent)] group-has-focus-visible:bg-(--panel-accent)"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          style={clip}
         />
+        {/* The fill pulls back to 3px under keyboard focus, turning the 1px
+            accent edge into a ring that follows the chamfer exactly — the clip
+            path would have cut away a real outline. */}
         <div
           aria-hidden
-          className="absolute inset-px"
+          className={[
+            "absolute inset-px",
+            interactive ? "group-has-focus-visible:inset-0.75" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
           style={{
             ...clip,
             background:
               "color-mix(in srgb, var(--panel-accent) 4.5%, var(--ds-color-background-elevated))",
           }}
         />
-        {/* The one bright line on the panel. */}
+        {/* The one bright line on the panel. It runs from the top-left corner
+            cut to where the notch steps in, so the whole flat top edge is lit. */}
         <div
           aria-hidden
-          className="absolute inset-x-3.5 top-0 h-0.5"
+          className="absolute top-0 h-0.5 left-(--ds-shape-signal-cut) right-(--ds-shape-signal-notch)"
           style={{
             background:
               "color-mix(in srgb, var(--panel-accent) 80%, transparent)",
           }}
         />
 
-        {tag ? <div className="absolute left-3 top-2.5 z-10">{tag}</div> : null}
+        <div className="relative z-10 flex h-full w-full flex-col">
+          {tag || meta ? (
+            <div
+              className={`flex h-9 shrink-0 items-center justify-between gap-2 ${RAIL_INSET}`}
+            >
+              <span className="flex min-w-0 items-center">{tag}</span>
+              {meta ? (
+                <span className="flex shrink-0 items-center">{meta}</span>
+              ) : null}
+            </div>
+          ) : null}
 
-        <div className="relative z-10 flex h-full w-full flex-col">{children}</div>
+          <div
+            className={[
+              "flex min-h-0 flex-1 flex-col",
+              // One rhythm for every panel: 8px between the body's regions.
+              pad ? `gap-2 ${RAIL_INSET} pb-2` : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            {children}
+          </div>
+
+          {footer ? (
+            <div
+              className={`flex h-8 shrink-0 items-center gap-2 ${RAIL_INSET}`}
+              style={{
+                borderTop:
+                  "1px solid color-mix(in srgb, var(--panel-accent) 16%, transparent)",
+                background:
+                  "color-mix(in srgb, var(--panel-accent) 7%, var(--ds-color-background-muted))",
+              }}
+            >
+              {footer}
+            </div>
+          ) : null}
+        </div>
 
         {href ? (
           <Link
             href={href}
             aria-label={label}
-            className="absolute inset-0 z-20"
+            className="absolute inset-0 z-20 outline-none"
             style={clip}
           />
         ) : onClick ? (
@@ -111,7 +180,7 @@ export function SignalPanel({
             type="button"
             onClick={onClick}
             aria-label={label}
-            className="absolute inset-0 z-20"
+            className="absolute inset-0 z-20 outline-none"
             style={clip}
           />
         ) : null}

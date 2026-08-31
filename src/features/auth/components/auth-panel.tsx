@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useActionState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useActionState, useEffect, useState, useTransition } from "react";
 
 import {
   Button,
@@ -12,7 +12,8 @@ import {
   InputField,
 } from "@/design-system";
 
-import { afterSignInHref } from "../constants";
+import { sanitizeReturnTo } from "../return-path";
+import { signInLocal, useAuthSession } from "../state/auth-session";
 import { isValidEmail } from "../validation";
 
 type EmailFormState = { error: string | null };
@@ -32,7 +33,23 @@ export type AuthPanelProps = {
  */
 export function AuthPanel({ className }: AuthPanelProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const session = useAuthSession();
   const [googlePending, startGoogleSignIn] = useTransition();
+  const [emailValue, setEmailValue] = useState("");
+  const [googleError, setGoogleError] = useState<string | null>(null);
+  const returnTo = sanitizeReturnTo(searchParams.get("returnTo"));
+
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      router.replace(session.needsOnboarding ? "/onboarding" : returnTo);
+    }
+  }, [returnTo, router, session.needsOnboarding, session.status]);
+
+  function finishSignIn(email: string) {
+    const next = signInLocal(email);
+    router.replace(next.needsOnboarding ? "/onboarding" : returnTo);
+  }
 
   const [state, submitEmail, emailPending] = useActionState(
     async (
@@ -45,17 +62,23 @@ export function AuthPanel({ className }: AuthPanelProps) {
         return { error: "Enter a valid email address" };
       }
 
-      // Hand-off: send the sign-in link or code for `email` here.
-      router.push(afterSignInHref);
+      // Local demo hand-off. A real provider can replace this one function.
+      finishSignIn(email);
       return idle;
     },
     idle,
   );
 
   function signInWithGoogle() {
+    const email = emailValue.trim();
+    if (!isValidEmail(email)) {
+      setGoogleError("Enter a valid email address before continuing with Google");
+      return;
+    }
+    setGoogleError(null);
     startGoogleSignIn(() => {
-      // Hand-off: start the Google OAuth redirect here.
-      router.push(afterSignInHref);
+      // This local demo uses the address above until OAuth supplies one.
+      finishSignIn(email);
     });
   }
 
@@ -80,7 +103,11 @@ export function AuthPanel({ className }: AuthPanelProps) {
           spellCheck={false}
           placeholder="champion@arena.com"
           hint="Enter a valid email address"
-          error={state.error ?? undefined}
+          error={state.error ?? googleError ?? undefined}
+          onChange={(event) => {
+            setEmailValue(event.target.value);
+            if (googleError) setGoogleError(null);
+          }}
           required
         />
 

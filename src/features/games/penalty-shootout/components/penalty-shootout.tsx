@@ -1,22 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
 
 import { accentVar, Button, withAlpha } from "@/design-system";
+import { useDecks } from "@/features/cards-decks";
+import { settleCoinReward } from "@/features/economy";
 import {
   footballAttackers,
   footballDefenders,
   footballGoalkeepers,
   footballPlayerCards,
-  useClaimedPacks,
 } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
-import type { GameEntry } from "../../data/game-registry";
-import { sportForGame } from "../../data/sport-decks";
+import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { randomOpponentName } from "../../shared/data/opponent-names";
-import { generateShootoutOpponent } from "../engine/opponent";
+import { generateShootoutOpponent } from "../../shared/engine/opponent";
 import { initialShootout, shootoutReducer } from "../engine/shootout";
 import {
   levelFromXp,
@@ -51,12 +51,15 @@ type View = "lobby" | "playing";
 export function PenaltyShootout({ game, entry }: PenaltyShootoutProps) {
   const [view, setView] = useState<View>("lobby");
   const [session, setSession] = useState(0);
-  const claimed = useClaimedPacks();
+  const decks = useDecks();
   const gamesHref = `/games/${sportForGame(game)}`;
 
   const squad = useMemo(
-    () => squadFromClaim(claimed.football?.playerCardIds),
-    [claimed.football?.playerCardIds],
+    () => {
+      const loadout = decks.loadouts.football;
+      return loadout ? squadFromClaim([...loadout.attackers, ...loadout.defenders, ...(loadout.keeperId ? [loadout.keeperId] : [])]) : null;
+    },
+    [decks.loadouts.football],
   );
 
   const play = useCallback(() => {
@@ -148,6 +151,7 @@ function ShootoutSession({ squad, entry, onPlayAgain, onHome }: SessionProps) {
 
   const [award, setAward] = useState({ xp: 0, total: 0 });
   const recorded = useRef(false);
+  const rewardId = `shootout-${useId()}`;
   const [quitting, setQuitting] = useState(false);
 
   // XP is applied the instant the result is decided, before the summary — the
@@ -165,6 +169,7 @@ function ShootoutSession({ squad, entry, onPlayAgain, onHome }: SessionProps) {
       opponentName: state.opponentName,
       suddenDeath: state.suddenDeath,
     });
+    settleCoinReward({ id: rewardId, coins: state.winner === "player" ? 50 : 10, title: "PENALTY SHOOTOUT", subtitle: state.winner === "player" ? "WIN" : "LOSS" });
     setAward({ xp: gained, total: readShootoutProgress().xp });
   }, [
     state.over,
@@ -173,6 +178,7 @@ function ShootoutSession({ squad, entry, onPlayAgain, onHome }: SessionProps) {
     state.opponentScore,
     state.opponentName,
     state.suddenDeath,
+    rewardId,
   ]);
 
   const onQuit = useCallback(() => {

@@ -67,10 +67,7 @@ export const playerRoleSports: Record<PlayerRole, Sport> = {
 
 export type ActionCategory = "attack" | "defense" | "special";
 
-/**
- * A player card. There is no portrait field: the app ships no player art, so
- * the glyph plate is the face that actually renders.
- */
+/** A player card. Portrait art is optional so catalog-only cards keep the glyph face. */
 export type PlayerCard = {
   id: string;
   name: string;
@@ -88,6 +85,8 @@ export type PlayerCard = {
   tier: CardTier;
   /** Key of the glyph the card shows, from the design system's icon set. */
   icon: string;
+  /** Public asset path for portrait artwork, when the source catalog provides it. */
+  portraitSrc?: string;
 };
 
 /** A one-shot effect played alongside a player card. */
