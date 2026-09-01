@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 
 import type { Sport } from "@/domain/sports";
 import { AuthBoundary, completeOnboarding } from "@/features/auth";
+import { readEconomy } from "@/features/economy";
 import { saveProfileSetup } from "@/features/profile";
 
 import { afterOnboardingHref, setupSteps } from "../constants";
@@ -17,13 +18,14 @@ import { BannerStep } from "./banner-step";
 import { ClubsStep } from "./clubs-step";
 import { LaunchCountdown } from "./launch-countdown";
 import { NameStep } from "./name-step";
+import { OnboardingCoinReward } from "./onboarding-coin-reward";
 import styles from "./motion.module.css";
 import { SetupDock } from "./setup-dock";
 import { SetupTopBar } from "./setup-top-bar";
 import { WelcomeReveal } from "./welcome-reveal";
 
-/** The splash plays first, the wizard next, the countdown last. */
-type Phase = "welcome" | "setup" | "launch";
+/** The splash plays first, then the wizard, countdown, and wallet payoff. */
+type Phase = "welcome" | "setup" | "launch" | "reward";
 
 export type OnboardingScreenProps = {
   /** Pre-selected avatar for a player who already picked one. */
@@ -69,6 +71,7 @@ function ProfileSetupScreen({
 
   const [phase, setPhase] = useState<Phase>("welcome");
   const [step, setStep] = useState(0);
+  const [rewardBalance, setRewardBalance] = useState(1000);
 
   const [displayName, setDisplayName] = useState("");
   const [avatarId, setAvatarId] = useState(avatarOptionById(initialAvatarId).id);
@@ -116,7 +119,7 @@ function ProfileSetupScreen({
    * than the defaults. `onComplete` still fires, for anything that wants to
    * know beyond the storing of it.
    */
-  const enterApp = useCallback(() => {
+  const creditWelcomeBonus = useCallback(() => {
     const result: ProfileSetupResult = {
       displayName: displayName.trim(),
       avatarId,
@@ -128,10 +131,10 @@ function ProfileSetupScreen({
     saveProfileSetup(result);
     completeOnboarding();
     onComplete?.(result);
-    router.push(afterOnboardingHref);
+    setRewardBalance(readEconomy().coins);
+    setPhase("reward");
   }, [
     onComplete,
-    router,
     avatarId,
     displayName,
     bannerId,
@@ -139,6 +142,11 @@ function ProfileSetupScreen({
     followedLeagueIds,
     favoriteTeams,
   ]);
+
+  const enterApp = useCallback(
+    () => router.push(afterOnboardingHref),
+    [router],
+  );
 
   const startSetup = useCallback(() => setPhase("setup"), []);
 
@@ -191,7 +199,17 @@ function ProfileSetupScreen({
   }
 
   if (phase === "launch") {
-    return <LaunchCountdown onEnter={enterApp} />;
+    return <LaunchCountdown onEnter={creditWelcomeBonus} />;
+  }
+
+  if (phase === "reward") {
+    return (
+      <OnboardingCoinReward
+        amount={1000}
+        balanceAfter={rewardBalance}
+        onComplete={enterApp}
+      />
+    );
   }
 
   return (

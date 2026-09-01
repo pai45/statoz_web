@@ -57,13 +57,16 @@
   --font-sans: var(--ds-font-body);
   --font-display: var(--ds-font-display);
   --font-mono: var(--ds-font-mono);
-  --text-2xs: var(--ds-text-2xs);
+  --text-nano: var(--ds-text-nano);
   --text-micro: var(--ds-text-micro);
+  --text-2xs: var(--ds-text-2xs);
   --text-xs: var(--ds-text-xs);
+  --text-compact: var(--ds-text-compact);
   --text-sm: var(--ds-text-sm);
   --text-md: var(--ds-text-md);
   --text-base: var(--ds-text-base);
   --text-lg: var(--ds-text-lg);
+  --text-badge: var(--ds-text-badge);
   --text-xl: var(--ds-text-xl);
   --text-2xl: var(--ds-text-2xl);
   --text-3xl: var(--ds-text-3xl);

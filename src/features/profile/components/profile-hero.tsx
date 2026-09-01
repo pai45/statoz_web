@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 
 import { accentVar, CopyIcon, EditIcon, withAlpha } from "@/design-system";
@@ -86,9 +87,13 @@ export function ProfileHero({
               is positioned against the panel itself rather than against a
               padded box the chip would hang outside of. */}
           <div className="relative">
-            <div className="absolute right-4 top-4.5 lg:right-6">
+            <Link
+              href="/profile/xp"
+              className="absolute right-4 top-4.5 flex min-h-11 items-center lg:right-6"
+              aria-label={`View XP progress, level ${progress.level}`}
+            >
               <LevelChip level={progress.level} />
-            </div>
+            </Link>
 
             <div className="px-5 pb-5 pt-19 lg:flex lg:items-start lg:gap-10 lg:px-7 lg:pt-21">
               <div className="min-w-0 lg:flex-1">
@@ -244,10 +249,16 @@ function MasteryStrip({
         <ul className="mt-2 flex gap-2 overflow-x-auto pb-0.5">
           {tracks.map((track) => (
             <li key={track} className="shrink-0">
-              <MasteryChip
-                label={trackShortLabels[track]}
-                level={levelFromXp(xpByTrack[track] ?? 0)}
-              />
+              <Link
+                href={`/profile/xp?track=${track}`}
+                className="flex min-h-11 items-center"
+                aria-label={`View ${trackShortLabels[track]} XP progress, level ${levelFromXp(xpByTrack[track] ?? 0)}`}
+              >
+                <MasteryChip
+                  label={trackShortLabels[track]}
+                  level={levelFromXp(xpByTrack[track] ?? 0)}
+                />
+              </Link>
             </li>
           ))}
         </ul>

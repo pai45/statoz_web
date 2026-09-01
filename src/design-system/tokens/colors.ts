@@ -50,6 +50,10 @@ export const colors = {
     scrim: "rgba(0, 0, 0, 0.84)",
     /** The scrim a label sits on when it lies over card art. */
     plate: "rgba(0, 0, 0, 0.6)",
+    /** Near-black action rail shared by purchasable shop cards. */
+    shopFooter: "rgba(0, 0, 0, 0.88)",
+    /** Dark veil under the tilted OWNED stamp on shop cards. */
+    shopOwnership: "rgba(0, 0, 0, 0.66)",
   },
   /** Shared fixture-card chrome, matched to the Flutter match hub. */
   fixture: {

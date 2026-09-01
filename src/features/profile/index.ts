@@ -6,6 +6,10 @@
  * is stays behind this boundary.
  */
 export { ProfileScreen } from "./components/profile-screen";
+export {
+  XpProgressScreen,
+  type XpProgressScreenProps,
+} from "./components/xp-progress-screen";
 export { AllCardsScreen } from "./components/all-cards-screen";
 export {
   ProfileHistoryScreen,

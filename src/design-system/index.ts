@@ -6,6 +6,7 @@ export * from "./components/data-display/action-card";
 export * from "./components/data-display/avatar";
 export * from "./components/data-display/badge";
 export * from "./components/data-display/hud-panel";
+export * from "./components/data-display/interactive-line-chart";
 export * from "./components/data-display/fixture-panel";
 export * from "./components/data-display/monogram";
 export * from "./components/data-display/player-card";

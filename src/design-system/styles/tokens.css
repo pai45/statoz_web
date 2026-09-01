@@ -60,6 +60,8 @@
   --ds-color-overlay-subtle: rgb(255 255 255 / 10%);
   --ds-color-overlay-scrim: rgb(0 0 0 / 84%);
   --ds-color-overlay-plate: rgb(0 0 0 / 60%);
+  --ds-color-overlay-shop-footer: rgb(0 0 0 / 88%);
+  --ds-color-overlay-shop-ownership: rgb(0 0 0 / 66%);
 
   /* Fixture-card chrome */
   --ds-color-fixture-shadow: #04060b;
@@ -247,13 +249,16 @@
   --ds-font-display: var(--font-orbitron), "Orbitron", var(--font-onest),
     "Onest", system-ui, sans-serif;
   --ds-font-mono: ui-monospace, "SFMono-Regular", monospace;
-  --ds-text-2xs: 0.625rem;
+  --ds-text-nano: 0.5rem;
   --ds-text-micro: 0.5625rem;
+  --ds-text-2xs: 0.625rem;
   --ds-text-xs: 0.6875rem;
+  --ds-text-compact: 0.75rem;
   --ds-text-sm: 0.8125rem;
   --ds-text-md: 0.875rem;
   --ds-text-base: 0.9375rem;
   --ds-text-lg: 1.0625rem;
+  --ds-text-badge: 1.125rem;
   --ds-text-xl: 1.25rem;
   --ds-text-2xl: 1.375rem;
   --ds-text-3xl: 2rem;
