@@ -9,4 +9,11 @@ export { LeaderboardScreen } from "./components/leaderboard-screen";
 
 export { isPro, rivalRoster, rivalSeedByName } from "@/mocks/leaderboard";
 
+export {
+  isProSeed,
+  resolveRival,
+  rivalIsOnline,
+  rivalLevelFor,
+} from "./roster";
+
 export type { LeaderboardEntry, RivalSeed } from "./types";

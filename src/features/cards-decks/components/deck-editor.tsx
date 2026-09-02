@@ -1,16 +1,33 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 
-import type { PlayerRole } from "@/domain/cards";
+import { Glyph } from "@/design-system";
+import type { PlayerCard as PlayerCardData, PlayerRole } from "@/domain/cards";
 import { sportModuleFor, type Sport } from "@/domain/sports";
 import { AuthBoundary } from "@/features/auth";
-import { useEconomy } from "@/features/economy";
+import { equipCosmetic, useEconomy } from "@/features/economy";
+import { basketballLiveries } from "@/features/games/basketball/data/liveries";
+import { finalOverKits } from "@/features/games/final-over/data/kits";
+import { grandPrixLiveries } from "@/features/games/grand-prix/data/liveries";
 import { actionCardForId, playerCardForId } from "@/features/packs";
 
-import { saveLoadout, useDecks, validateLoadout } from "../state/deck-store";
+import { activeDeck, saveLoadout, useDecks, validateLoadout } from "../state/deck-store";
 import type { SportLoadout } from "../types";
+import { DeckActionCard, DeckPlayerCard } from "./deck-card";
+import styles from "./deck-system.module.css";
+
+const accents: Record<Sport, string> = {
+  football: "var(--ds-color-accent-cyan)", cricket: "var(--ds-color-accent-cyan)",
+  basketball: "var(--ds-color-accent-gold)", tennis: "var(--ds-color-accent-lime)",
+  motorsport: "var(--ds-color-accent-racing)",
+};
+const icons = { football: "sports_soccer", cricket: "sports_cricket", basketball: "sports_basketball", tennis: "sports_tennis", motorsport: "sports_motorsports" } as const;
+type Focus = { lane: string; index: number };
+type PlayerOption = NonNullable<ReturnType<typeof playerCardForId>>;
+type ActionOption = NonNullable<ReturnType<typeof actionCardForId>>;
+type Pools = Record<string, PlayerOption[]>;
 
 function blank(sport: Sport): SportLoadout {
   if (sport === "football") return { sport, attackers: [], defenders: [], keeperId: null, actionCardIds: [] };
@@ -19,40 +36,44 @@ function blank(sport: Sport): SportLoadout {
   if (sport === "tennis") return { sport, playerId: null };
   return { sport, driverId: null };
 }
-
 const clone = <T extends SportLoadout>(value: T): T => structuredClone(value);
 
-export function DeckEditor({ sport }: { sport: Sport }) {
-  return (
-    <AuthBoundary
-      intent="edit your loadout"
-      message="Log in to manage owned cards and save an active lineup."
-      returnTo={`/decks/${sport}`}
-    >
-      <AuthenticatedDeckEditor sport={sport} />
-    </AuthBoundary>
-  );
+function replaceAt(values: string[], index: number, id: string): string[] {
+  const next = [...values];
+  const previous = next.indexOf(id);
+  const displaced = next[index];
+  if (previous !== -1 && previous !== index) next[previous] = displaced;
+  next[index] = id;
+  return next.filter(Boolean);
+}
+const removeAt = (values: string[], index: number) => values.filter((_, current) => current !== index);
+const safeReturnTo = (value?: string) => value?.startsWith("/") && !value.startsWith("//") ? value : "/decks";
+
+export function DeckEditor({ sport, returnTo }: { sport: Sport; returnTo?: string }) {
+  const searchParams = useSearchParams();
+  const queryReturnTo = searchParams.get("returnTo") ?? undefined;
+  const resolvedReturnTo = safeReturnTo(returnTo ?? queryReturnTo);
+
+  return <AuthBoundary intent="edit your loadout" message="Log in to manage owned cards and save an active lineup." returnTo={`/decks/${sport}`}><AuthenticatedDeckEditor sport={sport} returnTo={resolvedReturnTo} /></AuthBoundary>;
 }
 
-function AuthenticatedDeckEditor({ sport }: { sport: Sport }) {
+function AuthenticatedDeckEditor({ sport, returnTo }: { sport: Sport; returnTo: string }) {
+  const router = useRouter();
   const economy = useEconomy();
   const decks = useDecks();
-  const saved = decks.loadouts[sport];
-  const [draft, setDraft] = useState<SportLoadout>(() => blank(sport));
+  const deck = activeDeck(decks);
+  const saved = deck.loadouts[sport];
+  const [draft, setDraft] = useState<SportLoadout>(() => clone(saved ?? blank(sport)));
   const [dirty, setDirty] = useState(false);
-  const [message, setMessage] = useState("Only owned cards appear in the editor.");
+  const [focus, setFocus] = useState<Focus>(() => initialFocus(sport));
+  const [message, setMessage] = useState("Select an owned card to assign the focused slot.");
 
   useEffect(() => {
-    // Deck storage is an external store and may change in another tab.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!dirty) setDraft(clone(saved ?? blank(sport)));
-  }, [dirty, saved, sport]);
-
+  }, [dirty, saved, sport, deck.id]);
   useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => {
-      if (!dirty) return;
-      event.preventDefault();
-    };
+    const warn = (event: BeforeUnloadEvent) => { if (dirty) event.preventDefault(); };
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
@@ -61,67 +82,96 @@ function AuthenticatedDeckEditor({ sport }: { sport: Sport }) {
   const actions = useMemo(() => economy.owned.actionCardIds.map(actionCardForId).filter((card) => card !== undefined), [economy.owned.actionCardIds]);
   const roles = Object.fromEntries(players.map((card) => [card.id, card.role])) as Partial<Record<string, PlayerRole>>;
   const errors = validateLoadout(draft, { playerCardIds: economy.owned.playerCardIds, actionCardIds: economy.owned.actionCardIds, roles });
-
-  function update(next: SportLoadout) { setDraft(next); setDirty(true); setMessage("Unsaved changes."); }
-  function save() {
-    if (errors.length) { setMessage(errors.join(" ")); return; }
-    saveLoadout(sport, draft as never);
-    setDirty(false); setMessage("Loadout saved and ready for play.");
-  }
-  function discard(event: React.MouseEvent<HTMLAnchorElement>) {
-    if (dirty && !window.confirm("Discard your unsaved loadout changes?")) event.preventDefault();
-  }
-
-  const pools = {
-    attacker: players.filter((card) => card.role === "attacker"), defender: players.filter((card) => card.role === "defender"), goalkeeper: players.filter((card) => card.role === "goalkeeper"), batsman: players.filter((card) => card.role === "batsman"), basketballGuard: players.filter((card) => card.role === "basketballGuard"), basketballWing: players.filter((card) => card.role === "basketballWing"), basketballBig: players.filter((card) => card.role === "basketballBig"), tennisSingles: players.filter((card) => card.role === "tennisSingles"), driver: players.filter((card) => ["f1Driver", "f2Driver", "nascarDriver", "indycarDriver"].includes(card.role)),
+  const pools: Pools = {
+    attacker: players.filter((card) => card.role === "attacker"), defender: players.filter((card) => card.role === "defender"),
+    goalkeeper: players.filter((card) => card.role === "goalkeeper"), batsman: players.filter((card) => card.role === "batsman"),
+    basketballGuard: players.filter((card) => card.role === "basketballGuard"), basketballWing: players.filter((card) => card.role === "basketballWing"),
+    basketballBig: players.filter((card) => card.role === "basketballBig"), tennisSingles: players.filter((card) => card.role === "tennisSingles"),
+    driver: players.filter((card) => ["f1Driver", "f2Driver", "nascarDriver", "indycarDriver"].includes(card.role)),
   };
+  function update(next: SportLoadout, nextFocus?: Focus) { setDraft(next); setDirty(true); setMessage("Unsaved changes."); if (nextFocus) setFocus(nextFocus); }
+  function save() { if (errors.length) { setMessage(errors.join(" ")); return; } saveLoadout(sport, draft as never, deck.id); setDirty(false); router.push(returnTo); }
+  function leave() { if (dirty && !window.confirm("Discard your unsaved loadout changes?")) return; router.push(returnTo); }
+  const shared = { draft, focus, setFocus, update, pools, actions };
 
   return (
-    <section className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6">
-      <div className="border-b border-border pb-5">
-        <p className="font-display text-2xs font-black tracking-ultra text-muted">{"// ACTIVE "}{sportModuleFor(sport).label.toUpperCase()} LOADOUT</p>
-        <div className="mt-2 flex flex-wrap items-end justify-between gap-3"><div><h1 className="font-display text-2xl font-black">BUILD YOUR SQUAD</h1><p aria-live="polite" className="mt-2 text-xs text-muted">{message}</p></div><Link href="/profile" onClick={discard} className="border border-border-strong px-4 py-3 font-display text-2xs font-black tracking-wide">BACK TO PROFILE</Link></div>
-      </div>
-
-      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_280px]">
-        <div className="space-y-4">
-          {draft.sport === "football" ? <FootballSlots value={draft} pools={pools} actions={actions} update={update} /> : null}
-          {draft.sport === "cricket" ? <OrderedSlots label="BATTER" count={5} values={draft.batterIds} options={pools.batsman} update={(batterIds) => update({ sport: "cricket", batterIds })} /> : null}
-          {draft.sport === "basketball" ? <BasketballSlots value={draft} pools={pools} update={update} /> : null}
-          {draft.sport === "tennis" ? <SingleSlot label="SINGLES ATHLETE" value={draft.playerId} options={pools.tennisSingles} update={(playerId) => update({ sport: "tennis", playerId })} /> : null}
-          {draft.sport === "motorsport" ? <SingleSlot label="DRIVER" value={draft.driverId} options={pools.driver} update={(driverId) => update({ sport: "motorsport", driverId })} /> : null}
-        </div>
-
-        <aside className="h-fit border border-border bg-surface-raised p-4 lg:sticky lg:top-5">
-          <p className="font-display text-2xs font-black tracking-ultra text-muted">VALIDATION</p>
-          {errors.length ? <ul className="mt-3 space-y-2 text-xs text-error">{errors.map((error) => <li key={error}>— {error}</li>)}</ul> : <p className="mt-3 text-xs text-success">Every slot is legal and owned.</p>}
-          <button type="button" onClick={save} disabled={!dirty || errors.length > 0} className="mt-5 h-12 w-full bg-accent-cyan font-display text-xs font-black text-background disabled:cursor-not-allowed disabled:opacity-35">SAVE ACTIVE LOADOUT</button>
-          <p className="mt-3 text-[10px] leading-relaxed text-muted">Games consume this saved lineup. If a card becomes unavailable, return here to repair the stale slot.</p>
-        </aside>
-      </div>
+    <section className={styles.editor} style={{ "--deck-accent": accents[sport] } as CSSProperties}>
+      <header className={styles.editorHeader}><button type="button" className={styles.backButton} onClick={leave} aria-label="Back without saving">‹</button><div><p>{`// ${editorSubtitle(sport)}`}</p><h1>{editorTitle(sport)}</h1></div><span className={styles.deckName}>{deck.name.toUpperCase()}</span></header>
+      <div className={styles.systemStrip}><i /><Glyph name={icons[sport]} size={15} /><b>{sportModuleFor(sport).label.toUpperCase()} CHANNEL</b><span /><small>{errors.length === 0 ? "LOADOUT READY" : `${errors.length} CHECK${errors.length === 1 ? "" : "S"}`}</small></div>
+      <div className={styles.editorGrid}><div className={styles.boardColumn}>
+        {draft.sport === "football" ? <FootballBuilder {...shared} draft={draft} /> : null}
+        {draft.sport === "cricket" ? <CricketBuilder {...shared} draft={draft} /> : null}
+        {draft.sport === "basketball" ? <BasketballBuilder {...shared} draft={draft} /> : null}
+        {draft.sport === "tennis" ? <TennisBuilder {...shared} draft={draft} /> : null}
+        {draft.sport === "motorsport" ? <MotorsportBuilder {...shared} draft={draft} /> : null}
+      </div></div>
+      <footer className={styles.actionBar}><div><p aria-live="polite">{message}</p>{errors.length ? <span>{errors[0]}</span> : <span className={styles.valid}>EVERY SLOT IS LEGAL AND OWNED</span>}</div><button type="button" className={styles.secondaryButton} onClick={leave}>BACK</button><button type="button" className={styles.primaryButton} onClick={save} disabled={!dirty || errors.length > 0}>SAVE LOADOUT</button></footer>
     </section>
   );
 }
 
-type PlayerOption = NonNullable<ReturnType<typeof playerCardForId>>;
-type ActionOption = NonNullable<ReturnType<typeof actionCardForId>>;
-type Pools = Record<string, PlayerOption[]>;
+function initialFocus(sport: Sport): Focus { return sport === "football" ? { lane: "attacker", index: 0 } : sport === "cricket" ? { lane: "batter", index: 0 } : sport === "basketball" ? { lane: "basketballGuard", index: 0 } : sport === "tennis" ? { lane: "tennisSingles", index: 0 } : { lane: "driver", index: 0 }; }
+function editorTitle(sport: Sport) { return { football: "FOOTBALL DECK", cricket: "FINAL OVER SQUAD", basketball: "ROSTER DECK", tennis: "TENNIS DECK", motorsport: "RACING PIT DECK" }[sport]; }
+function editorSubtitle(sport: Sport) { return { football: "5-A-SIDE + 6 ACTIONS", cricket: "5-BAT CHASE UNIT", basketball: "HOOP DUEL", tennis: "SINGLES ATHLETE", motorsport: "DRIVER + LIVERY" }[sport]; }
+type BuilderProps<T extends SportLoadout> = { draft: T; focus: Focus; setFocus: (focus: Focus) => void; update: (draft: SportLoadout, focus?: Focus) => void; pools: Pools; actions: ActionOption[] };
 
-function SlotSelect({ label, value, options, used = [], update }: { label: string; value: string | null; options: { id: string; name?: string; shortName?: string; title?: string; rating?: number; power?: number }[]; used?: string[]; update: (value: string | null) => void }) {
-  return <label className="block border border-border bg-surface-raised p-3"><span className="font-display text-2xs font-black tracking-wide text-muted">{label}</span><select value={value ?? ""} onChange={(event) => update(event.target.value || null)} className="mt-2 h-11 w-full border border-border-strong bg-background px-3 text-xs focus-visible:outline-2 focus-visible:outline-accent-cyan"><option value="">— SELECT OWNED CARD —</option>{options.map((option) => <option key={option.id} value={option.id} disabled={used.includes(option.id) && option.id !== value}>{option.shortName ?? option.name ?? option.title} · {option.rating ?? option.power}</option>)}</select></label>;
+function FootballBuilder({ draft, focus, setFocus, update, pools, actions }: BuilderProps<Extract<SportLoadout, { sport: "football" }>>) {
+  const laneValues = focus.lane === "attacker" ? draft.attackers : focus.lane === "defender" ? draft.defenders : focus.lane === "action" ? draft.actionCardIds : draft.keeperId ? [draft.keeperId] : [];
+  const pool = focus.lane === "action" ? [] : pools[focus.lane] ?? [];
+  const selectedId = laneValues[focus.index] ?? null;
+  const selectedCard = selectedId ? playerCardForId(selectedId) : undefined;
+  const categories = draft.actionCardIds.map(actionCardForId).filter((card) => card !== undefined).map((card) => card.category);
+  const coverage = categories.includes("attack") && categories.includes("defense");
+  function assignPlayer(card: PlayerOption) {
+    if (focus.lane === "attacker") update({ ...draft, attackers: replaceAt(draft.attackers, focus.index, card.id) }, { lane: "attacker", index: Math.min(focus.index + 1, 1) });
+    if (focus.lane === "defender") update({ ...draft, defenders: replaceAt(draft.defenders, focus.index, card.id) }, { lane: "defender", index: Math.min(focus.index + 1, 1) });
+    if (focus.lane === "keeper") update({ ...draft, keeperId: card.id });
+  }
+  function clear() {
+    if (focus.lane === "attacker") update({ ...draft, attackers: removeAt(draft.attackers, focus.index) });
+    if (focus.lane === "defender") update({ ...draft, defenders: removeAt(draft.defenders, focus.index) });
+    if (focus.lane === "keeper") update({ ...draft, keeperId: null });
+    if (focus.lane === "action") update({ ...draft, actionCardIds: removeAt(draft.actionCardIds, focus.index) });
+  }
+  return <>
+    <HudSection title="5-A-SIDE DECK" status={draft.attackers.length === 2 && draft.defenders.length === 2 && draft.keeperId ? "READY" : "BUILD"}><div className={`${styles.sportBoard} ${styles.pitch}`}><SlotRow>{[0,1].map((index) => <DeckSlot key={`atk-${index}`} label={index ? "RS" : "LS"} cardId={draft.attackers[index]} selected={focus.lane === "attacker" && focus.index === index} onClick={() => setFocus({ lane: "attacker", index })} />)}</SlotRow><SlotRow>{[0,1].map((index) => <DeckSlot key={`def-${index}`} label={index ? "RCB" : "LCB"} cardId={draft.defenders[index]} selected={focus.lane === "defender" && focus.index === index} onClick={() => setFocus({ lane: "defender", index })} />)}</SlotRow><SlotRow><DeckSlot label="GK" cardId={draft.keeperId ?? undefined} selected={focus.lane === "keeper"} onClick={() => setFocus({ lane: "keeper", index: 0 })} /></SlotRow></div><div className={styles.actionStrip}>{Array.from({ length: 6 }, (_, index) => { const card = draft.actionCardIds[index] ? actionCardForId(draft.actionCardIds[index]) : undefined; return <MiniSlot key={index} label={`${index + 1}`} selected={focus.lane === "action" && focus.index === index} onClick={() => setFocus({ lane: "action", index })}>{card?.title ?? "+"}</MiniSlot>; })}</div>{!coverage && draft.actionCardIds.length ? <div className={styles.warning}>ACTION STRIP NEEDS BOTH ATTACK AND DEFENCE COVERAGE</div> : null}</HudSection>
+    <PickerHeader lanes={[["attacker","ATTACK"],["defender","DEFEND"],["keeper","KEEPER"],["action","ACTION"]]} focus={focus} onFocus={setFocus} onClear={clear} />
+    {selectedCard ? <Telemetry card={selectedCard} /> : null}
+    {focus.lane === "action" ? <div className={styles.cardGrid}>{actions.map((card) => <DeckActionCard key={card.id} card={card} selected={selectedId === card.id} disabled={draft.actionCardIds.includes(card.id) && selectedId !== card.id} onClick={() => update({ ...draft, actionCardIds: replaceAt(draft.actionCardIds, focus.index, card.id) }, { lane: "action", index: Math.min(focus.index + 1, 5) })} />)}</div> : <PlayerPicker cards={pool} selectedId={selectedId} used={[...draft.attackers, ...draft.defenders, ...(draft.keeperId ? [draft.keeperId] : [])]} onSelect={assignPlayer} />}
+  </>;
 }
 
-function OrderedSlots({ label, count, values, options, update }: { label: string; count: number; values: string[]; options: PlayerOption[]; update: (values: string[]) => void }) {
-  return <div className="grid gap-3 sm:grid-cols-2">{Array.from({ length: count }, (_, index) => <SlotSelect key={index} label={`${label} ${index + 1}`} value={values[index] ?? null} options={options} used={values} update={(id) => { const next = [...values]; if (id) next[index] = id; else next.splice(index, 1); update(next); }} />)}</div>;
+function CricketBuilder({ draft, focus, setFocus, update, pools }: BuilderProps<Extract<SportLoadout, { sport: "cricket" }>>) {
+  const selectedId = draft.batterIds[focus.index] ?? null;
+  return <><HudSection title="CHASE SQUAD" status={draft.batterIds.length === 5 ? "READY" : "BUILD"}><div className={`${styles.sportBoard} ${styles.crease}`}><div className={styles.fiveGrid}>{Array.from({ length: 5 }, (_, index) => <DeckSlot key={index} label={`BAT ${index + 1}`} cardId={draft.batterIds[index]} selected={focus.index === index} onClick={() => setFocus({ lane: "batter", index })} />)}</div></div></HudSection><PickerHeader lanes={Array.from({ length: 5 }, (_, index) => [`batter-${index}`, `${index + 1}`])} focus={{ lane: `batter-${focus.index}`, index: focus.index }} onFocus={(next) => setFocus({ lane: "batter", index: next.index })} onClear={() => update({ ...draft, batterIds: removeAt(draft.batterIds, focus.index) })} />{selectedId && playerCardForId(selectedId) ? <Telemetry card={playerCardForId(selectedId)!} labels={["OVR","TIMING","BOUNDARY","NERVE"]} /> : null}<PlayerPicker cards={pools.batsman} selectedId={selectedId} used={draft.batterIds} onSelect={(card) => update({ ...draft, batterIds: replaceAt(draft.batterIds, focus.index, card.id) }, { lane: "batter", index: Math.min(focus.index + 1, 4) })} /><CosmeticPicker kind="kit" title="MATCH KIT" items={finalOverKits.map((kit) => ({ id: kit.id, name: kit.name, primary: kit.primary, secondary: kit.secondary }))} /></>;
 }
 
-function SingleSlot({ label, value, options, update }: { label: string; value: string | null; options: PlayerOption[]; update: (value: string | null) => void }) { return <SlotSelect label={label} value={value} options={options} update={update} />; }
-
-function FootballSlots({ value, pools, actions, update }: { value: Extract<SportLoadout, { sport: "football" }>; pools: Pools; actions: ActionOption[]; update: (value: SportLoadout) => void }) {
-  return <><h2 className="font-display text-sm font-black tracking-wide text-accent-cyan">STARTING FIVE</h2><OrderedSlots label="ATTACKER" count={2} values={value.attackers} options={pools.attacker} update={(attackers) => update({ ...value, attackers })} /><OrderedSlots label="DEFENDER" count={2} values={value.defenders} options={pools.defender} update={(defenders) => update({ ...value, defenders })} /><SingleSlot label="GOALKEEPER" value={value.keeperId} options={pools.goalkeeper} update={(keeperId) => update({ ...value, keeperId })} /><h2 className="pt-3 font-display text-sm font-black tracking-wide text-accent-violet">ACTION HAND</h2><div className="grid gap-3 sm:grid-cols-2">{Array.from({ length: 6 }, (_, index) => <SlotSelect key={index} label={`ACTION ${index + 1}`} value={value.actionCardIds[index] ?? null} options={actions} used={value.actionCardIds} update={(id) => { const actionCardIds = [...value.actionCardIds]; if (id) actionCardIds[index] = id; else actionCardIds.splice(index, 1); update({ ...value, actionCardIds }); }} />)}</div></>;
+function BasketballBuilder({ draft, focus, setFocus, update, pools }: BuilderProps<Extract<SportLoadout, { sport: "basketball" }>>) {
+  const roleNames = ["basketballGuard", "basketballWing", "basketballBig"];
+  const index = Math.max(0, roleNames.indexOf(focus.lane));
+  const selectedId = draft.playerIds[index] ?? null;
+  return <><HudSection title="HOOP DUEL ROSTER" status={draft.playerIds.length === 3 && draft.starterId ? "READY" : "BUILD"}><div className={`${styles.sportBoard} ${styles.court}`}><SlotRow>{roleNames.map((role, roleIndex) => <DeckSlot key={role} label={["G","W","BIG"][roleIndex]} cardId={draft.playerIds[roleIndex]} selected={focus.lane === role} starter={draft.starterId === draft.playerIds[roleIndex]} onClick={() => setFocus({ lane: role, index: roleIndex })} onStarter={draft.playerIds[roleIndex] ? () => update({ ...draft, starterId: draft.playerIds[roleIndex] }) : undefined} />)}</SlotRow></div></HudSection><PickerHeader lanes={[["basketballGuard","G"],["basketballWing","W"],["basketballBig","BIG"]]} focus={focus} onFocus={setFocus} onClear={() => { const clearing = draft.playerIds[index]; const playerIds = removeAt(draft.playerIds, index); update({ ...draft, playerIds, starterId: draft.starterId === clearing ? playerIds[0] ?? null : draft.starterId }); }} />{selectedId && playerCardForId(selectedId) ? <Telemetry card={playerCardForId(selectedId)!} labels={["SPD","HANDLE","SHOT","DEF"]} /> : null}<PlayerPicker cards={pools[focus.lane] ?? []} selectedId={selectedId} used={draft.playerIds} onSelect={(card) => { const playerIds = replaceAt(draft.playerIds, index, card.id); const nextIndex = Math.min(index + 1, 2); update({ ...draft, playerIds, starterId: draft.starterId ?? card.id }, { lane: roleNames[nextIndex], index: nextIndex }); }} /><CosmeticPicker kind="jersey" title="TEAM JERSEY" items={basketballLiveries.map((team) => ({ id: team.id, name: team.name, primary: team.primary, secondary: team.secondary }))} /></>;
 }
 
-function BasketballSlots({ value, pools, update }: { value: Extract<SportLoadout, { sport: "basketball" }>; pools: Pools; update: (value: SportLoadout) => void }) {
-  const roles = [["GUARD", pools.basketballGuard], ["WING", pools.basketballWing], ["BIG", pools.basketballBig]] as const;
-  return <><div className="grid gap-3 sm:grid-cols-3">{roles.map(([label, options], index) => <SlotSelect key={label} label={label} value={value.playerIds[index] ?? null} options={options} used={value.playerIds} update={(id) => { const playerIds = [...value.playerIds]; if (id) playerIds[index] = id; else playerIds.splice(index, 1); update({ ...value, playerIds, starterId: value.starterId && playerIds.includes(value.starterId) ? value.starterId : playerIds[0] ?? null }); }} />)}</div><SlotSelect label="SELECTED STARTER" value={value.starterId} options={value.playerIds.map(playerCardForId).filter((card) => card !== undefined)} update={(starterId) => update({ ...value, starterId })} /></>;
+function TennisBuilder({ draft, focus, setFocus, update, pools }: BuilderProps<Extract<SportLoadout, { sport: "tennis" }>>) { const selected = draft.playerId ? playerCardForId(draft.playerId) : undefined; return <><HudSection title="BASELINE LOADOUT" status={selected ? "READY" : "BUILD"}><div className={`${styles.sportBoard} ${styles.tennisCourt}`}><DeckSlot label="SINGLES" cardId={draft.playerId ?? undefined} selected onClick={() => setFocus({ lane: "tennisSingles", index: 0 })} /></div></HudSection><PickerHeader lanes={[["tennisSingles", "SINGLES"]]} focus={focus} onFocus={setFocus} onClear={() => update({ sport: "tennis", playerId: null })} />{selected ? <Telemetry card={selected} labels={["SERVE","POWER","CONTROL","SPEED"]} /> : null}<SectionTitle title="OWNED ATHLETES" count={pools.tennisSingles.length} /><PlayerPicker cards={pools.tennisSingles} selectedId={draft.playerId} used={draft.playerId ? [draft.playerId] : []} onSelect={(card) => update({ sport: "tennis", playerId: card.id })} /></>; }
+function MotorsportBuilder({ draft, focus, setFocus, update, pools }: BuilderProps<Extract<SportLoadout, { sport: "motorsport" }>>) { const selected = draft.driverId ? playerCardForId(draft.driverId) : undefined; return <><HudSection title="GRID SLOT 01" status={selected ? "READY" : "BUILD"}><div className={`${styles.sportBoard} ${styles.pitLane}`}><DeckSlot label="RACE DRIVER" cardId={draft.driverId ?? undefined} selected onClick={() => setFocus({ lane: "driver", index: 0 })} /></div></HudSection><PickerHeader lanes={[["driver", "DRIVER"]]} focus={focus} onFocus={setFocus} onClear={() => update({ sport: "motorsport", driverId: null })} />{selected ? <Telemetry card={selected} labels={["PACE","CONTROL","START","NERVE"]} /> : null}<SectionTitle title="YOUR DRIVERS" count={pools.driver.length} /><PlayerPicker cards={pools.driver} selectedId={draft.driverId} used={draft.driverId ? [draft.driverId] : []} onSelect={(card) => update({ sport: "motorsport", driverId: card.id })} /><CosmeticPicker kind="livery" title="RACE LIVERY" items={grandPrixLiveries.map((spec) => ({ id: spec.livery, name: spec.name, primary: spec.primary, secondary: spec.accent }))} /></>; }
+
+function HudSection({ title, status, children }: { title: string; status: string; children: ReactNode }) { return <section className={styles.hudSection}><header><div><p>{"// ACTIVE PROFILE"}</p><h2>{title}</h2></div><b>{status}</b></header>{children}</section>; }
+function SlotRow({ children }: { children: ReactNode }) { return <div className={styles.slotRow}>{children}</div>; }
+function DeckSlot({ label, cardId, selected, starter, onClick, onStarter }: { label: string; cardId?: string; selected: boolean; starter?: boolean; onClick: () => void; onStarter?: () => void }) { const card = cardId ? playerCardForId(cardId) : undefined; return <div className={`${styles.deckSlot} ${selected ? styles.selectedSlot : ""}`}><button type="button" className={styles.slotButton} onClick={onClick} aria-pressed={selected} aria-label={`${label}${card ? `, ${card.name}` : ", empty"}`}><span>{label}</span>{card ? <DeckPlayerCard card={card} selected={selected} /> : <i><b>＋</b><small>SELECT CARD</small></i>}</button>{card && onStarter ? <button type="button" className={`${styles.starterButton} ${starter ? styles.isStarter : ""}`} onClick={onStarter}>{starter ? "★ STARTER" : "SET STARTER"}</button> : null}</div>; }
+function MiniSlot({ label, selected, onClick, children }: { label: string; selected: boolean; onClick: () => void; children: ReactNode }) { return <button type="button" className={`${styles.miniSlot} ${selected ? styles.selectedMiniSlot : ""}`} onClick={onClick} aria-pressed={selected}><b>{label}</b><span>{children}</span></button>; }
+function PickerHeader({ lanes, focus, onFocus, onClear }: { lanes: string[][]; focus: Focus; onFocus: (focus: Focus) => void; onClear: () => void }) {
+  function move(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? lanes.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + lanes.length) % lanes.length;
+    onFocus({ lane: lanes[next][0], index: next });
+    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    tabs?.[next]?.focus();
+  }
+  return <div className={styles.pickerHeader}><div role="tablist" aria-label="Deck slot group">{lanes.map(([lane, label], index) => <button key={lane} type="button" role="tab" aria-selected={focus.lane === lane} tabIndex={focus.lane === lane ? 0 : -1} onClick={() => onFocus({ lane, index })} onKeyDown={(event) => move(event, index)}>{label}</button>)}</div><button type="button" onClick={onClear}>CLEAR</button></div>;
 }
+function PlayerPicker({ cards, selectedId, used, onSelect }: { cards: PlayerOption[]; selectedId?: string | null; used: string[]; onSelect: (card: PlayerOption) => void }) { if (!cards.length) return <div className={styles.emptyPicker}>NO OWNED CARDS FOR THIS SLOT YET</div>; return <div className={styles.cardGrid}>{[...cards].sort((a,b) => b.rating-a.rating).map((card) => <DeckPlayerCard key={card.id} card={card} selected={selectedId === card.id} disabled={used.includes(card.id) && selectedId !== card.id} onClick={() => onSelect(card)} />)}</div>; }
+function Telemetry({ card, labels = ["OVR","POWER","CONTROL","NERVE"] }: { card: PlayerCardData; labels?: string[] }) { const values = [card.rating, Math.min(99, card.rating+4), Math.min(99, card.rating+7), Math.max(1, card.rating-2)]; return <section className={styles.telemetry}><p>{`${card.trait.toUpperCase()} // ROLE TELEMETRY`}</p><div>{labels.map((label,index) => <span key={label}><b>{values[index]}</b><small>{label}</small></span>)}</div></section>; }
+function SectionTitle({ title, count }: { title: string; count: number }) { return <div className={styles.sectionTitle}><h3>{title}</h3><span>{count} CARDS</span></div>; }
+function CosmeticPicker({ kind, title, items }: { kind: "kit"|"jersey"|"livery"; title: string; items: { id:string; name:string; primary:string; secondary:string }[] }) { const economy=useEconomy(); const ownedKey=kind==="kit"?"kitIds":kind==="jersey"?"jerseyIds":"liveryIds"; const equippedKey=kind==="kit"?"kitId":kind==="jersey"?"jerseyId":"liveryId"; const owned=economy.owned[ownedKey]; const equipped=economy.equipped[equippedKey]; return <section className={styles.cosmetics}><SectionTitle title={title} count={owned.length}/><div>{items.map((item)=>{const unlocked=owned.includes(item.id);return <button key={item.id} type="button" disabled={!unlocked} aria-pressed={equipped===item.id} onClick={()=>equipCosmetic(kind,item.id)} title={unlocked?item.name:`${item.name} — locked`} style={{"--cosmetic-primary":item.primary,"--cosmetic-secondary":item.secondary} as CSSProperties}><i/><span>{item.name}</span></button>;})}</div></section>; }

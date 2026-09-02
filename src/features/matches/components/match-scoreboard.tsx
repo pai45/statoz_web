@@ -1,23 +1,33 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useState } from "react";
 
+import { FilterChips, accentVar } from "@/design-system";
+import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
+
+import { BasketballStatsView } from "./basketball-stats-view";
+import { CricketStatsView } from "./cricket-stats-view";
+import { FootballStatsView } from "./football-stats-view";
+import { CommentaryView, LineupsView, TimelineList } from "./match-report-parts";
 import {
-  CheckIcon,
-  FlagIcon,
-  FootballIcon,
-  GridViewIcon,
-  RadarIcon,
-  UnderlineTabs,
-  accentVar,
-} from "@/design-system";
-import type { SportMatch } from "@/domain/matches";
-import { sportModuleFor } from "@/domain/sports";
+  EmptyPanel,
+  MatchIntelPanel,
+  MatchPulseHeader,
+  SectionHeading,
+  StatComparisonRow,
+  StatsRow,
+  TeamLegendRow,
+} from "./match-stats-shell";
+import { MatchTraceChart } from "./match-trace-chart";
+import styles from "./match-stats.module.css";
 
-import type { MatchDetailScoreboard, MatchDetailTimelineEvent } from "../types";
-import styles from "./match-detail.module.css";
-
-type ScoreboardView = "overview" | "momentum" | "events" | "lineup" | "commentary";
+/**
+ * The STATS tab.
+ *
+ * Football, basketball and cricket each have a report of their own; tennis and
+ * motorsport share the three-section one, which is where the race weekend's
+ * sessions, standings and starting grid live.
+ */
 
 export function MatchScoreboard({
   match,
@@ -26,253 +36,228 @@ export function MatchScoreboard({
   match: SportMatch;
   scoreboard: MatchDetailScoreboard;
 }) {
-  const [active, setActive] = useState<ScoreboardView>("overview");
-  const labels = scoreTabs(match).map((tab) => ({ id: tab.id, label: tab.label }));
-  const activeIndex = labels.findIndex((tab) => tab.id === active);
-  const accent = accentVar(sportModuleFor(match.sport).accent);
+  if (match.sport === "football") return <FootballStatsView match={match} scoreboard={scoreboard} />;
+  if (match.sport === "basketball") return <BasketballStatsView match={match} scoreboard={scoreboard} />;
+  if (match.sport === "cricket") return <CricketStatsView match={match} scoreboard={scoreboard} />;
+  return <GenericStatsView match={match} scoreboard={scoreboard} />;
+}
+
+function GenericStatsView({
+  match,
+  scoreboard,
+}: {
+  match: SportMatch;
+  scoreboard: MatchDetailScoreboard;
+}) {
+  const first = match.sport === "tennis" ? "SETS" : "FACTS";
+  const tabs = [first, "LINEUP", "COMMENTARY"];
+  const [tab, setTab] = useState(first);
 
   return (
-    <div className={styles.scoreboardPanel}>
-      <UnderlineTabs
-        tabs={labels}
-        activeIndex={activeIndex}
-        onChange={(index) => setActive(labels[index].id as ScoreboardView)}
-        accent={accent}
-        label="Match scoreboard views"
-        minTabWidth={match.sport === "football" ? 92 : undefined}
-        className={styles.scoreboardTabs}
-      />
-      <div className={styles.scoreboardScroll}>
-        {active === "overview" ? <FactsView match={match} scoreboard={scoreboard} /> : null}
-        {active === "momentum" ? <MomentumView match={match} scoreboard={scoreboard} /> : null}
-        {active === "events" ? <EventsView scoreboard={scoreboard} /> : null}
-        {active === "lineup" ? <LineupsView match={match} scoreboard={scoreboard} /> : null}
-        {active === "commentary" ? <CommentaryView scoreboard={scoreboard} /> : null}
+    <div className={styles.statsView}>
+      <FilterChips options={tabs} selected={tab} onSelect={setTab} label="Match report sections" />
+      <div className={styles.statsScroll}>
+        {tab === first ? <Facts match={match} scoreboard={scoreboard} /> : null}
+        {tab === "LINEUP" ? (
+          match.sport === "motorsport" ? (
+            <StartingGrid scoreboard={scoreboard} />
+          ) : (
+            <LineupsView match={match} scoreboard={scoreboard} heading="PLAYERS" />
+          )
+        ) : null}
+        {tab === "COMMENTARY" ? <CommentaryView commentary={scoreboard.commentary} /> : null}
       </div>
     </div>
   );
 }
 
-function scoreTabs(match: SportMatch): Array<{ id: ScoreboardView; label: string }> {
-  if (match.sport === "football") {
-    return [
-      { id: "overview", label: "OVERVIEW" },
-      { id: "momentum", label: "MOMENTUM" },
-      { id: "events", label: "EVENTS" },
-      { id: "lineup", label: "LINEUPS" },
-      { id: "commentary", label: "COMMENTARY" },
-    ];
-  }
-  const first = match.sport === "basketball" ? "BOX SCORE" : match.sport === "tennis" ? "SETS" : "FACTS";
-  return [
-    { id: "overview", label: first },
-    { id: "lineup", label: "LINEUP" },
-    { id: "commentary", label: "COMMENTARY" },
-  ];
-}
+function Facts({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
+  const [held, setHeld] = useState<string | null>(null);
+  const sessions = (scoreboard.sessions ?? []).filter((session) => !isQualifying(session.label));
 
-function MomentumView({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
-  const accent = accentVar(sportModuleFor(match.sport).accent);
   return (
-    <div className={styles.statsGrid}>
-      <Panel title="MATCH MOMENTUM" accent={accent} className={styles.teamStatsPanel}>
-        <div className={styles.momentumHeading}>
-          <span style={{ color: match.home.color }}>{match.home.shortName}</span>
-          <small>LIVE PRESSURE</small>
-          <span style={{ color: match.away.color }}>{match.away.shortName}</span>
-        </div>
-        {scoreboard.stats.map((stat) => {
-          const total = stat.homeValue + stat.awayValue;
-          const homeShare = total === 0 ? 50 : (stat.homeValue / total) * 100;
-          return (
-            <div key={stat.label} className={styles.teamStat}>
-              <div><span>{stat.home}</span><small>{stat.label}</small><span>{stat.away}</span></div>
-              <div className={styles.teamStatMeter}>
-                <span style={{ width: `${homeShare}%`, background: match.home.color }} />
-                <span style={{ width: `${100 - homeShare}%`, background: match.away.color }} />
-              </div>
-            </div>
-          );
-        })}
-      </Panel>
-    </div>
-  );
-}
+    <div className={styles.stack}>
+      <div className="spanFull">
+        <MatchPulseHeader
+          match={match}
+          title={`${match.home.name} vs ${match.away.name}`}
+          pulse={scoreboard.pulse}
+        />
+      </div>
 
-function EventsView({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
-  return (
-    <div className={styles.statsGrid}>
-      <Panel title="MATCH EVENT LOG" accent="var(--ds-color-accent-cyan)" className={styles.timelinePanel}>
-        {scoreboard.timeline.length ? (
-          <div className={styles.timelineList}>
-            {scoreboard.timeline.map((event) => <TimelineRow key={`${event.minute}-${event.player}`} event={event} />)}
-          </div>
-        ) : <EmptyState title="Event log pending" message="Goals, cards, and substitutions will appear here." />}
-      </Panel>
-    </div>
-  );
-}
+      <section className={styles.tight}>
+        <SectionHeading label="MATCH INTEL" />
+        <MatchIntelPanel match={match} intel={scoreboard.intel} />
+      </section>
 
-function FactsView({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
-  const accent = accentVar(sportModuleFor(match.sport).accent);
-  return (
-    <div className={styles.statsGrid}>
-      <Panel title="SCORECARD" accent={statusColor(match)} className={styles.scorecardPanel}>
-        <div className={styles.scorecardState}>
-          <span className={styles.scorecardIcon} style={{ "--state-color": statusColor(match) } as CSSProperties}>
-            {match.status === "finished" ? <FlagIcon size={21} /> : <RadarIcon size={21} />}
-          </span>
-          <div>
-            <strong>{match.status === "live" ? "LIVE NOW" : match.status === "finished" ? "FULL TIME" : "PRE-MATCH"}</strong>
-            <p>{match.status === "live" ? `Live clock: ${match.liveMinute ?? "—"} minutes.` : match.resultLine ?? "Scoreboard opens when the match starts."}</p>
-          </div>
-        </div>
-        <div className={styles.scoreRows}>
-          {scoreboard.scoreRows.map((row) => (
-            <div key={row.label} className={styles.scoreRow}>
-              <span>{row.home}</span>
+      <section className={styles.tight}>
+        <SectionHeading label={match.sport === "tennis" ? "SET BY SET" : "SESSION SCORE"} />
+        {scoreboard.scoreRows.map((row) => (
+          <StatsRow key={row.label} accent={accentVar("cyan")}>
+            <span className={styles.comparisonHead}>
+              <b className="ds-tabular">{row.home}</b>
               <small>{row.label}</small>
-              <span>{row.away}</span>
-            </div>
-          ))}
+              <b className="ds-tabular">{row.away}</b>
+            </span>
+          </StatsRow>
+        ))}
+      </section>
+
+      {scoreboard.trace ? (
+        <div className="spanFull">
+          <MatchTraceChart match={match} trace={scoreboard.trace} />
         </div>
-      </Panel>
+      ) : null}
 
-      <Panel title="MATCH FACTS" accent={accent}>
-        <dl className={styles.factsList}>
-          {scoreboard.facts.map((fact) => (
-            <div key={fact.label}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>
+      {sessions.length > 0 ? (
+        <section className={styles.tight}>
+          <SectionHeading label="SESSION RESULTS" />
+          {sessions.map((session) => (
+            <StatsRow key={session.label} accent={accentVar("cyan")}>
+              <b className={styles.rowLabel} style={{ color: accentVar("cyan") }}>{session.label}</b>
+              {session.results.length === 0 ? (
+                <small style={{ color: "var(--ds-color-text-muted)" }}>Not yet run.</small>
+              ) : (
+                session.results.map((result) => (
+                  <span key={result} style={{ color: "var(--ds-color-text-default)", fontSize: "13px" }}>
+                    {result}
+                  </span>
+                ))
+              )}
+            </StatsRow>
           ))}
-        </dl>
-      </Panel>
-
-      <Panel title="TEAM STATS" accent={accent} className={styles.teamStatsPanel}>
-        <div className={styles.statsLegend}>
-          <span style={{ color: match.home.color }}>{match.home.shortName}</span>
-          <span style={{ color: match.away.color }}>{match.away.shortName}</span>
-        </div>
-        {scoreboard.stats.map((stat) => {
-          const total = stat.homeValue + stat.awayValue;
-          const homeShare = total === 0 ? 50 : (stat.homeValue / total) * 100;
-          return (
-            <div key={stat.label} className={styles.teamStat}>
-              <div><span>{stat.home}</span><small>{stat.label}</small><span>{stat.away}</span></div>
-              <div className={styles.teamStatMeter}>
-                <span style={{ width: `${homeShare}%`, background: match.home.color }} />
-                <span style={{ width: `${100 - homeShare}%`, background: match.away.color }} />
-              </div>
-            </div>
-          );
-        })}
-      </Panel>
-
-      {scoreboard.sessions ? (
-        <Panel title="SESSION RESULTS" accent={accent}>
-          <div className={styles.sessionList}>
-            {scoreboard.sessions.map((session) => (
-              <section key={session.label}>
-                <h3>{session.label}</h3>
-                {session.results.map((result) => <p key={result}>{result}</p>)}
-              </section>
-            ))}
-          </div>
-        </Panel>
+        </section>
       ) : null}
 
       {scoreboard.driverStandings ? (
-        <Panel title="DRIVER STANDINGS" accent="var(--ds-color-accent-gold)">
-          <ol className={styles.driverStandings}>
-            {scoreboard.driverStandings.map((driver, index) => <li key={driver}><span>{index + 1}</span>{driver}</li>)}
-          </ol>
-        </Panel>
+        <section className={styles.tight}>
+          <SectionHeading label="DRIVER STANDINGS" />
+          {scoreboard.driverStandings.map((driver, index) => (
+            <StatsRow key={driver} accent={index < 3 ? accentVar("gold") : undefined}>
+              <span className={styles.eventRow}>
+                <b
+                  className={styles.eventMinute}
+                  style={{ color: index < 3 ? accentVar("gold") : "var(--ds-color-text-muted)" }}
+                >
+                  {index + 1}
+                </b>
+                <span className={styles.eventCopy}>
+                  <strong>{driver}</strong>
+                </span>
+              </span>
+            </StatsRow>
+          ))}
+        </section>
       ) : null}
 
-      <Panel title="MATCH TIMELINE" accent={accent} className={styles.timelinePanel}>
-        {scoreboard.timeline.length ? (
-          <div className={styles.timelineList}>
-            {scoreboard.timeline.map((event) => <TimelineRow key={`${event.minute}-${event.player}`} event={event} />)}
-          </div>
-        ) : <EmptyState title="Timeline waiting" message="Match events will appear here once play begins." />}
-      </Panel>
-    </div>
-  );
-}
-
-function Panel({ title, accent, className, children }: { title: string; accent: string; className?: string; children: ReactNode }) {
-  return (
-    <section className={[styles.statPanel, className].filter(Boolean).join(" ")} style={{ "--panel-accent": accent } as CSSProperties}>
-      <h2>{title}</h2>
-      <div className={styles.statPanelBody}>{children}</div>
-    </section>
-  );
-}
-
-function TimelineRow({ event }: { event: MatchDetailTimelineEvent }) {
-  const icon = event.type === "goal" || event.type === "score" ? <FootballIcon size={16} /> : event.type === "substitution" ? <CheckIcon size={16} /> : <span className={event.type === "red" ? styles.redCard : styles.yellowCard} />;
-  return (
-    <div className={[styles.timelineRow, event.side === "home" ? styles.timelineHome : styles.timelineAway].join(" ")}>
-      <div className={styles.timelineCopy}>
-        <strong>{event.player}</strong>
-        {event.secondary ? <small>{event.secondary}</small> : null}
-      </div>
-      <span className={styles.timelineIcon}>{icon}</span>
-      <time>{event.minute}</time>
-    </div>
-  );
-}
-
-function LineupsView({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
-  const sportLabel = match.sport === "motorsport" ? "STARTING GRID" : match.sport === "cricket" ? "PLAYING XI" : match.sport === "basketball" ? "STARTING FIVE" : "LINEUPS";
-  return (
-    <div className={styles.lineupView}>
-      <header className={styles.lineupHeader}>
-        <GridViewIcon size={18} />
-        <span>{sportLabel}</span>
-      </header>
-      <div className={styles.lineupPitch}>
-        <LineupColumn team={match.home.name} shortName={match.home.shortName} color={match.home.color} lineup={scoreboard.homeLineup} />
-        <LineupColumn team={match.away.name} shortName={match.away.shortName} color={match.away.color} lineup={scoreboard.awayLineup} alignEnd />
-      </div>
-    </div>
-  );
-}
-
-function LineupColumn({ team, shortName, color, lineup, alignEnd = false }: { team: string; shortName: string; color: string; lineup: MatchDetailScoreboard["homeLineup"]; alignEnd?: boolean }) {
-  return (
-    <section className={[styles.lineupColumn, alignEnd ? styles.lineupColumnAway : ""].join(" ")} style={{ "--team-color": color } as CSSProperties}>
-      <header><span>{shortName}</span><small>{lineup.formation}</small></header>
-      <h2>{team}</h2>
-      <ol>
-        {lineup.players.map((player) => (
-          <li key={`${team}-${player.number}`}>
-            <span>{player.number}</span>
-            <div><strong>{player.name}</strong><small>{player.role}{player.captain ? " · C" : ""}</small></div>
-          </li>
+      <section className={styles.tight}>
+        <SectionHeading label="TEAM STATS" />
+        <TeamLegendRow match={match} />
+        {scoreboard.stats.map((stat) => (
+          <StatComparisonRow
+            key={stat.label}
+            stat={stat}
+            homeColor={match.home.color}
+            awayColor={match.away.color}
+            selected={held === stat.label}
+            onSelect={() => setHeld((current) => (current === stat.label ? null : stat.label))}
+          />
         ))}
-      </ol>
-    </section>
+      </section>
+
+      <div className="spanFull">
+        <TimelineList match={match} events={scoreboard.timeline} />
+      </div>
+    </div>
   );
 }
 
-function CommentaryView({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
-  return scoreboard.commentary.length ? (
-    <ol className={styles.commentaryList}>
-      {scoreboard.commentary.map((item) => (
-        <li key={`${item.minute}-${item.text}`}><time>{item.minute}</time><p>{item.text}</p></li>
-      ))}
-    </ol>
-  ) : <EmptyState title="No commentary yet" message="Play-by-play commentary will appear here once the match starts." />;
+/** Qualifying is the starting grid, so it lives on LINEUP rather than FACTS. */
+function isQualifying(label: string): boolean {
+  const name = label.toLowerCase().trim();
+  return name.includes("qual") || name.includes("shootout") || name === "q" || name === "sq";
 }
 
-function EmptyState({ title, message }: { title: string; message: string }) {
-  return <div className={styles.emptyState}><RadarIcon size={24} /><strong>{title}</strong><p>{message}</p></div>;
+function StartingGrid({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
+  const sessions = (scoreboard.sessions ?? []).filter((session) => isQualifying(session.label));
+  if (sessions.length === 0) {
+    return (
+      <EmptyPanel
+        title="Grid not set"
+        message="Qualifying results will lock the starting grid here once the session runs."
+      />
+    );
+  }
+  if (sessions.every((session) => session.results.length === 0)) {
+    return (
+      <EmptyPanel
+        title="Qualifying pending"
+        message="The session is on the schedule — grid order drops here when times are in."
+      />
+    );
+  }
+
+  return (
+    <div className={styles.stack}>
+      {sessions.map((session) => {
+        const sprint = session.label.toLowerCase().includes("sprint");
+        const accent = sprint ? accentVar("pink") : accentVar("cyan");
+        return (
+          <section key={session.label} className={`${styles.tight} spanFull`}>
+            <SectionHeading label={sprint ? "SPRINT QUALIFYING" : "STARTING GRID"} />
+            {session.results.map((entry, index) => {
+              const parsed = parseGridEntry(entry);
+              const pole = index === 0 && !sprint;
+              return (
+                <StatsRow key={entry} accent={pole ? accentVar("gold") : accent} selected={pole}>
+                  <span className={styles.eventRow}>
+                    <b
+                      className={styles.eventMinute}
+                      style={{ color: pole ? accentVar("gold") : index < 3 ? accent : "var(--ds-color-text-muted)" }}
+                    >
+                      P{parsed.position ?? index + 1}
+                    </b>
+                    <span className={styles.eventCopy}>
+                      <strong>{parsed.driver}</strong>
+                      {parsed.constructor ? <small>{parsed.constructor}</small> : null}
+                    </span>
+                    {pole ? (
+                      <b className={styles.rowLabel} style={{ color: accentVar("gold") }}>POLE</b>
+                    ) : null}
+                    {parsed.time ? (
+                      <b
+                        className="ds-tabular font-display"
+                        style={{ fontSize: "12px", color: pole ? accentVar("gold") : "var(--ds-color-text-muted)" }}
+                      >
+                        {parsed.time}
+                      </b>
+                    ) : null}
+                  </span>
+                </StatsRow>
+              );
+            })}
+          </section>
+        );
+      })}
+    </div>
+  );
 }
 
-function statusColor(match: SportMatch): string {
-  if (match.status === "live") return "var(--ds-color-danger)";
-  if (match.status === "finished") return "var(--ds-color-text-muted)";
-  return "var(--ds-color-accent-gold)";
+/** `1. Verstappen · Red Bull (1:12.844)` and `P1 Verstappen` both parse here. */
+function parseGridEntry(entry: string): {
+  position: number | null;
+  driver: string;
+  constructor: string | null;
+  time: string | null;
+} {
+  const positionMatch = /^\s*P?(\d+)[.)]?\s*/.exec(entry);
+  const position = positionMatch ? Number.parseInt(positionMatch[1], 10) : null;
+  const stripped = entry.replace(/^\s*P?\d+[.)]?\s*/, "").trim();
+  const timeMatch = /\(([^)]+)\)\s*$/.exec(stripped);
+  const time = timeMatch ? timeMatch[1].trim() : null;
+  const withoutTime = timeMatch ? stripped.slice(0, timeMatch.index).trim() : stripped;
+  const parts = withoutTime.split(" · ");
+  const driver = parts[0]?.trim() || entry;
+  const constructor = parts.length > 1 && parts[1].trim() ? parts[1].trim() : null;
+  return { position, driver, constructor, time };
 }

@@ -65,5 +65,24 @@ export const pickMarkets: PickMarket[] = [...trendingMarkets.map(normalizedTrend
 const pickMarketIndex = new Map(pickMarkets.map((market) => [market.id, market]));
 export const allPickMarketIds = pickMarkets.map((market) => market.id);
 export function pickMarketById(id: string): PickMarket | undefined { return pickMarketIndex.get(id); }
-export function pickMarketsForMatch(matchId: string): PickMarket[] { return pickMarkets.filter((market) => market.matchId === matchId); }
+/**
+ * The markets on one fixture, in the order the match detail lists them: live
+ * first, then what is still to come, then what has closed, then what has been
+ * settled — and inside each band, whichever closes soonest.
+ */
+export function pickMarketsForMatch(matchId: string): PickMarket[] {
+  const rank = (market: PickMarket): number => {
+    switch (market.status) {
+      case "live": return 0;
+      case "closed":
+      case "unresolved": return 2;
+      case "settled":
+      case "voided": return 3;
+      default: return 1;
+    }
+  };
+  return pickMarkets
+    .filter((market) => market.matchId === matchId)
+    .toSorted((a, b) => rank(a) - rank(b) || Date.parse(a.closesAt ?? "9999-12-31") - Date.parse(b.closesAt ?? "9999-12-31"));
+}
 export function hasLinkedFixture(market: PickMarket): boolean { return Boolean(market.matchId && matchById(market.matchId)); }

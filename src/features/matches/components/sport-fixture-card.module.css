@@ -73,47 +73,6 @@
   transform: translateY(0);
 }
 
-.badge {
-  position: relative;
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-}
-
-.badgeShadow,
-.badgeFace {
-  position: absolute;
-  inset: 0;
-  clip-path: var(--ds-clip-octagon);
-}
-
-.badgeShadow {
-  transform: translateY(5px);
-  background: color-mix(in srgb, var(--badge-primary) 42%, black);
-}
-
-.badgeFace {
-  bottom: 5px;
-  display: grid;
-  overflow: hidden;
-  place-items: center;
-  background: var(--badge-primary);
-  color: var(--badge-text);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.badgeFace::after {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 11%;
-  content: "";
-  background: var(--badge-secondary);
-}
-
 .setChip {
   border: 1px solid color-mix(in srgb, var(--ds-color-accent-cyan) 35%, transparent);
   border-radius: var(--ds-radius-md);

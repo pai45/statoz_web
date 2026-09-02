@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 import {
+  AccentPanel,
   accentVar,
   BoltIcon,
   Button,
@@ -22,8 +23,6 @@ import { formatInt } from "@/shared/utils";
 import { entryCost, questionsPerSet } from "../constants";
 import { modeAccent, modeBlurb, modeGlyph, modeLabels, modeRewards } from "@/mocks/games/quiz";
 import type { QuizMode } from "../types";
-
-import { QuizPanel } from "./quiz-panel";
 
 /**
  * What a set costs and pays, shown before it opens.
@@ -116,7 +115,7 @@ export function QuizBriefing({
         </div>
 
         <div className="mt-2">
-          <QuizPanel accent={accent} glow>
+          <AccentPanel accent={accent} glow>
             <div className="p-4">
               <div className="flex items-center gap-3">
                 <Glyph
@@ -168,7 +167,7 @@ export function QuizBriefing({
                 />
               </div>
             </div>
-          </QuizPanel>
+          </AccentPanel>
         </div>
 
         <div

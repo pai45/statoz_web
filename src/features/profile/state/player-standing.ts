@@ -3,6 +3,9 @@
 import { useMemo } from "react";
 
 import { avatarOptionById } from "@/features/onboarding";
+import { useEconomy } from "@/features/economy";
+import { playerCardForId, portraitForCard } from "@/features/packs";
+import { shopFrames } from "@/features/shop";
 
 import { usePlayerProgress } from "./player-progress";
 import { useIsHydrated, useProfileIdentity } from "./profile-identity";
@@ -26,6 +29,7 @@ export type PlayerStanding = {
    * the player before it knows their XP — the server has no way to know it.
    */
   ready: boolean;
+  frameColor?: string;
 };
 
 /**
@@ -39,15 +43,20 @@ export function usePlayerStanding(): PlayerStanding {
   const hydrated = useIsHydrated();
   const identity = useProfileIdentity();
   const progress = usePlayerProgress();
+  const economy = useEconomy();
 
   return useMemo(
     () => ({
       displayName: identity.displayName || playerDisplayName,
-      avatarSrc: avatarOptionById(identity.avatarId).src,
+      avatarSrc: (() => {
+        const card = playerCardForId(identity.avatarId);
+        return card && economy.owned.avatarIds.includes(card.id) ? portraitForCard(card) ?? avatarOptionById(identity.avatarId).src : avatarOptionById(identity.avatarId).src;
+      })(),
       totalXp: progress.totalXp,
       level: progress.level,
       ready: hydrated,
+      frameColor: economy.equipped.frameId ? shopFrames.find((frame) => frame.id === economy.equipped.frameId)?.color : undefined,
     }),
-    [hydrated, identity.avatarId, identity.displayName, progress.totalXp, progress.level],
+    [economy.equipped.frameId, economy.owned.avatarIds, hydrated, identity.avatarId, identity.displayName, progress.totalXp, progress.level],
   );
 }

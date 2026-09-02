@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { accentVar } from "@/design-system";
 import { AuthBoundary } from "@/features/auth";
-import { isLoadoutComplete, useDecks } from "@/features/cards-decks";
+import { activeLoadout, isLoadoutComplete, useDecks } from "@/features/cards-decks";
 import {
   claimPack,
   rollStarterPackFor,
@@ -28,6 +28,7 @@ import { SportQuiz } from "../quiz";
 import { TennisRally } from "../tennis";
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../types";
+import { GameLandingAdProvider } from "../shared/components/game-landing-ad";
 
 import { GamePlaceholder } from "./game-placeholder";
 
@@ -85,7 +86,9 @@ export function GameLauncher({ game, entry }: GameLauncherProps) {
       returnTo={entry.href}
       fullScreen
     >
-      <AuthenticatedGameLauncher game={game} entry={entry} />
+      <GameLandingAdProvider>
+        <AuthenticatedGameLauncher game={game} entry={entry} />
+      </GameLandingAdProvider>
     </AuthBoundary>
   );
 }
@@ -105,7 +108,7 @@ function AuthenticatedGameLauncher({ game, entry }: GameLauncherProps) {
     return <StarterPackGate game={game} entry={entry} sport={sport} />;
   }
 
-  if (entry.requiresDeck && !isLoadoutComplete(decks.loadouts[sport])) {
+  if (entry.requiresDeck && !isLoadoutComplete(activeLoadout(decks, sport))) {
     return <DeckRequired sport={sport} entry={entry} />;
   }
 
@@ -114,7 +117,7 @@ function AuthenticatedGameLauncher({ game, entry }: GameLauncherProps) {
 
 function DeckRequired({ sport, entry }: { sport: Sport; entry: GameEntry }) {
   const accent = accentVar(entry.accent);
-  return <div className="grid min-h-dvh place-items-center px-5 text-center"><div className="max-w-md border border-border bg-surface-raised p-6"><p className="font-display text-2xs font-black tracking-ultra text-muted">{"// LOADOUT REQUIRED"}</p><h1 className="mt-3 font-display text-2xl font-black" style={{ color: accent }}>{entry.title}</h1><p className="mt-3 text-xs leading-relaxed text-muted">Your saved lineup is incomplete or stale. Repair every required slot before entering the game.</p><Link href={`/decks/${sport}`} className="mt-6 grid h-12 place-items-center font-display text-xs font-black text-background" style={{ background: accent }}>OPEN LOADOUT EDITOR</Link></div></div>;
+  return <div className="grid min-h-dvh place-items-center px-5 text-center"><div className="max-w-md border border-border bg-surface-raised p-6"><p className="font-display text-2xs font-black tracking-ultra text-muted">{"// LOADOUT REQUIRED"}</p><h1 className="mt-3 font-display text-2xl font-black" style={{ color: accent }}>{entry.title}</h1><p className="mt-3 text-xs leading-relaxed text-muted">Your active deck profile is incomplete or stale. Repair every required slot before entering the game.</p><Link href={`/decks/${sport}?returnTo=${encodeURIComponent(entry.href)}`} className="mt-6 grid h-12 place-items-center font-display text-xs font-black text-background" style={{ background: accent }}>OPEN LOADOUT EDITOR</Link></div></div>;
 }
 
 /**

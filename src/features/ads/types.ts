@@ -4,9 +4,12 @@ export type AdPlacementId =
   | "games-catalog"
   | "profile-dossier"
   | "history-feed"
-  | "leaderboard-rail";
+  | "leaderboard-rail"
+  | "platform-left-rail"
+  | "platform-right-rail"
+  | "game-landing-anchor";
 
-export type AdFormat = "horizontal" | "rectangle";
+export type AdFormat = "horizontal" | "rectangle" | "skyscraper" | "anchor";
 
 export type AdCreative = "campaign" | "wireframe";
 

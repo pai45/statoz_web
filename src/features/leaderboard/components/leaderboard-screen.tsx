@@ -166,6 +166,7 @@ function LeaderboardBoard({
       meta={meta}
       accent={accent}
       avatarSrc={player?.avatarSrc}
+      frameColor={player?.frameColor}
       onOpen={user.team ? undefined : () => router.push("/profile")}
     />
   ) : null;
@@ -210,6 +211,7 @@ function LeaderboardBoard({
                 meta={meta}
                 accent={accent}
                 userAvatarSrc={player?.avatarSrc}
+                userFrameColor={player?.frameColor}
                 onOpen={onOpen}
               />
 
@@ -226,6 +228,7 @@ function LeaderboardBoard({
                         accent={accent}
                         meta={meta}
                         avatarSrc={player?.avatarSrc}
+                        frameColor={player?.frameColor}
                         onOpen={onOpen}
                       />
                     </div>

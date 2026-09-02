@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { accentVar, Button, Glyph, hudChamferPath, withAlpha } from "@/design-system";
@@ -17,11 +18,8 @@ import styles from "./tennis.module.css";
 /**
  * The match lobby — the web port of `_PreviewScreen` in `tennis_hub.dart`.
  *
- * Flutter's version also carries a Deck Builder and a Match History button.
- * Neither screen exists on the web, so neither button does — the same call
- * Final Over's lobby made about Flutter's deck builder and shop. Everything
- * else is here: the system strip, the emblem, the three career figures, and the
- * one CTA that either starts a match or resumes the one left unfinished.
+ * The system strip, emblem, career figures, match CTA, and deck entry preserve
+ * the same information hierarchy while adapting to the web shell.
  */
 
 export type TennisLobbyProps = {
@@ -141,13 +139,19 @@ export function TennisLobby({
 
         <div className={`${styles.lobbyIn} mt-4`} style={delayed(lobbyBriefDelayMs)}>
           <ControlBrief />
-          <a
+          <Link
+            href="/decks/tennis?returnTo=/play/tennis-rally"
+            className="mt-4 block text-center font-display text-2xs font-black tracking-wide text-lime underline-offset-4 hover:underline"
+          >
+            DECK BUILDER
+          </Link>
+          <Link
             href={backHref}
             className="mt-4 block text-center font-bold leading-compact text-muted underline-offset-4 hover:underline"
             style={{ fontSize: "var(--ds-text-2xs)" }}
           >
             Back to Tennis games
-          </a>
+          </Link>
         </div>
       </div>
     </div>

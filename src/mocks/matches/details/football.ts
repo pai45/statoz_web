@@ -1,16 +1,6 @@
 import type { DetailConfig } from "./shared";
 
 export const footballDetail: DetailConfig = {
-  mainQuiz: {
-    title: "Scoreline Quiz",
-    subtitle: "Final score and scoring market",
-    questions: 2,
-    rewardXp: 150,
-  },
-  eventQuiz: {
-    subtitle: "Winner, first goal, and discipline",
-    rewardXp: 230,
-  },
   lineup: {
     formation: "4-3-3",
     roles: ["GK", "RB", "CB", "CB", "LB", "CM", "CM", "RW", "AM", "LW", "ST"],

@@ -1,24 +1,24 @@
 import type { CSSProperties, ReactNode } from "react";
 
-import { accentVar, bottomCutPath, withAlpha } from "@/design-system";
+import { accentVar } from "../../../tokens/colors";
+import { withAlpha } from "../../../tokens/elevation";
+import { bottomCutPath, shape } from "../../../tokens/shape";
 
 /**
- * The Knowledge Arena's surface: a flat dark plate, square across the top with
- * both bottom corners cut, inside a one-pixel accent edge.
+ * A flat dark plate, square across the top with both bottom corners cut, inside
+ * a one-pixel accent edge.
  *
  * The app draws it as a clipped fill with a stroke painted over the top. A clip
  * path crops a border away on the web, so the edge is a clipped plate with the
  * fill inset a pixel inside it — the construction every chamfered surface in
  * this codebase uses.
  *
- * `glow` is for the one panel a screen wants looked at first, and nothing else:
- * the entry briefing's set card, and the banner that names a set just unlocked.
+ * `glow` is for the one panel a screen wants looked at first, and nothing else.
  */
 
-const cut = 12;
-
-export type QuizPanelProps = {
+export type AccentPanelProps = {
   children: ReactNode;
+  /** CSS color driving the edge and the optional bloom. */
   accent?: string;
   /** Blooms the accent behind the plate. One per screen, at most. */
   glow?: boolean;
@@ -26,14 +26,14 @@ export type QuizPanelProps = {
   style?: CSSProperties;
 };
 
-export function QuizPanel({
+export function AccentPanel({
   children,
   accent = accentVar("cyan"),
   glow = false,
   className,
   style,
-}: QuizPanelProps) {
-  const clip: CSSProperties = { clipPath: bottomCutPath(cut) };
+}: AccentPanelProps) {
+  const clip: CSSProperties = { clipPath: bottomCutPath(shape.panelCut) };
 
   return (
     <div className={["relative", className ?? ""].filter(Boolean).join(" ")} style={style}>

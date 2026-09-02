@@ -11,7 +11,11 @@ import {
   withAlpha,
 } from "@/design-system";
 import { sportModuleFor, sportOrder, type Sport } from "@/domain/sports";
-import { isLoadoutComplete, useDecks } from "@/features/cards-decks";
+import {
+  activeDeck,
+  isLoadoutComplete,
+  useDecks,
+} from "@/features/cards-decks";
 import { SportIcon } from "@/features/matches";
 
 import { ProfilePanel } from "./profile-panel";
@@ -19,14 +23,8 @@ import { ProfilePanel } from "./profile-panel";
 /**
  * ALL DECKS — how many of the five sports have a squad behind them.
  *
- * Flutter counts decks a builder assembled; the web has no deck builder, and it
- * does not need one: a sport's starter pack deals exactly the loadout its game
- * requires, so a claimed pack *is* that sport's deck. The readout means the same
- * thing and is derived from the thing that actually gates a game.
- *
- * The app's card pushes into a deck manager. That route has no page yet, so this
- * is a readout rather than a link — a card that navigates nowhere would be worse
- * than one that does not offer to.
+ * Readiness is derived from the active named profile, matching the loadout that
+ * gates each deck-dependent game. The panel links into the shared Deck Locker.
  */
 
 const cyan = accentVar("cyan");
@@ -34,7 +32,10 @@ const success = feedbackVar("success");
 
 export function LoadoutCard() {
   const decks = useDecks();
-  const ready = sportOrder.filter((sport) => isLoadoutComplete(decks.loadouts[sport]));
+  const deck = activeDeck(decks);
+  const ready = sportOrder.filter((sport) =>
+    isLoadoutComplete(deck.loadouts[sport]),
+  );
   const allReady = ready.length === sportOrder.length;
   const accent = allReady ? success : cyan;
 
@@ -56,7 +57,10 @@ export function LoadoutCard() {
           <div className="min-w-0 flex-1">
             <h2
               className="font-display font-black leading-none"
-              style={{ fontSize: "11px", letterSpacing: "var(--ds-tracking-wide)" }}
+              style={{
+                fontSize: "11px",
+                letterSpacing: "var(--ds-tracking-wide)",
+              }}
             >
               ALL DECKS
             </h2>
@@ -89,7 +93,7 @@ export function LoadoutCard() {
             <li key={sport} className="min-w-0 flex-1">
               <SportReadyNode
                 sport={sport}
-                ready={isLoadoutComplete(decks.loadouts[sport])}
+                ready={isLoadoutComplete(deck.loadouts[sport])}
               />
             </li>
           ))}
@@ -128,7 +132,9 @@ function SportReadyNode({ sport, ready }: { sport: Sport; ready: boolean }) {
         background: ready
           ? `color-mix(in srgb, ${accent} 12%, var(--ds-color-background-elevated))`
           : withAlpha("var(--ds-color-background-primary)", 0.44),
-        borderColor: ready ? withAlpha(accent, 0.65) : "var(--ds-color-border-strong)",
+        borderColor: ready
+          ? withAlpha(accent, 0.65)
+          : "var(--ds-color-border-strong)",
       }}
     >
       <SportIcon

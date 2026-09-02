@@ -132,35 +132,6 @@
 
 .summaryScoreEmpty { color: var(--ds-color-text-muted); }
 
-.teamBadge {
-  position: relative;
-  display: inline-grid;
-  flex: none;
-  place-items: center;
-  clip-path: var(--ds-clip-octagon);
-}
-
-.teamBadgeShadow,
-.teamBadgeFace {
-  position: absolute;
-  inset: 0;
-  clip-path: inherit;
-}
-
-.teamBadgeShadow { transform: translateY(3px); background: color-mix(in srgb, var(--team-secondary) 64%, var(--ds-color-fixture-shadow)); }
-
-.teamBadgeFace {
-  display: grid;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--team-primary) 68%, var(--ds-color-text-default));
-  background: linear-gradient(145deg, var(--team-primary), var(--team-secondary));
-  color: var(--team-ink);
-  font-family: var(--font-display, ui-sans-serif, system-ui, sans-serif);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: -.04em;
-}
-
 .summarySplit { display: flex; height: 3px; margin: 0 -2px; }
 .summarySplit span { flex: 1; }
 

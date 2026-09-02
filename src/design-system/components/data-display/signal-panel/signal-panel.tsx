@@ -31,8 +31,16 @@ const RAIL_INSET = "px-3.5";
  * The signature StatOz surface: a chamfered plate with a notched top-right
  * edge, an accent hairline across the top, and an accent shadow beneath.
  *
- * Built from three stacked layers that share one clip path — a lift, an accent
- * edge, and the inset fill — so the cut corners stay crisp at any size.
+ * Built from stacked layers that share one clip path — a lift, an accent edge,
+ * and the fill — so the cut corners stay crisp at any size. The content column
+ * carries the clip too, because the bottom rail paints an opaque background of
+ * its own and would otherwise square the panel off at exactly the corners the
+ * silhouette cuts.
+ *
+ * The accent edge is drawn one pixel *outside* the fill rather than under it.
+ * The app strokes the silhouette rather than insetting a fill, and keeping the
+ * ring outside is what makes that faithful: no rail, badge, or meter background
+ * can reach it, so the edge stays unbroken the whole way round the shape.
  *
  * Content sits in three regions: a fixed top rail carrying the tag, a flexible
  * body, and an optional bottom rail. The rails are structural rather than
@@ -65,7 +73,7 @@ export function SignalPanel({
       {lifted ? (
         <div
           aria-hidden
-          className="absolute inset-0 translate-y-(--ds-shape-signal-lift)"
+          className="absolute -inset-px translate-y-(--ds-shape-signal-lift)"
           style={{
             ...clip,
             background:
@@ -85,13 +93,14 @@ export function SignalPanel({
           .filter(Boolean)
           .join(" ")}
       >
-        {/* Accent edge — the inset fill below leaves 1px of it showing. It
-            brightens on hover and goes solid under keyboard focus. Background
-            comes from classes, not inline style, so the variants can win. */}
+        {/* Accent edge — a 1px ring standing one pixel proud of the fill, so
+            nothing painted inside the panel can break it. It brightens on hover
+            and goes solid under keyboard focus. Background comes from classes,
+            not inline style, so the variants can win. */}
         <div
           aria-hidden
           className={[
-            "absolute inset-0 transition-[background-color] duration-150",
+            "absolute -inset-px transition-[background-color] duration-150",
             "bg-[color-mix(in_srgb,var(--panel-accent)_55%,transparent)]",
             interactive
               ? "group-hover:bg-[color-mix(in_srgb,var(--panel-accent)_74%,transparent)] group-has-focus-visible:bg-(--panel-accent)"
@@ -101,13 +110,13 @@ export function SignalPanel({
             .join(" ")}
           style={clip}
         />
-        {/* The fill pulls back to 3px under keyboard focus, turning the 1px
-            accent edge into a ring that follows the chamfer exactly — the clip
-            path would have cut away a real outline. */}
+        {/* The fill pulls back to 3px under keyboard focus, widening the edge
+            into a ring that follows the chamfer exactly — the clip path would
+            have cut away a real outline. */}
         <div
           aria-hidden
           className={[
-            "absolute inset-px",
+            "absolute inset-0",
             interactive ? "group-has-focus-visible:inset-0.75" : "",
           ]
             .filter(Boolean)
@@ -118,18 +127,22 @@ export function SignalPanel({
               "color-mix(in srgb, var(--panel-accent) 4.5%, var(--ds-color-background-elevated))",
           }}
         />
-        {/* The one bright line on the panel. It runs from the top-left corner
-            cut to where the notch steps in, so the whole flat top edge is lit. */}
+        {/* The one bright line on the panel. It stops where the notch steps in
+            — a pixel further and it would hang off the cut edge, since it sits
+            outside the clipped content column. */}
         <div
           aria-hidden
-          className="absolute top-0 h-0.5 left-(--ds-shape-signal-cut) right-(--ds-shape-signal-notch)"
+          className="absolute top-0 h-0.5 left-(--ds-shape-signal-cut) right-[calc(var(--ds-shape-signal-notch)+var(--ds-shape-signal-step))]"
           style={{
             background:
               "color-mix(in srgb, var(--panel-accent) 80%, transparent)",
           }}
         />
 
-        <div className="relative z-10 flex h-full w-full flex-col">
+        <div
+          className="relative z-10 flex h-full w-full flex-col"
+          style={clip}
+        >
           {tag || meta ? (
             <div
               className={`flex h-9 shrink-0 items-center justify-between gap-2 ${RAIL_INSET}`}

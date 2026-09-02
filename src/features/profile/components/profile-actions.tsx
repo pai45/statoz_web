@@ -24,10 +24,8 @@ import styles from "./profile.module.css";
  * The utility rows that close the dossier, and the settings sheet behind the
  * last of them.
  *
- * Three of the four destinations — All Cards, How To Play, Talk to StatOz — are
- * screens the web has not built. Their rows stay, because the profile is where
- * a player looks for them, but they are marked and inert rather than wired to a
- * route with no page behind it.
+ * All four rows go somewhere now; `NavRow` stays a button because the last of
+ * them opens a sheet rather than a route.
  */
 
 const cyan = accentVar("cyan");
@@ -40,29 +38,16 @@ export function ProfileActions() {
     <>
       <ul className="flex flex-col gap-2.5">
         <li>
-          <Link
-            href="/cards"
-            className={`flex w-full items-center gap-3 border px-4 py-4 text-left ${styles.pressable} cursor-pointer`}
-            style={{
-              background: withAlpha("var(--ds-color-background-secondary)", 0.5),
-              borderColor: "var(--ds-color-border-default)",
-            }}
-          >
-            <span aria-hidden style={{ color: cyan }}>
-              <StyleIcon size={20} />
-            </span>
-            <span className="flex-1 text-base font-semibold leading-none">All Cards</span>
-            <ChevronRightIcon size={20} className="text-muted" />
-          </Link>
+          <NavLink icon={<StyleIcon size={20} />} label="All Cards" href="/cards" />
         </li>
         <li>
-          <NavRow icon={<MenuBookIcon size={20} />} label="How To Play" pending />
+          <NavLink icon={<MenuBookIcon size={20} />} label="How To Play" href="/how-to-play" />
         </li>
         <li>
-          <NavRow
+          <NavLink
             icon={<HeadsetIcon size={20} />}
             label="Talk to StatOz 1:1"
-            pending
+            href="/profile/talk-to-statoz"
           />
         </li>
         <li>
@@ -81,47 +66,59 @@ export function ProfileActions() {
   );
 }
 
-function NavRow({
+/** A row that goes somewhere. Same plate as {@link NavRow}, different element. */
+function NavLink({
   icon,
   label,
-  onClick,
-  pending = false,
+  href,
 }: {
   icon: ReactNode;
   label: string;
-  onClick?: () => void;
-  pending?: boolean;
+  href: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={pending}
-      aria-disabled={pending || undefined}
-      className={[
-        "flex w-full items-center gap-3 border px-4 py-4 text-left",
-        pending ? "cursor-default" : `${styles.pressable} cursor-pointer`,
-      ].join(" ")}
+    <Link
+      href={href}
+      className={`flex w-full items-center gap-3 border px-4 py-4 text-left ${styles.pressable} cursor-pointer`}
       style={{
         background: withAlpha("var(--ds-color-background-secondary)", 0.5),
         borderColor: "var(--ds-color-border-default)",
-        opacity: pending ? 0.55 : undefined,
       }}
     >
       <span aria-hidden style={{ color: cyan }}>
         {icon}
       </span>
       <span className="flex-1 text-base font-semibold leading-none">{label}</span>
-      {pending ? (
-        <span
-          className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "8px", letterSpacing: "var(--ds-tracking-wide)" }}
-        >
-          SOON
-        </span>
-      ) : (
-        <ChevronRightIcon size={20} className="text-muted" />
-      )}
+      <ChevronRightIcon size={20} className="text-muted" />
+    </Link>
+  );
+}
+
+/** A row that opens something in place — the settings sheet. */
+function NavRow({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: ReactNode;
+  label: string;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center gap-3 border px-4 py-4 text-left ${styles.pressable} cursor-pointer`}
+      style={{
+        background: withAlpha("var(--ds-color-background-secondary)", 0.5),
+        borderColor: "var(--ds-color-border-default)",
+      }}
+    >
+      <span aria-hidden style={{ color: cyan }}>
+        {icon}
+      </span>
+      <span className="flex-1 text-base font-semibold leading-none">{label}</span>
+      <ChevronRightIcon size={20} className="text-muted" />
     </button>
   );
 }

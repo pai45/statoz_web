@@ -1,6 +1,7 @@
-import { accentVar, Badge, Monogram, SignalPanel } from "@/design-system";
+import { accentVar, Badge, SignalPanel } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
 
+import { TeamBadge } from "./team-badge";
 import { TileFooter } from "./tile-footer";
 import { TileMetaRow } from "./tile-meta-row";
 
@@ -10,7 +11,7 @@ export type TrendingPredictCardProps = {
   answered?: boolean;
 };
 
-const VIOLET = accentVar("violet");
+const PRIMARY_ACCENT = accentVar("cyan");
 
 /** An open prediction mission on a fixture. */
 export function TrendingPredictCard({
@@ -19,14 +20,14 @@ export function TrendingPredictCard({
 }: TrendingPredictCardProps) {
   return (
     <SignalPanel
-      accent={VIOLET}
-      tag={<Badge accent={VIOLET}>PREDICT</Badge>}
+      accent={PRIMARY_ACCENT}
+      tag={<Badge accent={PRIMARY_ACCENT}>PREDICT</Badge>}
       href={`/matches/${match.id}`}
       label={`Predict ${match.home.name} versus ${match.away.name}`}
       footer={
         <TileFooter
           status={answered ? "ANSWERS LOCKED" : `+${match.rewardXp} XP MISSION`}
-          accent={answered ? "var(--ds-color-success)" : VIOLET}
+          accent={PRIMARY_ACCENT}
           volumeOz={match.volumeOz}
         />
       }
@@ -36,24 +37,14 @@ export function TrendingPredictCard({
       {/* The matchup is this tile's focal element, so it carries the weight the
           other kinds give to a figure. */}
       <div className="flex flex-1 items-center justify-between gap-2">
-        <Monogram
-          name={match.home.name}
-          initials={match.home.shortName}
-          accent={match.home.color}
-          size={32}
-        />
+        <TeamBadge team={match.home} size={32} />
         <span
           className="font-display text-2xs font-black tracking-label"
-          style={{ color: VIOLET }}
+          style={{ color: PRIMARY_ACCENT }}
         >
           VS
         </span>
-        <Monogram
-          name={match.away.name}
-          initials={match.away.shortName}
-          accent={match.away.color}
-          size={32}
-        />
+        <TeamBadge team={match.away} size={32} />
       </div>
 
       <p className="truncate font-display text-sm font-black tracking-label">

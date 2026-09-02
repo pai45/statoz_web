@@ -71,6 +71,8 @@ const serverSnapshot: EconomySnapshot = Object.freeze(freshEconomy());
 const listeners = new Set<() => void>();
 let cachedSignature: string | null = null;
 let cachedValue: EconomySnapshot = serverSnapshot;
+let volatileSnapshot: EconomySnapshot | null = null;
+let storageUnavailable = false;
 
 function stringList(value: unknown): string[] {
   return Array.isArray(value)
@@ -180,8 +182,11 @@ function coerceEconomy(value: unknown): EconomySnapshot {
 
 function readStorage(key: string): string | null {
   try {
-    return window.localStorage.getItem(key);
+    const value = window.localStorage.getItem(key);
+    storageUnavailable = false;
+    return value;
   } catch {
+    storageUnavailable = true;
     return null;
   }
 }
@@ -220,6 +225,10 @@ function mergeLegacyClaims(
 }
 
 function getSnapshot(): EconomySnapshot {
+  // Some privacy modes and embedded browsers expose localStorage but reject
+  // reads/writes. Keep the latest in-memory state alive rather than resetting
+  // the wallet after every notification.
+  if (storageUnavailable && volatileSnapshot) return volatileSnapshot;
   const raw = readStorage(storageKey);
   const legacyRaw = readStorage(legacyPacksKey);
   const signature = `${raw ?? ""}\u0000${legacyRaw ?? ""}`;
@@ -264,7 +273,11 @@ function write(next: EconomySnapshot): EconomySnapshot {
   const safe = coerceEconomy(next);
   try {
     window.localStorage.setItem(storageKey, JSON.stringify(safe));
+    volatileSnapshot = null;
+    storageUnavailable = false;
   } catch {
+    volatileSnapshot = safe;
+    storageUnavailable = true;
     cachedValue = safe;
   }
   notify();

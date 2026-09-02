@@ -4,7 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 
-import { accentVar, CopyIcon, EditIcon, withAlpha } from "@/design-system";
+import {
+  accentVar,
+  ChevronRightIcon,
+  CopyIcon,
+  EditIcon,
+  GroupsIcon,
+  withAlpha,
+} from "@/design-system";
 import {
   levelFromXp,
   trackShortLabels,
@@ -12,6 +19,10 @@ import {
   type TrackXp,
 } from "@/domain/progression";
 import { avatarOptionById, BannerVisual, profileBannerOptionById } from "@/features/onboarding";
+import { useEconomy } from "@/features/economy";
+import { useFriendCounts } from "@/features/friends";
+import { allPlayerCards, portraitForCard } from "@/features/packs";
+import { AvatarFrameRing, BannerArt, shopBanners, shopFrames } from "@/features/shop";
 import { publicAsset } from "@/shared/config";
 
 import type { PlayerProgress } from "../state/player-progress";
@@ -35,6 +46,8 @@ import styles from "./profile.module.css";
  */
 
 const cyan = accentVar("cyan");
+const violet = accentVar("violet");
+const success = "var(--ds-color-success)";
 
 export type ProfileHeroProps = {
   progress: PlayerProgress;
@@ -55,15 +68,25 @@ export function ProfileHero({
   onEditAvatar,
   onEditBanner,
 }: ProfileHeroProps) {
+  const economy = useEconomy();
   const banner = profileBannerOptionById(bannerId);
   const avatar = avatarOptionById(avatarId);
+  const purchasedCard = allPlayerCards.find((card) => card.id === avatarId && economy.owned.avatarIds.includes(card.id));
+  const purchasedBanner = shopBanners.find((entry) => entry.id === bannerId && economy.owned.bannerIds.includes(entry.id));
+  const frame = economy.equipped.frameId ? shopFrames.find((entry) => entry.id === economy.equipped.frameId) : null;
 
   return (
     <section className="relative">
       {/* Banner. Flat art with a blend into the page, so the card below it
           appears to sit on the same surface rather than on a photograph. */}
       <div className="absolute inset-x-0 top-0 h-51.5 overflow-hidden lg:h-60">
-        <BannerVisual banner={banner} />
+        {purchasedBanner ? (
+          <div className="absolute inset-0">
+            <BannerArt banner={purchasedBanner} />
+          </div>
+        ) : (
+          <BannerVisual banner={banner} />
+        )}
         <div
           aria-hidden
           className="absolute inset-x-0 bottom-0 h-19"
@@ -120,8 +143,9 @@ export function ProfileHero({
 
               <div className="mt-3 lg:mt-0 lg:min-w-0 lg:flex-1">
                 <MasteryStrip xpByTrack={progress.xpByTrack} tracks={progress.tracks} />
-                <div className="mt-3">
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2.5">
                   <PlayerTagPill tag={playerTag} />
+                  <FriendsPill />
                 </div>
               </div>
             </div>
@@ -131,7 +155,7 @@ export function ProfileHero({
 
       {/* The avatar straddles the banner and the card, so it sits outside both. */}
       <div className="absolute left-7 top-18 lg:left-10 lg:top-21">
-        <Avatar src={avatar.src} label={avatar.label} onEdit={onEditAvatar} />
+        <Avatar src={purchasedCard ? portraitForCard(purchasedCard)! : avatar.src} label={purchasedCard?.shortName ?? avatar.label} frameColor={frame?.color} onEdit={onEditAvatar} />
       </div>
     </section>
   );
@@ -176,10 +200,12 @@ function EditButton({
 function Avatar({
   src,
   label,
+  frameColor,
   onEdit,
 }: {
   src: string;
   label: string;
+  frameColor?: string;
   onEdit: () => void;
 }) {
   return (
@@ -194,13 +220,15 @@ function Avatar({
           boxShadow: `0 4px 0 var(--ds-color-fixture-shadow), 0 0 18px -6px ${withAlpha(cyan, 0.75)}`,
         }}
       >
-        <Image
-          src={publicAsset(src)}
-          alt={label}
-          fill
-          sizes="8rem"
-          className="object-cover object-top"
-        />
+        <AvatarFrameRing color={frameColor} glow className="h-full w-full">
+          <Image
+            src={publicAsset(src)}
+            alt={label}
+            fill
+            sizes="8rem"
+            className="object-cover object-top"
+          />
+        </AvatarFrameRing>
       </div>
 
       <EditButton
@@ -303,6 +331,77 @@ function MasteryChip({ label, level }: { label: string; level: number }) {
           L{level}
         </span>
       </span>
+    </span>
+  );
+}
+
+/* ---- The way into the arena ----------------------------------------------- */
+
+/**
+ * How many friends you have, how many are on, and the way through to them.
+ *
+ * Interactive, so it takes a faint cyan edge — but no glow: the level chip and
+ * the XP meter own the hero's light.
+ */
+function FriendsPill() {
+  const counts = useFriendCounts();
+
+  return (
+    <Link
+      href="/friends"
+      className="flex h-8.5 items-center gap-2 px-2.75 transition-colors duration-150 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2"
+      style={{
+        clipPath: "var(--ds-clip-field)",
+        background: "color-mix(in srgb, var(--ds-color-background-elevated) 55%, transparent)",
+        boxShadow: `inset 0 0 0 1px ${withAlpha(cyan, 0.42)}`,
+        outlineColor: cyan,
+      }}
+      aria-label={`Open the friends arena: ${counts.total} friends, ${counts.online} online`}
+    >
+      <GroupsIcon size={17} style={{ color: cyan }} />
+      <span
+        className="font-display font-black leading-none"
+        style={{ fontSize: "12px", letterSpacing: "var(--ds-tracking-label)" }}
+      >
+        FRIENDS
+      </span>
+      <CountBadge value={counts.total} color={violet} />
+      {counts.online > 0 ? <CountBadge value={counts.online} color={success} dot /> : null}
+      <ChevronRightIcon size={16} style={{ color: "var(--ds-color-text-muted)" }} />
+    </Link>
+  );
+}
+
+/** Violet counts the squad; a green dot counts who is on right now. */
+function CountBadge({
+  value,
+  color,
+  dot = false,
+}: {
+  value: number;
+  color: string;
+  dot?: boolean;
+}) {
+  return (
+    <span
+      className="ds-tabular flex items-center gap-1 py-0.5 font-display font-black leading-none"
+      style={{
+        paddingLeft: dot ? "5px" : "7px",
+        paddingRight: "7px",
+        fontSize: "11px",
+        color,
+        background: withAlpha(color, 0.16),
+        boxShadow: `inset 0 0 0 1px ${withAlpha(color, 0.55)}`,
+      }}
+    >
+      {dot ? (
+        <span
+          aria-hidden="true"
+          className="h-1.5 w-1.5 rounded-full"
+          style={{ background: color }}
+        />
+      ) : null}
+      {value}
     </span>
   );
 }

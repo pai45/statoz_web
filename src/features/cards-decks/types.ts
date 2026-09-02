@@ -38,8 +38,17 @@ export type SportLoadout =
 
 export type LoadoutFor<S extends Sport> = Extract<SportLoadout, { sport: S }>;
 
-export type DeckSnapshot = {
-  version: 1;
-  loadouts: Partial<{ [S in Sport]: LoadoutFor<S> }>;
+export type DeckLoadouts = Partial<{ [S in Sport]: LoadoutFor<S> }>;
+
+/** One named profile carries the active lineup for every sport, as in Flutter. */
+export type DeckSlot = {
+  id: string;
+  name: string;
+  loadouts: DeckLoadouts;
 };
 
+export type DeckSnapshot = {
+  version: 2;
+  activeDeckId: string;
+  slots: DeckSlot[];
+};

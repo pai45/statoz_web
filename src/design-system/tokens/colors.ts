@@ -103,6 +103,24 @@ export function feedbackVar(name: FeedbackName): string {
   return `var(--ds-color-${name})`;
 }
 
+/**
+ * Every colour a surface is allowed to be *themed* in: the eight accents plus
+ * the four feedback colours.
+ *
+ * Data that names its own colour — a guide's accent, a support channel's — uses
+ * this, because the choice crosses the two scales: most modes take an accent,
+ * but a lives counter or a bug report takes danger, and it is one field either
+ * way.
+ */
+export type PaletteName = AccentName | FeedbackName;
+
+/** The CSS custom property behind any palette name, accent or feedback. */
+export function paletteVar(name: PaletteName): string {
+  return name in colors.accent
+    ? accentVar(name as AccentName)
+    : feedbackVar(name as FeedbackName);
+}
+
 /** The CSS custom property backing one shade of a rarity tier. */
 export function rarityVar(
   name: RarityName,

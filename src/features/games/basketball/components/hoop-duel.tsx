@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-import { useDecks } from "@/features/cards-decks";
-import { settleCoinReward } from "@/features/economy";
+import { activeLoadout, useDecks } from "@/features/cards-decks";
+import { settleCoinReward, useEconomy } from "@/features/economy";
 
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import { randomOpponentName } from "../../shared/data/opponent-names";
 import { resultDelayMs } from "../constants";
@@ -81,14 +82,13 @@ export function HoopDuel({ game }: HoopDuelProps) {
   const [view, setView] = useState<"lobby" | "playing">("lobby");
   const [session, setSession] = useState(0);
   const decks = useDecks();
+  const economy = useEconomy();
   const hydrated = useIsHydrated();
   const stats = useHoopDuelStats();
   const gamesHref = `/games/${sportForGame(game)}`;
 
-  const roster = useMemo(
-    () => rosterFromClaim(decks.loadouts.basketball?.playerIds),
-    [decks.loadouts.basketball],
-  );
+  const basketballLoadout = activeLoadout(decks, "basketball");
+  const roster = useMemo(() => rosterFromClaim(basketballLoadout?.playerIds), [basketballLoadout]);
 
   const play = useCallback(() => {
     setSession((value) => value + 1);
@@ -100,14 +100,17 @@ export function HoopDuel({ game }: HoopDuelProps) {
     // out there — Flutter's deck builder asks the same question explicitly.
     const starter = roster === null ? null : bestOf(roster);
     return (
-      <HoopDuelLobby
-        stats={stats}
-        squadReady={roster !== null && hydrated}
-        starterName={starter?.name ?? null}
-        backHref={gamesHref}
-        onDifficultyChange={saveDifficulty}
-        onPlay={play}
-      />
+      <>
+        <HoopDuelLobby
+          stats={stats}
+          squadReady={roster !== null && hydrated}
+          starterName={starter?.name ?? null}
+          backHref={gamesHref}
+          onDifficultyChange={saveDifficulty}
+          onPlay={play}
+        />
+        <GameLandingAd />
+      </>
     );
   }
 
@@ -118,6 +121,7 @@ export function HoopDuel({ game }: HoopDuelProps) {
       stats={stats}
       onRematch={play}
       onExit={() => setView("lobby")}
+      jerseyId={economy.owned.jerseyIds.includes(economy.equipped.jerseyId) ? economy.equipped.jerseyId : "statoz"}
     />
   );
 }
@@ -135,9 +139,10 @@ type SessionProps = {
   stats: HoopDuelStats;
   onRematch: () => void;
   onExit: () => void;
+  jerseyId: string;
 };
 
-function HoopDuelSession({ roster, stats, onRematch, onExit }: SessionProps) {
+function HoopDuelSession({ roster, stats, onRematch, onExit, jerseyId }: SessionProps) {
   const reducedMotion = usePrefersReducedMotion();
   const rewardId = `hoop-duel-${useId()}`;
 
@@ -145,7 +150,7 @@ function HoopDuelSession({ roster, stats, onRematch, onExit }: SessionProps) {
    * Drawn once, in the browser, when the session mounts — never during a server
    * render, where the roll would differ from the client's.
    */
-  const [{ config, rivalName }] = useState(() => buildMatch(roster, stats));
+  const [{ config, rivalName }] = useState(() => buildMatch(roster, stats, jerseyId));
 
   const game = useHoopDuelGame(config, reducedMotion);
   const hud = useHoopDuelHud(game);
@@ -323,6 +328,7 @@ function HoopDuelSession({ roster, stats, onRematch, onExit }: SessionProps) {
 function buildMatch(
   roster: BasketballAthlete[],
   stats: HoopDuelStats,
+  jerseyId = freeLiveryId,
 ): { config: BasketballMatchConfig; rivalName: string } {
   const pool = [...basketballAthletes];
   const cpuRoster: BasketballAthlete[] = [];
@@ -340,8 +346,8 @@ function buildMatch(
     difficulty: stats.difficulty,
     seed: drawSeed(),
     showHints: !stats.hintsSeen,
-    teamId: freeLiveryId,
-    cpuTeamId: rivalLiveryId(freeLiveryId, Math.random()),
+    teamId: jerseyId,
+    cpuTeamId: rivalLiveryId(jerseyId, Math.random()),
   };
 
   return { config, rivalName: randomOpponentName() };

@@ -26,10 +26,11 @@ export type RankRowProps = {
   meta: ScoreMeta;
   /** The player's own portrait, used only on their row. */
   avatarSrc?: string;
+  frameColor?: string;
   onOpen?: (entry: LeaderboardEntry) => void;
 };
 
-export function RankRow({ entry, accent, meta, avatarSrc, onOpen }: RankRowProps) {
+export function RankRow({ entry, accent, meta, avatarSrc, frameColor, onOpen }: RankRowProps) {
   const isUser = entry.isUser;
 
   const row = (
@@ -59,6 +60,7 @@ export function RankRow({ entry, accent, meta, avatarSrc, onOpen }: RankRowProps
           highlight={isUser}
           team={entry.team}
           src={isUser ? avatarSrc : undefined}
+          frameColor={isUser ? frameColor : undefined}
         />
 
         <div className="ml-3 min-w-0 flex-1">

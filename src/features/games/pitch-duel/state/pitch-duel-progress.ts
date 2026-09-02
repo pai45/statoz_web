@@ -186,6 +186,13 @@ export function markPitchDuelTutorialSeen(key: string): void {
   write({ ...current, tutorialSeen: [...current.tutorialSeen, key] });
 }
 
+/** Replays the in-game guidance without touching career progress or history. */
+export function resetPitchDuelTutorials(): void {
+  const current = getSnapshot();
+  if (current.tutorialSeen.length === 0) return;
+  write({ ...current, tutorialSeen: [] });
+}
+
 export function resetPitchDuelProgress(): void {
   write(emptyProgress);
 }

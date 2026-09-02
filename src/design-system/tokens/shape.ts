@@ -8,6 +8,8 @@ export const shape = {
   signalCut: 12,
   /** Width of the notch stepped into a signal panel's top-right edge. */
   signalNotch: 34,
+  /** How far that notch steps down, and how long its slope runs. */
+  signalStep: 8,
   /** How far a signal panel's accent shadow sits below the panel. */
   signalLift: 6,
   /** Match-hub card: lower chamfer and centred status notch geometry. */
@@ -20,6 +22,8 @@ export const shape = {
   tabChamfer: 16,
   /** Corner cut on fields and buttons — the system's smallest chamfer. */
   fieldCut: 10,
+  /** Corner cut on a filter chip, a step tighter than a field. */
+  chipCut: 8,
   /** Corner cut on a dossier panel: the card chamfer, on all four corners. */
   panelCut: 12,
   /** The HUD plate's strong cut, on the top-left and bottom-right corners. */
@@ -57,9 +61,9 @@ export const shape = {
 export const signalClipPath = [
   `polygon(`,
   `${shape.signalCut}px 0,`,
-  `calc(100% - ${shape.signalNotch + 8}px) 0,`,
-  `calc(100% - ${shape.signalNotch}px) 8px,`,
-  `100% 8px,`,
+  `calc(100% - ${shape.signalNotch + shape.signalStep}px) 0,`,
+  `calc(100% - ${shape.signalNotch}px) ${shape.signalStep}px,`,
+  `100% ${shape.signalStep}px,`,
   `100% calc(100% - ${shape.signalCut}px),`,
   `calc(100% - ${shape.signalCut}px) 100%,`,
   `${shape.signalCut}px 100%,`,
@@ -98,6 +102,12 @@ export const octagonClipPath = (() => {
 /** Fields and buttons: the same small cut on all four corners. */
 export const fieldClipPath = (() => {
   const c = `${shape.fieldCut}px`;
+  return `polygon(${c} 0, calc(100% - ${c}) 0, 100% ${c}, 100% calc(100% - ${c}), calc(100% - ${c}) 100%, ${c} 100%, 0 calc(100% - ${c}), 0 ${c})`;
+})();
+
+/** A filter chip: the chip cut, evenly around all four corners. */
+export const chipClipPath = (() => {
+  const c = `${shape.chipCut}px`;
   return `polygon(${c} 0, calc(100% - ${c}) 0, 100% ${c}, 100% calc(100% - ${c}), calc(100% - ${c}) 100%, ${c} 100%, 0 calc(100% - ${c}), 0 ${c})`;
 })();
 

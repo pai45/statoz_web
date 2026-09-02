@@ -4,6 +4,9 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { accentVar, Button, SelectableTile } from "@/design-system";
+import { useEconomy } from "@/features/economy";
+import { allPlayerCards, portraitForCard } from "@/features/packs";
+import { shopBanners } from "@/features/shop";
 import {
   avatarOptionById,
   avatarOptions,
@@ -37,7 +40,10 @@ export type AvatarEditorProps = {
 
 export function AvatarEditor({ selectedId, onCancel, onSave }: AvatarEditorProps) {
   const [chosen, setChosen] = useState(() => avatarOptionById(selectedId).id);
-  const preview = avatarOptionById(chosen);
+  const economy = useEconomy();
+  const purchased = allPlayerCards.filter((card) => economy.owned.avatarIds.includes(card.id) && portraitForCard(card));
+  const options = [...avatarOptions, ...purchased.map((card) => ({ id: card.id, label: card.shortName, src: portraitForCard(card)! }))];
+  const preview = options.find((avatar) => avatar.id === chosen) ?? avatarOptions[0];
 
   return (
     <ProfileOverlay
@@ -75,7 +81,7 @@ export function AvatarEditor({ selectedId, onCancel, onSave }: AvatarEditorProps
           aria-label="Avatar"
           className="mt-5 grid w-full max-w-115 grid-cols-3 gap-4"
         >
-          {avatarOptions.map((avatar) => (
+          {options.map((avatar) => (
             <SelectableTile
               key={avatar.id}
               label={avatar.label}
@@ -111,6 +117,8 @@ export function BannerEditor({ selectedId, onCancel, onSave }: BannerEditorProps
       profileBannerOptions.find((banner) => banner.id === selectedId)?.id ??
       profileBannerOptions[0].id,
   );
+  const economy = useEconomy();
+  const purchased = shopBanners.filter((banner) => economy.owned.bannerIds.includes(banner.id));
 
   return (
     <ProfileOverlay
@@ -151,6 +159,13 @@ export function BannerEditor({ selectedId, onCancel, onSave }: BannerEditorProps
             >
               {banner.label.toUpperCase()}
             </span>
+          </SelectableTile>
+        ))}
+        {purchased.map((banner) => (
+          <SelectableTile key={banner.id} label={banner.label} selected={banner.id === chosen} onSelect={() => setChosen(banner.id)} sealSize={28} className="aspect-[2.35] w-full">
+            <div className="absolute inset-0" style={{ background: `linear-gradient(120deg, ${banner.colors[0]}, ${banner.colors[1]})` }} />
+            {banner.assetSrc ? <Image src={banner.assetSrc} alt="" fill sizes="30rem" className="object-cover" /> : null}
+            <span className="absolute inset-x-0 bottom-0 truncate bg-overlay-plate px-3 py-1.5 text-center font-display text-2xs font-black">{banner.label}</span>
           </SelectableTile>
         ))}
       </div>

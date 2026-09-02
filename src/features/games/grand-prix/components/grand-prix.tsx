@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-import { useDecks } from "@/features/cards-decks";
+import { activeLoadout, useDecks } from "@/features/cards-decks";
 import { equipCosmetic, settleCoinReward, useEconomy } from "@/features/economy";
 import { racingPlayerCards } from "@/features/packs";
 import { levelFromXp } from "@/domain/progression";
 
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import { raceColumnMaxPx, resultDelayMs } from "../constants";
 import { fieldSize, startPositionMin, startPositionSpan } from "../tuning";
@@ -95,7 +96,7 @@ export function GrandPrix({ game }: GrandPrixProps) {
     grandPrixLiveryFromName(economy?.equipped.liveryId),
   );
 
-  const driverId = decks.loadouts.motorsport?.driverId ?? null;
+  const driverId = activeLoadout(decks, "motorsport")?.driverId ?? null;
   const driver = useMemo(
     () =>
       driverId === null
@@ -118,19 +119,22 @@ export function GrandPrix({ game }: GrandPrixProps) {
 
   if (view !== "racing" || driver === null) {
     return (
-      <GrandPrixLobby
-        stats={stats}
-        livery={livery}
-        ownedLiveryIds={ownedLiveryIds}
-        driverReady={driver !== null && hydrated}
-        driverName={driver?.name ?? null}
-        backHref={`/games/${sport}`}
-        loadoutHref={`/decks/${sport}`}
-        onSelectCircuit={saveCircuit}
-        onSelectLaps={saveLaps}
-        onSelectLivery={selectLivery}
-        onStart={race}
-      />
+      <>
+        <GrandPrixLobby
+          stats={stats}
+          livery={livery}
+          ownedLiveryIds={ownedLiveryIds}
+          driverReady={driver !== null && hydrated}
+          driverName={driver?.name ?? null}
+          backHref={`/games/${sport}`}
+          loadoutHref={`/decks/${sport}?returnTo=/play/grand-prix-dash`}
+          onSelectCircuit={saveCircuit}
+          onSelectLaps={saveLaps}
+          onSelectLivery={selectLivery}
+          onStart={race}
+        />
+        <GameLandingAd />
+      </>
     );
   }
 

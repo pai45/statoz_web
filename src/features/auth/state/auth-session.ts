@@ -16,6 +16,7 @@ const playerStorageKeys = [
   "statoz.economy.v1",
   "statoz.packs.v1",
   "statoz.decks.v1",
+  "statoz.decks.v2",
   "statoz.picks.v1",
   "statoz.footballchess.v1",
   "statoz.quiz.v1",
@@ -44,7 +45,7 @@ function readRaw(): string | null {
   }
 }
 
-let cachedRaw: string | null = null;
+let cachedRaw: string | null | undefined;
 let cachedSnapshot: AuthSessionSnapshot = snapshots.guest;
 
 type AccountDirectory = Record<string, { onboardingComplete: boolean }>;
@@ -167,7 +168,7 @@ function subscribe(onChange: () => void): () => void {
   const onStorage = (event: StorageEvent) => {
     if (event.key !== storageKey && event.key !== null) return;
     memoryRaw = event.key === storageKey ? event.newValue : null;
-    cachedRaw = null;
+    cachedRaw = undefined;
     onChange();
   };
 
@@ -195,7 +196,7 @@ export function signInLocal(emailInput: string): AuthSessionSnapshot {
   } catch {
     // A blocked store keeps the demo session alive in this tab until reload.
   }
-  cachedRaw = null;
+  cachedRaw = undefined;
   notifyPlayerStores();
   notify();
   return getSnapshot();
@@ -207,7 +208,7 @@ export function completeOnboarding(): void {
   if (!session.email) return;
   const accounts = readDirectory();
   writeDirectory({ ...accounts, [session.email]: { onboardingComplete: true } });
-  cachedRaw = null;
+  cachedRaw = undefined;
   notify();
 }
 
@@ -218,7 +219,7 @@ export function signOut(): void {
   } catch {
     // The in-memory fallback is already cleared.
   }
-  cachedRaw = null;
+  cachedRaw = undefined;
   notifyPlayerStores();
   notify();
 }

@@ -25,18 +25,15 @@ import styles from "./final-over.module.css";
 /**
  * The lobby — the web port of `final_over_hub.dart`.
  *
- * Flutter's version also gates on a five-batter squad the player builds in a
- * deck builder, and sells kits for coins in the shop. The web has neither: the
- * cricket starter pack already deals exactly five batters the first time the
- * game is opened, and with no coin system every kit is simply available. The
- * CTA says what actually happens rather than reproducing the Flutter copy,
- * which asks for three batters while the gate requires five.
+ * The lobby gates on the active five-batter deck and exposes globally owned
+ * kits, preserving Flutter's information hierarchy in the responsive shell.
  */
 
 export type FinalOverLobbyProps = {
   stats: FinalOverStats;
   tier: FinalOverTier;
   kitId: string;
+  ownedKitIds: string[];
   squadReady: boolean;
   backHref: string;
   onTierChange: (tier: FinalOverTier) => void;
@@ -52,6 +49,7 @@ export function FinalOverLobby({
   stats,
   tier,
   kitId,
+  ownedKitIds,
   squadReady,
   backHref,
   onTierChange,
@@ -93,6 +91,7 @@ export function FinalOverLobby({
                 key={kit.id}
                 type="button"
                 onClick={() => onKitChange(kit.id)}
+                disabled={!ownedKitIds.includes(kit.id)}
                 aria-pressed={kit.id === kitId}
                 aria-label={kit.name}
                 title={kit.name}
@@ -103,6 +102,7 @@ export function FinalOverLobby({
                   border: `2px solid ${
                     kit.id === kitId ? kit.accent : withAlpha("var(--ds-color-border-default)", 0.8)
                   }`,
+                  opacity: ownedKitIds.includes(kit.id) ? 1 : 0.32,
                 }}
               >
                 <span
@@ -146,6 +146,9 @@ export function FinalOverLobby({
           </p>
           <Button accent={cyan} variant="ghost" fullWidth href={backHref}>
             BACK TO GAMES
+          </Button>
+          <Button accent={cyan} variant="ghost" fullWidth href="/decks/cricket?returnTo=/play/final-over">
+            DECK BUILDER
           </Button>
         </div>
       </div>

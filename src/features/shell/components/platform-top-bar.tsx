@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { accentVar, BrandIcon, FlameIcon, PlusIcon } from "@/design-system";
-import { loginHref, useAuthSession } from "@/features/auth";
 import { useEconomy } from "@/features/economy";
 import { currentStreak, useIsStreakHydrated, useStreakSnapshot } from "@/features/streaks";
 import { formatInt } from "@/shared/utils";
@@ -25,8 +24,13 @@ export function PlatformTopBar({
   accent = accentVar("cyan"),
 }: PlatformTopBarProps) {
   const pathname = usePathname();
-  const session = useAuthSession();
-  const resolvedTitle = title ?? (pathname.startsWith("/shop") ? "Shop" : pathname.startsWith("/decks/") ? "Loadout" : "StatOz");
+  const resolvedTitle = title ?? (pathname.startsWith("/shop")
+    ? "Shop"
+    : pathname === "/decks"
+      ? "Deck Locker"
+      : pathname.startsWith("/decks/")
+        ? "Loadout"
+        : "StatOz");
   return (
     <header
       className="flex h-19.5 shrink-0 items-center gap-3 border-b bg-surface-nav px-4 pr-3.5"
@@ -42,18 +46,7 @@ export function PlatformTopBar({
         {resolvedTitle}
       </h1>
 
-      {session.status === "authenticated" ? (
-        <AuthenticatedStats coins={coins} accent={accent} />
-      ) : session.status === "guest" ? (
-        <Link
-          href={loginHref(pathname)}
-          className="grid min-h-11 place-items-center border border-cyan px-4 font-display text-2xs font-black tracking-wide text-cyan"
-        >
-          LOG IN
-        </Link>
-      ) : (
-        <span className="h-11 w-20" aria-label="Checking account status" />
-      )}
+      <AuthenticatedStats coins={coins} accent={accent} />
     </header>
   );
 }

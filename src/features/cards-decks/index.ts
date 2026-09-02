@@ -1,6 +1,13 @@
 export { DeckEditor } from "./components/deck-editor";
+export { DeckLocker } from "./components/deck-locker";
 export {
+  activeDeck,
+  activeLoadout,
+  applyDeck,
+  createDeck,
+  deleteDeck,
   isLoadoutComplete,
+  renameDeck,
   validateLoadout,
   loadoutFromClaim,
   readDecks,
@@ -11,6 +18,8 @@ export {
 export type {
   BasketballLoadout,
   CricketLoadout,
+  DeckLoadouts,
+  DeckSlot,
   DeckSnapshot,
   FootballLoadout,
   LoadoutFor,

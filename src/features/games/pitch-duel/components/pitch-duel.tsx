@@ -9,22 +9,22 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   ActionCard,
-  Avatar,
   Button,
   Glyph,
   PlayerCard,
+  Progress,
   glyphRegistry,
   type GlyphName,
 } from "@/design-system";
 import { playerRoleLabels, type ActionCard as ActionCardData, type PlayerCard as PlayerCardData } from "@/domain/cards";
-import { levelFromXp } from "@/domain/progression";
-import { useDecks } from "@/features/cards-decks";
+import { levelFromXp, levelProgress } from "@/domain/progression";
+import { activeLoadout, useDecks, type FootballLoadout } from "@/features/cards-decks";
 import { settleCoinReward } from "@/features/economy";
-import { avatarForName, avatarOptionById } from "@/features/onboarding";
+import { avatarOptionById } from "@/features/onboarding";
 import {
   actionCardForId,
   allActionCards,
@@ -37,6 +37,7 @@ import { playerDisplayName, useProfileIdentity } from "@/features/profile";
 
 import type { GameEntry } from "@/mocks/games";
 import { opponentNames } from "../../shared/data/opponent-names";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import type { GameId } from "../../types";
 import {
@@ -51,6 +52,7 @@ import {
 import {
   markPitchDuelTutorialSeen,
   recordPitchDuel,
+  resetPitchDuelTutorials,
   usePitchDuelProgress,
 } from "../state/pitch-duel-progress";
 import type {
@@ -61,8 +63,13 @@ import type {
 } from "../types";
 
 import styles from "./pitch-duel.module.css";
+import { PitchDuelHowTo } from "./pitch-duel-how-to";
+import { PitchDuelLobby } from "./pitch-duel-lobby";
+import { PitchDuelMatchmaking } from "./pitch-duel-matchmaking";
 
 export type PitchDuelProps = { game: GameId; entry: GameEntry };
+
+type PitchDuelView = "lobby" | "howToPlay" | "matchmaking" | "match";
 
 type MatchAward = {
   result: "Victory" | "Draw" | "Defeat";
@@ -78,7 +85,7 @@ function glyph(name: string): GlyphName {
   return name in glyphRegistry ? (name as GlyphName) : "sports_soccer";
 }
 
-function deckFromLoadout(loadout: ReturnType<typeof useDecks>["loadouts"]["football"]): PitchDuelDeck | null {
+function deckFromLoadout(loadout: FootballLoadout | undefined): PitchDuelDeck | null {
   if (!loadout) return null;
   const attackers = loadout.attackers
     .map(playerCardForId)
@@ -104,55 +111,84 @@ function coinsFor(result: MatchAward["result"]): number {
 
 export function PitchDuel({ game }: PitchDuelProps) {
   const router = useRouter();
+  const params = useSearchParams();
   const decks = useDecks();
   const identity = useProfileIdentity();
   const progress = usePitchDuelProgress();
+  const footballLoadout = activeLoadout(decks, "football");
   const playerDeck = useMemo(
-    () => deckFromLoadout(decks.loadouts.football),
-    [decks.loadouts.football],
+    () => deckFromLoadout(footballLoadout),
+    [footballLoadout],
   );
-  const [session, setSession] = useState(0);
+
+  /**
+   * A challenge from the friends arena or a rival's dossier: the opponent is
+   * that rival, at their level, and the match starts at matchmaking rather than
+   * the lobby — the player already chose who they are playing.
+   */
+  const challengedName = params.get("vs");
+  const challengedLevel = Number.parseInt(params.get("level") ?? "", 10);
+
+  const [session, setSession] = useState<{ id: number; initialView: PitchDuelView }>(() => ({
+    id: 0,
+    initialView: challengedName ? "matchmaking" : "lobby",
+  }));
 
   if (!playerDeck) return null;
 
   return (
     <PitchDuelSession
-      key={session}
+      key={session.id}
+      initialView={session.initialView}
       playerDeck={playerDeck}
       playerName={identity.displayName || playerDisplayName}
       playerAvatar={avatarOptionById(identity.avatarId).src}
-      opponentSeed={progress.played + session}
-      cpuLevel={levelFromXp(progress.xp)}
-      onReplay={() => setSession((value) => value + 1)}
+      opponentSeed={progress.played + session.id}
+      opponentName={challengedName ?? undefined}
+      cpuLevel={
+        Number.isFinite(challengedLevel) && challengedLevel > 0
+          ? challengedLevel
+          : levelFromXp(progress.xp)
+      }
+      onReplay={() => setSession((value) => ({ id: value.id + 1, initialView: "matchmaking" }))}
+      onHome={() => setSession((value) => ({ id: value.id + 1, initialView: "lobby" }))}
       onExit={() => router.push(`/games/${game === "pitch-duel" ? "football" : "football"}`)}
     />
   );
 }
 
 function PitchDuelSession({
+  initialView,
   playerDeck,
   playerName,
   playerAvatar,
   opponentSeed,
+  opponentName: challengedName,
   cpuLevel,
   onReplay,
+  onHome,
   onExit,
 }: {
+  initialView: PitchDuelView;
   playerDeck: PitchDuelDeck;
   playerName: string;
   playerAvatar: string;
   opponentSeed: number;
+  /** A challenged rival. Absent, the pool picks the night's opponent. */
+  opponentName?: string;
   cpuLevel: number;
   onReplay: () => void;
+  onHome: () => void;
   onExit: () => void;
 }) {
   const reducedMotion = usePrefersReducedMotion();
   const progress = usePitchDuelProgress();
-  const opponentName = opponentNames[opponentSeed % opponentNames.length];
+  const opponentName = challengedName ?? opponentNames[opponentSeed % opponentNames.length];
   const [state, dispatch] = useReducer(
     pitchDuelReducer,
     initialPitchDuelState(playerDeck, cpuLevel, opponentName),
   );
+  const [view, setView] = useState<PitchDuelView>(initialView);
   const [meterOpen, setMeterOpen] = useState(false);
   const [quitOpen, setQuitOpen] = useState(false);
   const [award, setAward] = useState<MatchAward | null>(null);
@@ -205,11 +241,10 @@ function PitchDuelSession({
   }, [reducedMotion, state.phase, state.playerWonToss, tutorialOpen]);
 
   const startMatch = useCallback(() => {
-    const rival = opponentNames[Math.floor(Math.random() * opponentNames.length)];
     matchId.current = `pitch-duel-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
     dispatch({
       type: "matchStarted",
-      opponentName: rival,
+      opponentName: state.opponentName,
       opponentDeck: generateOpponentDeck(
         cpuLevel,
         footballAttackers,
@@ -217,7 +252,8 @@ function PitchDuelSession({
         allActionCards,
       ),
     });
-  }, [cpuLevel]);
+    setView("match");
+  }, [cpuLevel, state.opponentName]);
 
   const callToss = useCallback((call: TossFace) => {
     dispatch({
@@ -266,26 +302,49 @@ function PitchDuelSession({
     else dispatch({ type: "roundAdvanced" });
   }, [finishMatch, state.round]);
 
+  if (view === "lobby") {
+    return (
+      <>
+        <PitchDuelLobby
+          progress={progress}
+          onPlay={() => setView("matchmaking")}
+          onHowToPlay={() => setView("howToPlay")}
+          onReplayTutorial={resetPitchDuelTutorials}
+          onExit={onExit}
+        />
+        <GameLandingAd />
+      </>
+    );
+  }
+
+  if (view === "howToPlay") {
+    return <PitchDuelHowTo onBack={() => setView("lobby")} onPlay={() => setView("matchmaking")} />;
+  }
+
+  if (view === "matchmaking") {
+    return (
+      <PitchDuelMatchmaking
+        playerName={playerName}
+        playerAvatar={playerAvatar}
+        opponentName={state.opponentName}
+        cpuLevel={cpuLevel}
+        onReady={startMatch}
+        onCancel={() => setView("lobby")}
+      />
+    );
+  }
+
   return (
-    <main className={styles.gameShell}>
+    <>
+      <main className={styles.gameShell}>
       <div className={styles.stadium} aria-hidden />
       <div className={styles.vignette} aria-hidden />
 
-      {state.phase !== "matchmaking" && state.phase !== "finalResult" ? (
+      {state.phase !== "finalResult" ? (
         <MatchHeader state={state} onQuit={() => setQuitOpen(true)} />
       ) : null}
 
       <div className={styles.stage}>
-        {state.phase === "matchmaking" ? (
-          <Matchmaking
-            playerName={playerName}
-            opponentName={state.opponentName}
-            playerAvatar={playerAvatar}
-            cpuLevel={cpuLevel}
-            onStart={startMatch}
-            onExit={onExit}
-          />
-        ) : null}
         {state.phase === "toss" ? <Toss onCall={callToss} /> : null}
         {state.phase === "tossResult" ? (
           <TossResult state={state} onRole={(playerAttacking) => dispatch({ type: "roleChosen", playerAttacking })} />
@@ -318,7 +377,7 @@ function PitchDuelSession({
           />
         ) : null}
         {state.phase === "finalResult" ? (
-          <FinalResultView playerName={playerName} state={state} award={award} onReplay={onReplay} onExit={onExit} />
+          <FinalResultView playerName={playerName} state={state} award={award} onReplay={onReplay} onExit={onHome} />
         ) : null}
       </div>
 
@@ -326,8 +385,9 @@ function PitchDuelSession({
       {tutorialOpen && tutorialKey ? (
         <TutorialOverlay tutorialKey={tutorialKey} onDismiss={() => markPitchDuelTutorialSeen(tutorialKey)} />
       ) : null}
-      {quitOpen ? <QuitDialog onStay={() => setQuitOpen(false)} onQuit={onExit} /> : null}
-    </main>
+        {quitOpen ? <QuitDialog onStay={() => setQuitOpen(false)} onQuit={onHome} /> : null}
+      </main>
+    </>
   );
 }
 
@@ -345,42 +405,6 @@ function MatchHeader({ state, onQuit }: { state: PitchDuelState; onQuit: () => v
         <b>{state.playerScore}</b><span>—</span><b>{state.opponentScore}</b>
       </div>
     </header>
-  );
-}
-
-function Matchmaking({ playerName, opponentName, playerAvatar, cpuLevel, onStart, onExit }: {
-  playerName: string;
-  opponentName: string; playerAvatar: string; cpuLevel: number; onStart: () => void; onExit: () => void;
-}) {
-  const rivalAvatar = avatarForName(opponentName);
-  return (
-    <section className={`${styles.centerScene} ${styles.matchmaking}`} aria-labelledby="matchmaking-title">
-      <button type="button" className={styles.backLink} onClick={onExit}>← FOOTBALL GAMES</button>
-      <div className={styles.modeLockup}>
-        <Glyph name="sports_soccer" size={27} />
-        <span>PITCH DUEL</span>
-      </div>
-      <p className={styles.eyebrow}>LIVE MATCHMAKING</p>
-      <h1 id="matchmaking-title">OWN THE MOMENT</h1>
-      <p className={styles.lede}>Four rounds. One card per move. Make every matchup count.</p>
-      <div className={styles.versusRow}>
-        <IdentityPlate name={playerName} label="YOU" avatar={playerAvatar} accent={attackAccent} />
-        <div className={styles.vsMark}><span>VS</span><i /></div>
-        <IdentityPlate name={opponentName} label={`LVL ${cpuLevel} RIVAL`} avatar={rivalAvatar.src} accent={defenseAccent} />
-      </div>
-      <div className={styles.queueSignal}><i /><span>RIVAL SIGNAL LOCKED</span><i /></div>
-      <Button size="lg" glow fullWidth onClick={onStart} leadingIcon={<Glyph name="play_arrow" size={18} />} className={styles.primaryCta}>KICK OFF</Button>
-      <p className={styles.microcopy}>Higher card total wins the duel · Used cards lock</p>
-    </section>
-  );
-}
-
-function IdentityPlate({ name, label, avatar, accent }: { name: string; label: string; avatar: string; accent: string }) {
-  return (
-    <div className={styles.identityPlate} style={{ "--side-accent": accent } as CSSProperties}>
-      <div className={styles.avatarGlow}><Avatar src={avatar} alt="" size={76} ring={accent} ringWidth={2} /></div>
-      <span>{label}</span><strong>{name}</strong>
-    </div>
   );
 }
 
@@ -458,6 +482,8 @@ function DuelBoard({ state, onPlayer, onAction, onCommit }: {
   const chance = playerSuccessChance(state);
   const accent = state.playerAttacking ? attackAccent : defenseAccent;
   const allPlayers = [...state.playerDeck.attackers, ...state.playerDeck.defenders];
+  const selectedPlayer = allPlayers.find((card) => card.id === state.selectedPlayerId);
+  const selectedAction = state.playerDeck.actions.find((card) => card.id === state.selectedActionId);
   return (
     <section className={styles.board} style={{ "--role-accent": accent } as CSSProperties} aria-label={`Round ${state.round} card selection`}>
       <div className={styles.rivalZone}>
@@ -467,6 +493,15 @@ function DuelBoard({ state, onPlayer, onAction, onCommit }: {
       <div className={styles.pitch}>
         <div className={styles.pitchMarkings} aria-hidden><i /><i /><i /></div>
         <div className={styles.scenarioChip}><Glyph name={glyph(state.scenario?.icon ?? "sports_soccer")} size={15} /><span>{state.scenario?.title}</span></div>
+        <div className={styles.duelArena} aria-label="Locked move preview">
+          <div className={styles.arenaSlot} data-rival="true"><Glyph name="lock" size={18} /><span>RIVAL MOVE</span><b>LOCKED</b></div>
+          <div className={styles.arenaVs}>VS</div>
+          <div className={styles.arenaSlot} data-ready={Boolean(selectedPlayer && selectedAction)}>
+            <Glyph name={selectedPlayer ? glyph(selectedPlayer.icon) : "person_search"} size={20} />
+            <span>{selectedPlayer?.shortName ?? "PICK PLAYER"}</span>
+            <b>{selectedAction?.title ?? "PICK ACTION"}</b>
+          </div>
+        </div>
         <div className={styles.matchupLine}>
           <span>{state.playerAttacking ? "YOUR ATTACK" : "YOUR DEFENSE"}</span>
           <b>{chance === null ? "SELECT CARDS" : chance === 1 ? "EDGE: YOU" : chance === 0 ? "EDGE: RIVAL" : "EVEN MATCH"}</b>
@@ -489,9 +524,15 @@ function DuelBoard({ state, onPlayer, onAction, onCommit }: {
             return <ActionChoice key={card.id} card={card} selected={state.selectedActionId === card.id} disabled={!eligible || used} used={used} onClick={() => onAction(card.id)} />;
           })}
         </div>
+        {!state.selectedPlayerId || !state.selectedActionId ? (
+          <div className={styles.moveGuidance}>
+            <span data-done={Boolean(state.selectedPlayerId)}>01 PLAYER</span><i /><span data-done={Boolean(state.selectedActionId)}>02 ACTION</span>
+          </div>
+        ) : null}
         <Button fullWidth size="lg" glow accent={accent} disabled={!state.selectedPlayerId || !state.selectedActionId} onClick={onCommit} trailingIcon={<Glyph name="flash_on" size={18} />} className={styles.commitButton}>
-          LOCK IN MOVE
+          {state.playerAttacking ? "COMMIT ATTACK" : "COMMIT DEFENSE"}
         </Button>
+        <p className={styles.commitHelper}>{chance === null ? "SELECT A PLAYER AND ACTION" : `${chance === 1 ? 68 : chance === 0 ? 32 : 50}% ${state.playerAttacking ? "GOAL" : "STOP"} CHANCE · TIME YOUR ${state.playerAttacking ? "STRIKE" : "BLOCK"}`}</p>
       </div>
     </section>
   );
@@ -603,16 +644,33 @@ function FinalResultView({ playerName, state, award, onReplay, onExit }: { playe
   const result = award?.result ?? (state.playerScore > state.opponentScore ? "Victory" : state.playerScore < state.opponentScore ? "Defeat" : "Draw");
   const accent = result === "Victory" ? "var(--ds-color-success)" : result === "Draw" ? "var(--ds-color-accent-gold)" : "var(--ds-color-danger)";
   const playerDisplayName = playerName;
+  const band = levelProgress(award?.totalXp ?? 0);
+  const mvp = state.rounds.find((round) => round.outcome === "goal" && round.playerAttacking)?.attackerCard;
   return (
     <section className={styles.finalScene} style={{ "--result-accent": accent } as CSSProperties} aria-labelledby="final-title">
       <div className={styles.finalBadge}><Glyph name={result === "Victory" ? "emoji_events" : result === "Draw" ? "sync_alt" : "shield"} size={42} /></div>
       <p className={styles.eyebrow}>FULL TIME</p>
       <h1 id="final-title">{result.toUpperCase()}</h1>
       <div className={styles.finalScore}><span>{playerDisplayName}</span><b>{state.playerScore} — {state.opponentScore}</b><span>{state.opponentName}</span></div>
+      <div className={styles.xpPanel}>
+        <div><span>MATCH XP</span><b>{award && award.xp > 0 ? "+" : ""}{award?.xp ?? 0}</b></div>
+        <div><span>LEVEL {band.level}</span><b>{band.intoLevel} / {band.levelSpan}</b></div>
+        <Progress value={band.fraction} accent={accent} label={`Level ${band.level} progress`} height={5} />
+      </div>
       <div className={styles.rewardGrid}>
         <div><Glyph name="trending_up" size={20} /><span>XP</span><b>{award && award.xp > 0 ? "+" : ""}{award?.xp ?? 0}</b></div>
         <div><Glyph name="paid" size={20} /><span>COINS</span><b>+{award?.coins ?? coinsFor(result)}</b></div>
         <div><Glyph name="workspace_premium" size={20} /><span>TOTAL XP</span><b>{award?.totalXp ?? 0}</b></div>
+      </div>
+      {mvp ? (
+        <div className={styles.mvpPanel}>
+          <span>MVP</span>
+          <strong>{mvp.shortName}</strong>
+          <b>{mvp.rating}</b>
+        </div>
+      ) : null}
+      <div className={styles.roundTrail} aria-label="Four-round goal trail">
+        {state.rounds.map((round) => <i key={round.round} data-goal={round.outcome === "goal"} data-player={round.playerAttacking} title={`Round ${round.round}: ${round.outcome}`} />)}
       </div>
       <div className={styles.roundLog}>
         {state.rounds.map((round) => {
@@ -622,7 +680,7 @@ function FinalResultView({ playerName, state, award, onReplay, onExit }: { playe
       </div>
       <div className={styles.finalActions}>
         <Button size="lg" fullWidth glow accent={accent} onClick={onReplay} leadingIcon={<Glyph name="replay" size={18} />}>PLAY AGAIN</Button>
-        <Button size="lg" fullWidth variant="surface" onClick={onExit}>BACK TO GAMES</Button>
+        <Button size="lg" fullWidth variant="surface" onClick={onExit}>HOME</Button>
       </div>
     </section>
   );

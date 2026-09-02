@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 
 import {
+  AccentPanel,
   accentVar,
   feedbackVar,
   Glyph,
@@ -33,7 +34,6 @@ import {
 } from "../state/ladder";
 import type { QuizMode, QuizProgress } from "../types";
 
-import { QuizPanel } from "./quiz-panel";
 import styles from "./quiz.module.css";
 
 /**
@@ -108,7 +108,7 @@ function ArenaHero({
   const label = sportModuleFor(sport).label.toUpperCase();
 
   return (
-    <QuizPanel accent={cyan}>
+    <AccentPanel accent={cyan}>
       <div className="flex items-center gap-1.75 px-4 pt-3.25">
         <span aria-hidden className="size-1.25" style={{ background: cyan }} />
         <span
@@ -255,7 +255,7 @@ function ArenaHero({
         </div>
         <QuestionCount />
       </div>
-    </QuizPanel>
+    </AccentPanel>
   );
 }
 
@@ -368,7 +368,7 @@ function ModeTile({
       className={`${styles.pressable} block h-full w-full cursor-pointer text-left`}
       aria-label={`${modeLabels[mode]} category, ${cleared} of ${setCount} sets cleared, ${stars} stars, ${complete ? "complete" : `next set ${nextSet}`}`}
     >
-      <QuizPanel accent={accent} className="h-full">
+      <AccentPanel accent={accent} className="h-full">
         <div className="flex h-full flex-col p-3">
           <div className="flex items-start gap-2">
             <span
@@ -440,7 +440,7 @@ function ModeTile({
             </div>
           </div>
         </div>
-      </QuizPanel>
+      </AccentPanel>
     </button>
   );
 }

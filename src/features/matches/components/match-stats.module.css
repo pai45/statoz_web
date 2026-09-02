@@ -1,0 +1,211 @@
+/*
+ * The per-sport match report: the pulse header, the market-style data rows the
+ * panels are built from, and the two-sided trace chart.
+ */
+
+.pulse,
+.statPill,
+.miniMetric b,
+.deltaChip,
+.sectionHeading,
+.comparisonHead b,
+.comparisonHead small,
+.legendMark b,
+.legendMark small,
+.intelTitle,
+.intelCell small,
+.traceHead b,
+.traceAxis,
+.eventMinute,
+.rowLabel,
+.tableHead,
+.feedMarker {
+  font-family: var(--ds-font-display);
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+/* ---- Scroll body ----------------------------------------------------------- */
+
+.statsView { display: flex; min-height: 0; height: 100%; flex-direction: column; }
+.statsScroll {
+  min-height: 0;
+  flex: 1;
+  padding: 14px 16px calc(96px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-color: var(--ds-color-border-strong) transparent;
+}
+.stack { display: grid; gap: 18px; }
+.tight { display: grid; gap: 10px; }
+
+/* ---- Pulse header ---------------------------------------------------------- */
+
+.pulse { display: grid; gap: 12px; padding: 14px 0; }
+.pulseTop { display: flex; align-items: center; gap: 8px; }
+.pulseLeague { margin-left: auto; overflow: hidden; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+
+.statPill {
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--pill-color) 45%, transparent);
+  background: color-mix(in srgb, var(--pill-color) 12%, transparent);
+  color: var(--pill-color);
+  font-size: 9px;
+}
+
+.pulseTitle { margin: 0; color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 18px; font-weight: 900; letter-spacing: .04em; }
+
+.pulseFigure { display: flex; align-items: center; gap: 12px; }
+.pulseValue {
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--ds-font-display);
+  font-size: 34px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  animation: pulseRise 620ms cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes pulseRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.pulseCopy { display: grid; min-width: 0; flex: 1; gap: 4px; }
+.pulseCopy strong { overflow: hidden; color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 10px; font-weight: 900; letter-spacing: .1em; text-overflow: ellipsis; white-space: nowrap; }
+.pulseCopy small { overflow: hidden; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .14em; text-overflow: ellipsis; white-space: nowrap; }
+
+.deltaChip {
+  flex: none;
+  padding: 4px 7px;
+  border: 1px solid color-mix(in srgb, var(--delta-color) 50%, transparent);
+  background: color-mix(in srgb, var(--delta-color) 12%, transparent);
+  color: var(--delta-color);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pulseSubtitle { margin: 0; color: var(--ds-color-text-muted); font-size: 12px; font-weight: 700; }
+
+.pulseMetrics { display: flex; gap: 10px; }
+.miniMetric {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1px solid var(--ds-color-border-muted);
+  background: var(--ds-color-background-secondary);
+}
+.miniMetric small { color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.miniMetric b { color: var(--ds-color-text-default); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* ---- Data rows ------------------------------------------------------------- */
+
+.sectionHeading { margin: 0; color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .18em; }
+
+.statsRow {
+  display: grid;
+  width: 100%;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--row-accent) 40%, transparent);
+  background: var(--ds-color-background-secondary);
+  text-align: left;
+}
+button.statsRow { cursor: pointer; transition: background 160ms ease, border-color 160ms ease; }
+button.statsRow:hover { border-color: var(--row-accent); }
+button.statsRow:focus-visible { outline: 2px solid var(--row-accent); outline-offset: 2px; }
+.statsRowSelected { border-color: var(--row-accent); background: color-mix(in srgb, var(--row-accent) 12%, var(--ds-color-background-secondary)); }
+
+.comparisonHead { display: grid; grid-template-columns: 62px 1fr 62px; align-items: center; }
+.comparisonHead b { font-size: 16px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.comparisonHead b:last-child { text-align: right; }
+.comparisonHead small { color: var(--ds-color-text-muted); text-align: center; font-size: 9px; letter-spacing: .1em; }
+
+.splitBar { display: flex; gap: 3px; height: 6px; }
+.splitBar i { display: block; }
+
+.legendRow { display: flex; justify-content: space-between; gap: 12px; }
+.legendMark { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.legendMarkEnd { flex-direction: row-reverse; text-align: right; }
+.legendMark > i { display: block; width: 4px; height: 30px; flex: none; }
+.legendMark span { display: grid; min-width: 0; }
+.legendMark b { font-size: 13px; }
+.legendMark small { overflow: hidden; color: var(--ds-color-text-muted); font-size: 8px; letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Intel ----------------------------------------------------------------- */
+
+.intelPanel { gap: 12px; padding: 14px; }
+.intelTitle { color: var(--ds-color-text-default); font-size: 15px; }
+.intelSeason { margin: -8px 0 0; color: var(--ds-color-text-muted); font-size: 12px; }
+.intelCells { display: grid; grid-template-columns: 1fr 96px; gap: 8px; }
+.intelCell { display: grid; gap: 4px; padding: 10px; background: color-mix(in srgb, var(--ds-color-background-elevated) 56%, transparent); }
+.intelCell small { color: var(--ds-color-text-muted); font-size: 8px; letter-spacing: .12em; }
+.intelCell b { color: var(--ds-color-text-default); font-size: 11px; font-weight: 700; }
+.intelFacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0; }
+.intelFacts div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 6px 8px; background: color-mix(in srgb, var(--ds-color-text-default) 4%, transparent); }
+.intelFacts dt { color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .1em; }
+.intelFacts dd { margin: 0; color: var(--ds-color-text-default); font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.intelResult { margin: 0; color: var(--ds-color-accent-cyan); font-family: var(--ds-font-display); font-size: 9.5px; font-weight: 900; letter-spacing: .1em; }
+
+/* ---- Trace ----------------------------------------------------------------- */
+
+.tracePanel { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--ds-color-border-muted); background: var(--ds-color-background-secondary); }
+.traceHead { display: grid; gap: 6px; }
+.traceHead b { color: var(--ds-color-text-default); font-size: 10px; letter-spacing: .14em; }
+.traceReadout { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--ds-font-display); font-size: 11px; font-weight: 900; }
+.traceReadout small { color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .12em; }
+
+.traceCanvas { position: relative; height: 170px; cursor: ew-resize; touch-action: none; background: linear-gradient(to bottom, color-mix(in srgb, var(--ds-color-accent-cyan) 5%, transparent), transparent); }
+.traceCanvas svg { width: 100%; height: 100%; }
+.traceCanvas:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: 2px; }
+
+.traceGuide { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--ds-color-text-default) 45%, transparent); pointer-events: none; }
+.traceMarker { position: absolute; bottom: 6px; width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg); background: var(--marker-color); pointer-events: none; }
+.traceMarkerFocal { box-shadow: 0 0 12px var(--marker-color); }
+
+.traceAxis { display: flex; justify-content: space-between; color: var(--ds-color-text-muted); font-size: 8px; letter-spacing: .12em; }
+
+/* ---- Lists ----------------------------------------------------------------- */
+
+.eventRow { display: flex; align-items: center; gap: 10px; }
+.eventMinute { min-width: 42px; color: var(--ds-color-accent-cyan); font-size: 13px; font-variant-numeric: tabular-nums; }
+.eventCopy { min-width: 0; flex: 1; }
+.eventCopy strong { display: block; overflow: hidden; color: var(--ds-color-text-default); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.eventCopy small { display: block; margin-top: 2px; color: var(--ds-color-text-muted); font-size: 10px; }
+.eventSide { width: 6px; align-self: stretch; }
+
+.rowLabel { color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .12em; }
+
+.statTable { width: 100%; border-collapse: collapse; }
+.statTable th,
+.statTable td { padding: 8px 6px; border-bottom: 1px solid var(--ds-color-border-subtle); text-align: right; font-size: 11px; font-variant-numeric: tabular-nums; }
+.statTable th { color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.statTable th:first-child,
+.statTable td:first-child { text-align: left; }
+.statTable td:first-child { color: var(--ds-color-text-default); font-weight: 700; }
+.tableHead { color: var(--ds-color-text-default); }
+
+.feedMarker { min-width: 44px; color: var(--ds-color-accent-cyan); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+.emptyPanel { display: grid; place-items: center; gap: 6px; padding: 28px 16px; border: 1px dashed var(--ds-color-border-default); text-align: center; }
+.emptyPanel strong { color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 13px; font-weight: 900; letter-spacing: .06em; }
+.emptyPanel p { margin: 0; color: var(--ds-color-text-muted); font-size: 12px; }
+
+/* ---- Desktop --------------------------------------------------------------- */
+
+@media (width >= 900px) {
+  /* A report is a reading surface, so the panels pair up rather than stretch. */
+  .stack { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .stack > .spanFull { grid-column: 1 / -1; }
+  .statsScroll { padding-right: 24px; padding-left: 24px; }
+}
+
+@media (width >= 1024px) {
+  .statsView { height: auto; }
+  .statsScroll { min-height: 560px; height: auto; padding-bottom: 24px; overflow: visible; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulseValue { animation: none; }
+}

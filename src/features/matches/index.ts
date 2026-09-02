@@ -6,6 +6,7 @@ export { SportFixtureCard } from "./components/sport-fixture-card";
 export { SportMatchFeed } from "./components/sport-match-feed";
 export { SportHubTabs, type SportHubSelection } from "./components/sport-hub-tabs";
 export { SportIcon } from "./components/sport-icon";
+export { TeamBadge, type TeamBadgeProps } from "./components/team-badge";
 export { TrendingFeed } from "./components/trending-feed";
 export { matchTrendingCatalog } from "@/mocks/matches";
 export { matchDetailFor } from "@/mocks/matches";
@@ -20,7 +21,6 @@ export {
 } from "@/mocks/matches";
 export type {
   MatchDetailData,
-  MatchDetailQuiz,
   MatchDetailScoreboard,
   MatchLeague,
   SportFixtureCount,

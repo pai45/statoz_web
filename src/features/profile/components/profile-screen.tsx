@@ -5,6 +5,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { accentVar, GameIcon, MatchIcon, PickIcon } from "@/design-system";
 import { AdSlot } from "@/features/ads";
 import { AuthBoundary } from "@/features/auth";
+import { equipCosmetic } from "@/features/economy";
 
 import {
   loadOrCreatePlayerTag,
@@ -21,6 +22,7 @@ import { AchievementShowcase } from "./achievement-showcase";
 import { FollowingBand } from "./following-band";
 import { AvatarEditor, BannerEditor } from "./identity-editors";
 import { LoadoutCard } from "./loadout-card";
+import { OzCoinTracker } from "./oz-coin-tracker";
 import { ProfileActions } from "./profile-actions";
 import { ProfileHero } from "./profile-hero";
 import styles from "./profile.module.css";
@@ -123,14 +125,18 @@ function ProfileDossier() {
             </Section>
 
             <Section delay={60}>
+              <OzCoinTracker />
+            </Section>
+
+            <Section delay={100}>
               <AchievementShowcase stats={achievements} />
             </Section>
 
-            <Section delay={90}>
+            <Section delay={130}>
               <AdSlot placement="profile-dossier" />
             </Section>
 
-            <Section delay={120}>
+            <Section delay={160}>
               <StatBand
                 title="PREDICTS"
                 accent={cyan}
@@ -140,7 +146,7 @@ function ProfileDossier() {
               />
             </Section>
 
-            <Section delay={160}>
+            <Section delay={200}>
               <StatBand
                 title="PICKS"
                 accent={lime}
@@ -150,7 +156,7 @@ function ProfileDossier() {
               />
             </Section>
 
-            <Section delay={200}>
+            <Section delay={240}>
               <StatBand
                 title="GAMES"
                 accent={orange}
@@ -163,15 +169,15 @@ function ProfileDossier() {
           </div>
 
           <div className="mt-3.5 flex flex-col gap-3.5 lg:mt-0">
-            <Section delay={240}>
+            <Section delay={280}>
               <LoadoutCard />
             </Section>
 
-            <Section delay={280}>
+            <Section delay={320}>
               <TimeZoneCard selectedId={identity.timeZoneId} />
             </Section>
 
-            <Section delay={320}>
+            <Section delay={360}>
               <ProfileActions />
             </Section>
           </div>
@@ -184,6 +190,7 @@ function ProfileDossier() {
           onCancel={() => setEditing(null)}
           onSave={(avatarId) => {
             saveAvatar(avatarId);
+            equipCosmetic("avatar", avatarId);
             setEditing(null);
           }}
         />
@@ -195,6 +202,7 @@ function ProfileDossier() {
           onCancel={() => setEditing(null)}
           onSave={(bannerId) => {
             saveBanner(bannerId);
+            equipCosmetic("banner", bannerId);
             setEditing(null);
           }}
         />

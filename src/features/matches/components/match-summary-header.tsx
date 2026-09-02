@@ -1,9 +1,8 @@
-import type { CSSProperties } from "react";
-
-import type { SportMatch, SportTeam } from "@/domain/matches";
+import type { SportMatch } from "@/domain/matches";
 import { formatKickoffTime } from "@/shared/utils";
 
 import styles from "./match-detail.module.css";
+import { TeamBadge } from "./team-badge";
 
 export function MatchSummaryHeader({ match }: { match: SportMatch }) {
   if (match.sport === "motorsport") {
@@ -29,7 +28,7 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
         </time>
 
         <div className={styles.summaryTeams}>
-          <TeamBadge team={match.home} />
+          <TeamBadge team={match.home} size={44} />
           <span className={styles.teamName} style={{ marginLeft: 10 }}>
             {match.home.name}
           </span>
@@ -42,7 +41,7 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
             {match.away.name}
           </span>
           <span style={{ width: 10, flex: "none" }} />
-          <TeamBadge team={match.away} />
+          <TeamBadge team={match.away} size={44} />
         </div>
 
         <div className={styles.summarySplit} aria-hidden>
@@ -70,23 +69,6 @@ function GrandPrixSummary({ match }: { match: SportMatch }) {
         </div>
       </div>
     </section>
-  );
-}
-
-export function TeamBadge({ team, size = 44 }: { team: SportTeam; size?: number }) {
-  const style = {
-    width: size,
-    height: size,
-    "--team-primary": team.color,
-    "--team-secondary": team.secondaryColor ?? team.color,
-    "--team-ink": team.badgeTextColor ?? "var(--ds-color-text-default)",
-  } as CSSProperties;
-
-  return (
-    <span className={styles.teamBadge} style={style} role="img" aria-label={team.name}>
-      <span aria-hidden className={styles.teamBadgeShadow} />
-      <span className={styles.teamBadgeFace}>{team.shortName}</span>
-    </span>
   );
 }
 

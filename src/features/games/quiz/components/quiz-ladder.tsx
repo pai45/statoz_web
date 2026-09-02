@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import {
+  AccentPanel,
   accentVar,
   feedbackVar,
   Glyph,
@@ -27,7 +28,6 @@ import {
 } from "../state/ladder";
 import type { QuizMode, QuizModeProgress, QuizSetProgress } from "../types";
 
-import { QuizPanel } from "./quiz-panel";
 import { QuizSetTile } from "./quiz-set-tile";
 import styles from "./quiz.module.css";
 
@@ -256,7 +256,7 @@ function NextChallenge({
         : `${questionsPerSet} questions · instant verdict after every answer.`;
 
   return (
-    <QuizPanel accent={accent} className={styles.riseIn}>
+    <AccentPanel accent={accent} className={styles.riseIn}>
       <div className="p-4">
         <div className="flex items-center gap-2.25">
           {awaitingContent ? (
@@ -298,7 +298,7 @@ function NextChallenge({
         </p>
         <p className="mt-1.75 text-xs leading-snug text-muted">{body}</p>
       </div>
-    </QuizPanel>
+    </AccentPanel>
   );
 }
 

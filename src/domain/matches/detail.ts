@@ -1,20 +1,18 @@
 import type { Sport } from "@/domain/sports";
-
-export type MatchDetailQuizState = "open" | "locked" | "finished";
-
-export type MatchDetailQuiz = {
-  id: string;
-  title: string;
-  subtitle: string;
-  questions: number;
-  rewardXp: number;
-  state: MatchDetailQuizState;
-  answered: number;
-  contest?: {
-    entryLabel: string;
-    prizeLabel: string;
-  };
-};
+import type {
+  BoxScore,
+  FeedEvent,
+  InningsLine,
+  MatchIntel,
+  MatchPulse,
+  MatchScorer,
+  MatchTrace,
+  StatLeader,
+} from "./report";
+import type {
+  MatchPredictionLeaderboardEntry,
+  PredictionQuiz,
+} from "@/domain/predictions";
 
 export type MatchDetailOutcome = {
   id: string;
@@ -38,16 +36,6 @@ export type MatchDetailMarket = {
   closesLabel?: string;
   volumeOz: number;
   outcomes: MatchDetailOutcome[];
-};
-
-export type MatchDetailBoardEntry = {
-  rank: number;
-  name: string;
-  points: number;
-  correct: number;
-  movement: number;
-  badge?: string;
-  isNew?: boolean;
 };
 
 export type MatchDetailStat = {
@@ -86,12 +74,26 @@ export type MatchDetailScoreboard = {
   scoreRows: Array<{ label: string; home: string; away: string }>;
   sessions?: Array<{ label: string; results: string[] }>;
   driverStandings?: string[];
+  /** The report the STATS tab leads with. */
+  pulse: MatchPulse;
+  intel: MatchIntel;
+  /** Football momentum, basketball win probability, a cricket run race. */
+  trace?: MatchTrace;
+  /** Cricket only: the chase against the required rate. */
+  chase?: MatchTrace;
+  scorers?: MatchScorer[];
+  leaders?: StatLeader[];
+  boxScore?: BoxScore;
+  innings?: InningsLine[];
+  feed?: FeedEvent[];
 };
 
-/** Static, feature-owned data that makes a fixture's Flutter match-detail tabs complete. */
+/** Static, feature-owned data that makes a fixture's match-detail tabs complete. */
 export type MatchDetailData = {
-  quizzes: MatchDetailQuiz[];
-  leaderboard: Record<string, MatchDetailBoardEntry[]>;
+  /** The quiz sets the PREDICT tab lists, and the TOPS tab ranks. */
+  quizzes: PredictionQuiz[];
+  /** quizId -> the rivals already on that quiz's board. */
+  leaderboard: Record<string, MatchPredictionLeaderboardEntry[]>;
   scoreboard: MatchDetailScoreboard;
 };
 

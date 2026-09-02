@@ -1,16 +1,23 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
+
 import {
   accentVar,
   Avatar,
   BoltIcon,
+  CheckIcon,
   feedbackVar,
   GameIcon,
   MatchIcon,
   PersonSearchIcon,
   PickIcon,
+  PlusIcon,
   withAlpha,
 } from "@/design-system";
+import { activeLoadout, isLoadoutComplete, useDecks } from "@/features/cards-decks";
+import { isFriend, toggleFriend, useFriends } from "@/features/friends";
 import { avatarForName } from "@/features/onboarding";
 
 import { rivalDossier, type RivalDossier } from "../data/rival-dossier";
@@ -35,9 +42,8 @@ import { StatBand } from "./stat-band";
  * measures yours. Nothing is stored, so a rival can never drift out of step
  * with the board that listed them.
  *
- * The app's two actions are gone. CHALLENGE needs a game that takes a themed
- * opponent and ADD FRIEND needs a friends store; the web has neither yet, and a
- * button that does nothing is worse than no button.
+ * The app's two actions are here: CHALLENGE starts a Pitch Duel themed as this
+ * rival, and ADD FRIEND bookmarks them into the arena's board.
  */
 
 const cyan = accentVar("cyan");
@@ -98,6 +104,8 @@ export function RivalDossierOverlay({
       <div className="flex flex-col gap-3.5 p-4">
         <RivalHero name={name} rank={rank} pro={pro} rival={rival} />
 
+        <RivalActions name={name} level={rival.level} onClose={onClose} />
+
         <VsYouCard
           rows={[
             { label: "RANK", rival: rank, you: userRank, lowerIsBetter: true },
@@ -134,6 +142,95 @@ export function RivalDossierOverlay({
         />
       </div>
     </ProfileOverlay>
+  );
+}
+
+/**
+ * CHALLENGE and ADD FRIEND — the app's pair, in its order.
+ *
+ * CHALLENGE is the focal plate and ADD FRIEND the calm one, the same way the
+ * quiz dock pairs NEXT with PREVIOUS. A challenge with no deck behind it says
+ * so rather than starting a match the player cannot field.
+ */
+function RivalActions({
+  name,
+  level,
+  onClose,
+}: {
+  name: string;
+  level: number;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const decks = useDecks();
+  const friends = useFriends();
+  const [notice, setNotice] = useState<string | null>(null);
+  const friend = isFriend(friends, name);
+
+  useEffect(() => {
+    if (notice === null) return;
+    const timer = window.setTimeout(() => setNotice(null), 1800);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+
+  function challenge() {
+    if (!isLoadoutComplete(activeLoadout(decks, "football"))) {
+      setNotice("Build a match deck to challenge a rival.");
+      return;
+    }
+    onClose();
+    router.push(`/play/pitch-duel?vs=${encodeURIComponent(name)}&level=${level}`);
+  }
+
+  return (
+    <div className="grid gap-2">
+      <div className="grid grid-cols-2 gap-3.5">
+        <ActionPlate label="CHALLENGE" icon={<BoltIcon size={16} />} focal onSelect={challenge} />
+        <ActionPlate
+          label={friend ? "FRIEND ✓" : "ADD FRIEND"}
+          icon={friend ? <CheckIcon size={16} /> : <PlusIcon size={16} />}
+          onSelect={() => {
+            const nowFriend = toggleFriend(name);
+            setNotice(nowFriend ? `${name} added to friends` : `${name} removed from friends`);
+          }}
+        />
+      </div>
+      {notice ? (
+        <p className="text-center text-xs text-muted" role="status">
+          {notice}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function ActionPlate({
+  label,
+  icon,
+  focal = false,
+  onSelect,
+}: {
+  label: string;
+  icon: ReactNode;
+  focal?: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className="flex min-h-11.5 items-center justify-center gap-2 font-display text-2xs font-black tracking-label transition-[filter,transform] duration-150 hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2"
+      style={{
+        clipPath: "var(--ds-clip-compact-hud)",
+        background: focal ? cyan : "var(--ds-color-background-elevated)",
+        color: focal ? "var(--ds-color-text-inverse)" : "var(--ds-color-text-default)",
+        boxShadow: focal ? undefined : "inset 0 0 0 1px var(--ds-color-border-strong)",
+        outlineColor: cyan,
+      }}
+    >
+      {label}
+      {icon}
+    </button>
   );
 }
 

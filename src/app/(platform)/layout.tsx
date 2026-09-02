@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { AdSlot } from "@/features/ads";
 import { PlatformNav, PlatformTopBar } from "@/features/shell";
 
 /**
@@ -9,7 +10,7 @@ import { PlatformNav, PlatformTopBar } from "@/features/shell";
 export default function PlatformLayout({ children }: LayoutProps<"/">) {
   return (
     <div
-      className="flex min-h-dvh flex-col lg:flex-row"
+      className="min-h-dvh"
       style={
         {
           background: "var(--ds-gradient-app-background)",
@@ -23,20 +24,36 @@ export default function PlatformLayout({ children }: LayoutProps<"/">) {
         } as CSSProperties
       }
     >
-      <div className="hidden shrink-0 lg:block lg:w-56">
-        <div className="sticky top-0 h-dvh">
-          <PlatformNav orientation="rail" />
+      <div className="mx-auto grid min-h-dvh w-full max-w-[104rem] grid-cols-1 2xl:grid-cols-[10rem_minmax(0,80rem)_10rem] 2xl:gap-4 2xl:px-4">
+        <div className="hidden 2xl:block">
+          <div className="sticky top-4">
+            <AdSlot placement="platform-left-rail" />
+          </div>
+        </div>
+
+        <div className="mx-auto flex min-h-dvh w-full max-w-7xl min-w-0 flex-col lg:flex-row 2xl:mx-0">
+          <div className="hidden shrink-0 lg:block lg:w-56">
+            <div className="sticky top-0 h-dvh">
+              <PlatformNav orientation="rail" />
+            </div>
+          </div>
+
+          <div className="flex min-w-0 flex-1 flex-col">
+            <PlatformTopBar />
+            <main className="flex min-h-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)]">
+              {children}
+            </main>
+          </div>
+
+          <PlatformNav className="sticky bottom-0 z-20 h-[calc(var(--platform-nav-height)+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] lg:hidden" />
+        </div>
+
+        <div className="hidden 2xl:block">
+          <div className="sticky top-4">
+            <AdSlot placement="platform-right-rail" />
+          </div>
         </div>
       </div>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <PlatformTopBar />
-        <main className="flex min-h-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)]">
-          {children}
-        </main>
-      </div>
-
-      <PlatformNav className="sticky bottom-0 z-20 h-[calc(var(--platform-nav-height)+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] lg:hidden" />
     </div>
   );
 }

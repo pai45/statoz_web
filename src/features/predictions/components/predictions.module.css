@@ -1,0 +1,635 @@
+/*
+ * The PREDICT tab: the quiz-set hub, the one-question-at-a-time flow, the
+ * review cards with their crowd votes, and the two docks that end them.
+ *
+ * Motion and pseudo-state only — layout is Tailwind and colour comes from the
+ * token variables the components pass in.
+ */
+
+.display,
+.hubTag,
+.hubTitle,
+.rewardPill,
+.contestChip,
+.hubCta,
+.indexPlate,
+.lockLine,
+.xpPot,
+.allQuizzes,
+.questionIndex,
+.optionLetter,
+.optionLabel,
+.boostChip,
+.xpPill,
+.dockHelper,
+.pagerButton,
+.reviewIndex,
+.reviewPickLabel,
+.pollMeta,
+.lockDockLabel,
+.noticeLabel {
+  font-family: var(--ds-font-display);
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ---- Quiz-set hub ---------------------------------------------------------- */
+
+/* Cards sit at their own height; a stretched cell would show its offset edge
+   above the frame instead of below it. */
+.hubList { display: grid; align-items: start; gap: 22px; }
+
+.hubCard {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.hubCard:disabled { cursor: not-allowed; }
+
+/* The hard, un-blurred offset edge that reads as elevation. */
+.hubShadow {
+  position: absolute;
+  z-index: -1;
+  inset: 6px 0 -6px 0;
+  background: color-mix(in srgb, var(--hub-accent) 30%, var(--ds-color-fixture-shadow));
+  clip-path: var(--ds-clip-compact-hud);
+}
+
+.hubFrame {
+  position: relative;
+  display: flex;
+  min-height: 84px;
+  gap: 12px;
+  padding: 12px 12px 13px;
+  clip-path: var(--ds-clip-compact-hud);
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--home-color) 16%, var(--ds-color-background-quiz-hub)),
+      color-mix(in srgb, var(--away-color) 16%, var(--ds-color-background-quiz-hub)));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hub-accent) 40%, transparent);
+}
+
+/* The reward-reveal moment is the one card that breathes — and the only glow. */
+.hubGlow .hubFrame { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hub-accent) 60%, transparent); }
+.hubGlow { animation: hubBreathe 2.8s ease-in-out infinite; }
+
+@keyframes hubBreathe {
+  0%, 100% { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--hub-accent) 18%, transparent)); }
+  50% { filter: drop-shadow(0 0 22px color-mix(in srgb, var(--hub-accent) 40%, transparent)); }
+}
+
+.hubBlocked .hubFrame { filter: saturate(.5) brightness(.86); }
+
+.hubCard:hover:not(:disabled) .hubFrame { filter: brightness(1.06); }
+.hubCard:focus-visible { outline: 2px solid var(--hub-accent); outline-offset: 2px; }
+
+.indexPlate {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  place-items: center;
+  clip-path: polygon(8px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 2px 100%, 0 calc(100% - 2px), 0 8px);
+  background: color-mix(in srgb, var(--hub-accent) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hub-accent) 60%, transparent);
+  color: var(--hub-accent);
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.hubTag { color: var(--hub-accent); font-size: 8.5px; letter-spacing: .16em; }
+.hubTitle { margin: 4px 0 0; color: var(--ds-color-text-default); font-size: 14.5px; line-height: 1.2; }
+.hubSubtitle { margin: 6px 0 0; color: var(--ds-color-text-muted); font-family: var(--ds-font-body); font-size: 11.5px; font-weight: 400; letter-spacing: 0; }
+
+.rewardPill {
+  flex: none;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--pill-color) 50%, transparent);
+  background: color-mix(in srgb, var(--pill-color) 12%, transparent);
+  color: var(--pill-color);
+  font-size: 9px;
+  letter-spacing: .06em;
+}
+
+.contestStrip { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; }
+.contestChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3.5px 7px;
+  border: 1px solid color-mix(in srgb, var(--chip-color) 45%, transparent);
+  background: color-mix(in srgb, var(--chip-color) 10%, transparent);
+  color: var(--chip-color);
+  font-size: 8.5px;
+  letter-spacing: .08em;
+}
+.contestChipFilled { background: color-mix(in srgb, var(--chip-color) 18%, transparent); }
+
+.hubTrack {
+  height: 6px;
+  margin-top: 11px;
+  background: rgb(0 0 0 / 35%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hub-accent) 22%, transparent);
+}
+.hubTrack i { display: block; height: 100%; background: var(--track-accent); transition: width 240ms ease-out; }
+
+.hubDivider {
+  height: 1px;
+  margin: 10px 0 9px;
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--hub-accent) 62%, transparent), transparent);
+}
+
+.hubCta { display: flex; align-items: center; gap: 6px; color: var(--hub-accent); font-size: 9px; letter-spacing: .1em; }
+.hubCtaText { overflow: hidden; flex: 1; text-overflow: ellipsis; white-space: nowrap; }
+.hubGlow .hubCtaText { text-shadow: 0 0 10px color-mix(in srgb, var(--hub-accent) 50%, transparent); }
+
+.chevronChip {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  clip-path: polygon(6px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 2px 100%, 0 calc(100% - 2px), 0 6px);
+  background: color-mix(in srgb, var(--hub-accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hub-accent) 55%, transparent);
+}
+
+.outcomeDots { display: flex; flex: none; gap: 4px; }
+.outcomeDot {
+  display: grid;
+  width: 13px;
+  height: 13px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--dot-color) 55%, transparent);
+  background: color-mix(in srgb, var(--dot-color) 12%, transparent);
+  color: var(--dot-color);
+}
+
+.blockedNote {
+  margin-top: 10px;
+  color: var(--ds-color-text-muted);
+  font-family: var(--ds-font-body);
+  font-size: 11px;
+}
+
+/* ---- Flow chrome ----------------------------------------------------------- */
+
+.flow { display: flex; min-height: 0; height: 100%; flex-direction: column; }
+/* The Match Circle bar floats over the frame on a phone; the scroll and the
+   docks below leave it room rather than running under it. */
+.flowScroll {
+  min-height: 0;
+  flex: 1;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-color: var(--ds-color-border-strong) transparent;
+}
+/* A docked flow hands the clearance to its dock; an undocked one keeps it. */
+.flow > .flowScroll { padding-bottom: 12px; }
+.flow > .flowScroll:last-child { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+
+.lockLine { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 20px 2px; font-size: 11px; letter-spacing: .14em; }
+.lockLineStack { display: grid; justify-items: center; gap: 7px; padding: 12px 20px 2px; }
+
+.xpPot { display: inline-flex; align-items: center; gap: 5px; color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .14em; }
+.xpPotValue { color: var(--ds-color-accent-gold); font-size: 12px; letter-spacing: .06em; transition: transform 140ms ease-out; }
+.xpPotBump { transform: scale(1.2); }
+
+.allQuizzes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ds-color-accent-cyan);
+  font-size: 10px;
+  letter-spacing: .12em;
+  cursor: pointer;
+}
+.allQuizzes:hover { color: var(--ds-color-text-default); }
+
+/* ---- One question ---------------------------------------------------------- */
+
+/* The panel sits 30px down so the numbered plate and the XP pill can ride its
+   top edge; that space is the stage's padding, not the panel's margin, which
+   would collapse through and take the plate with it. */
+.questionStage { position: relative; padding: 30px 20px 12px; }
+
+.questionPanel {
+  position: relative;
+  padding: 28px 18px 18px;
+  border: 1px solid var(--ds-color-border-default);
+  background: linear-gradient(to bottom, var(--ds-color-background-secondary), var(--ds-color-background-primary));
+}
+
+.questionIndex {
+  position: absolute;
+  top: 18px;
+  left: 14px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--ds-color-border-default);
+  background: color-mix(in srgb, var(--ds-color-accent-cyan) 16%, transparent);
+  color: var(--ds-color-accent-cyan);
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.questionMeta { position: absolute; top: 0; right: 0; display: flex; align-items: center; gap: 4px; }
+
+.questionText {
+  margin: 0;
+  color: var(--ds-color-text-default);
+  font-family: var(--ds-font-display);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  line-height: 1.25;
+}
+
+/* Words rise in one after another as the question lands. */
+.revealWord { display: inline-block; margin-right: 5px; animation: revealRise 420ms cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes revealRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.optionList { display: grid; gap: 10px; margin-top: 16px; }
+.optionReveal { animation: revealRise 380ms cubic-bezier(.22, 1, .36, 1) both; }
+
+.optionTile {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 10px;
+  border: 1px solid var(--option-border, var(--ds-color-border-default));
+  background: var(--option-fill, var(--ds-color-background-elevated));
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+.optionTile:disabled { cursor: default; }
+.optionTile:hover:not(:disabled) { border-color: color-mix(in srgb, var(--ds-color-accent-cyan) 60%, transparent); }
+.optionTile:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -2px; }
+
+.optionActive { border-width: 1.5px; border-color: var(--option-accent); background: color-mix(in srgb, var(--option-accent) 10%, var(--ds-color-background-elevated)); }
+.optionSelected { box-shadow: 0 0 14px color-mix(in srgb, var(--option-accent) 40%, transparent); }
+
+.optionLetter {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--option-accent, var(--ds-color-text-muted)) 60%, transparent);
+  background: var(--letter-fill, var(--ds-color-background-muted));
+  color: var(--option-accent, var(--ds-color-text-muted));
+  font-size: 13px;
+  letter-spacing: 0;
+}
+.optionActive .optionLetter { background: color-mix(in srgb, var(--option-accent) 20%, transparent); }
+
+.optionLabel { flex: 1; color: var(--ds-color-text-subtle); font-size: 12.5px; letter-spacing: .05em; }
+.optionActive .optionLabel { color: var(--ds-color-text-default); }
+
+/* Boost chips and the XP pill that rides the panel's top-right corner. */
+.boostRow { display: flex; align-items: center; gap: 8px; }
+.boostLabel { color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .12em; }
+
+.boostChip {
+  display: inline-flex;
+  height: 30px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--boost-accent) 45%, transparent);
+  background: var(--ds-color-background-elevated);
+  color: var(--boost-accent);
+  font-size: 11px;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(.34, 1.56, .64, 1), border-color 180ms ease, background 180ms ease;
+}
+.boostChip:disabled { cursor: not-allowed; border-color: color-mix(in srgb, var(--boost-accent) 18%, transparent); color: color-mix(in srgb, var(--ds-color-text-muted) 55%, transparent); }
+.boostChipClaimed { border-color: var(--ds-color-border-default); background: var(--ds-color-background-primary); }
+.boostChipActive {
+  border-width: 1.5px;
+  border-color: var(--boost-accent);
+  background: color-mix(in srgb, var(--boost-accent) 22%, transparent);
+  color: var(--ds-color-text-default);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--boost-accent) 35%, transparent);
+  animation: boostPop 360ms cubic-bezier(.34, 1.56, .64, 1);
+}
+@keyframes boostPop { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
+.boostChip:focus-visible { outline: 2px solid var(--boost-accent); outline-offset: 2px; }
+
+.xpPill {
+  display: inline-flex;
+  height: 30px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  background: linear-gradient(to right, var(--ds-color-accent-violet), color-mix(in srgb, var(--ds-color-accent-violet) 55%, var(--pill-accent)));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--pill-accent) 45%, transparent);
+  color: var(--ds-color-text-default);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+.xpPill small { font-size: 10px; letter-spacing: .05em; }
+.xpPill b { color: var(--pill-accent); font-size: 9px; }
+
+/* ---- The score picker ------------------------------------------------------ */
+
+.scorePicker { display: grid; grid-template-columns: 1fr 1fr; height: 104px; margin-top: 24px; }
+.scoreHalf { display: flex; align-items: center; background: var(--half-color); }
+.scoreHalfAway { flex-direction: row-reverse; }
+.scoreName {
+  overflow: hidden;
+  flex: 1;
+  padding: 0 8px 0 16px;
+  color: var(--ds-color-text-default);
+  font-family: var(--ds-font-body);
+  font-size: 15px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.scoreHalfAway .scoreName { padding: 0 16px 0 8px; text-align: right; }
+
+.scoreControls { display: grid; justify-items: center; gap: 4px; padding: 0 12px; }
+.scoreValue { color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 30px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.scoreValueCorrect { color: var(--ds-color-success); }
+/* The stepper darkens its own half rather than taking a colour of its own. */
+.stepButton {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  background: color-mix(in srgb, var(--half-color) 62%, var(--ds-color-background-primary));
+  color: var(--ds-color-text-default);
+  cursor: pointer;
+}
+.stepButton:disabled { color: rgb(255 255 255 / 35%); cursor: not-allowed; opacity: .55; }
+.stepButton:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -2px; }
+
+.scoreVerdict { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-family: var(--ds-font-display); font-size: 11px; font-weight: 900; letter-spacing: .08em; }
+
+/* ---- The dock -------------------------------------------------------------- */
+
+.dock { flex: none; padding: 20px 16px calc(20px + 78px + env(safe-area-inset-bottom)); }
+.segments { display: flex; gap: 8px; }
+.segment { height: 5px; flex: 1; background: var(--ds-color-border-subtle); transition: background 200ms ease, box-shadow 200ms ease; }
+.segmentAnswered { background: var(--ds-color-accent-cyan); }
+.segmentCurrent { background: var(--ds-color-accent-gold); box-shadow: 0 0 8px color-mix(in srgb, var(--ds-color-accent-gold) 60%, transparent); }
+
+.pagerRow { display: flex; gap: 14px; margin-top: 14px; }
+.pagerButton {
+  display: flex;
+  min-height: 46px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--ds-color-border-strong);
+  background: var(--ds-color-background-elevated);
+  clip-path: var(--ds-clip-compact-hud);
+  color: var(--ds-color-text-subtle);
+  font-size: 11px;
+  letter-spacing: .1em;
+  cursor: pointer;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+.pagerFocal { border-color: transparent; background: var(--ds-color-accent-cyan); color: var(--ds-color-text-inverse); }
+.pagerButton:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.pagerButton:disabled { cursor: not-allowed; background: var(--ds-color-background-muted); color: var(--ds-color-text-disabled); }
+.pagerButton:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: 2px; }
+
+.dockHelper { margin: 12px 0 0; color: var(--ds-color-text-muted); font-family: var(--ds-font-body); font-size: 12px; font-weight: 400; letter-spacing: 0; text-align: center; }
+
+/* ---- Review ---------------------------------------------------------------- */
+
+.reviewList { display: grid; gap: 10px; padding: 0 20px 18px; }
+
+.reviewNotice {
+  margin: 14px 20px 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--ds-color-accent-cyan) 28%, transparent);
+  background: color-mix(in srgb, var(--ds-color-accent-cyan) 8%, transparent);
+  color: var(--ds-color-text-subtle);
+  font-size: 13px;
+  text-align: center;
+}
+
+.reviewCard { border: 1px solid var(--ds-color-border-default); background: linear-gradient(to bottom, var(--ds-color-background-secondary), var(--ds-color-background-primary)); }
+.reviewHead { display: grid; width: 100%; padding: 12px 12px 11px; border: 0; background: none; text-align: left; cursor: pointer; }
+.reviewHead:disabled { cursor: default; }
+.reviewHead:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -2px; }
+
+.reviewIndex {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--ds-color-border-default);
+  background: color-mix(in srgb, var(--ds-color-accent-cyan) 14%, transparent);
+  color: var(--ds-color-accent-cyan);
+  font-size: 10px;
+}
+
+.reviewQuestion { margin: 0; color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 13.5px; font-weight: 900; letter-spacing: .02em; line-height: 1.25; }
+.reviewPickLabel { color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .12em; }
+.reviewPickValue { overflow: hidden; flex: 1; font-family: var(--ds-font-body); font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+
+.reviewBody { padding: 0 12px 12px; border-top: 1px solid var(--ds-color-border-subtle); margin-top: 0; }
+.reviewBodyInner { padding-top: 12px; }
+
+.multiplierBadge { padding: 4px 8px; border: 1px solid color-mix(in srgb, var(--badge-accent) 70%, transparent); background: color-mix(in srgb, var(--badge-accent) 14%, transparent); color: var(--badge-accent); font-family: var(--ds-font-display); font-size: 10px; font-weight: 900; }
+
+.reviewChoice {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--ds-color-border-default);
+  background: var(--ds-color-background-primary);
+  color: var(--ds-color-text-subtle);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.reviewChoiceSelected { border-width: 1.5px; border-color: var(--ds-color-accent-cyan); background: color-mix(in srgb, var(--ds-color-accent-cyan) 12%, transparent); color: var(--ds-color-text-default); }
+.reviewChoice:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -2px; }
+
+.pollMeta { display: flex; align-items: center; justify-content: space-between; color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .12em; }
+.pollRow { display: grid; gap: 5px; }
+.pollHead { display: flex; align-items: center; gap: 6px; font-family: var(--ds-font-body); font-size: 12px; font-weight: 700; }
+.pollTrack { height: 7px; background: rgb(0 0 0 / 35%); }
+.pollTrack i { display: block; height: 100%; background: var(--poll-accent); transition: width 720ms cubic-bezier(.22, 1, .36, 1); }
+
+/* ---- Docks that end a review ----------------------------------------------- */
+
+.lockDock { flex: none; padding: 10px 16px calc(12px + 78px + env(safe-area-inset-bottom)); border-top: 1px solid color-mix(in srgb, var(--ds-color-accent-cyan) 34%, transparent); background: var(--ds-color-background-nav); }
+.lockDockLabel { color: var(--ds-color-text-muted); font-size: 8px; letter-spacing: .12em; }
+.lockCharge { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+.lockChargeTrack { height: 4px; flex: 1; background: rgb(0 0 0 / 35%); }
+.lockChargeTrack i { display: block; height: 100%; background: var(--ds-color-accent-cyan); }
+
+.holdButton {
+  display: grid;
+  width: 100%;
+  min-height: 58px;
+  place-items: center;
+  border: 1px solid var(--ds-color-accent-cyan);
+  background: color-mix(in srgb, var(--ds-color-accent-cyan) 14%, transparent);
+  clip-path: var(--ds-clip-compact-hud);
+  color: var(--ds-color-text-default);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+.holdButton:disabled { cursor: progress; }
+.holdButton:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: 2px; }
+.holdLabel { font-family: var(--ds-font-display); font-size: 13px; font-weight: 900; letter-spacing: .12em; }
+.holdHelper { margin-top: 3px; color: var(--ds-color-text-muted); font-size: 10px; letter-spacing: .1em; }
+
+.settleDock { flex: none; padding: 20px 16px calc(22px + 78px + env(safe-area-inset-bottom)); }
+
+/* ---- Overlays -------------------------------------------------------------- */
+
+.numberBurst {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  inset: 0;
+  place-items: center;
+  background: color-mix(in srgb, var(--ds-color-background-primary) 86%, transparent);
+  color: var(--ds-color-accent-lime);
+  font-family: var(--ds-font-display);
+  font-size: 128px;
+  font-weight: 900;
+  pointer-events: none;
+  text-shadow: 0 0 52px color-mix(in srgb, var(--ds-color-accent-lime) 70%, transparent), 0 0 80px color-mix(in srgb, var(--ds-color-accent-cyan) 40%, transparent);
+  animation: numberBurst 900ms ease-out forwards;
+}
+@keyframes numberBurst {
+  0% { opacity: 1; transform: scale(2); }
+  25% { opacity: 1; transform: scale(1); }
+  82% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+.overlay {
+  position: absolute;
+  z-index: 6;
+  display: grid;
+  inset: 0;
+  place-items: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--ds-color-background-primary) 92%, transparent);
+  text-align: center;
+}
+
+.seal {
+  display: grid;
+  width: 172px;
+  margin: 0 auto;
+  height: 172px;
+  place-items: center;
+  border: 2px solid var(--ds-color-accent-cyan);
+  clip-path: var(--ds-clip-octagon);
+  background: color-mix(in srgb, var(--ds-color-accent-cyan) 12%, transparent);
+  color: var(--ds-color-accent-cyan);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--ds-color-accent-cyan) 35%, transparent);
+  animation: sealSlam 620ms cubic-bezier(.18, 1.5, .4, 1) both;
+}
+@keyframes sealSlam { 0% { opacity: 0; transform: scale(2.1); } 60% { opacity: 1; transform: scale(.94); } 100% { opacity: 1; transform: scale(1); } }
+
+.overlayHeadline { margin: 22px 0 0; color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 22px; font-weight: 900; letter-spacing: .1em; }
+.overlayBody { margin: 8px 0 0; color: var(--ds-color-text-muted); font-size: 13px; }
+.overlayXp { margin-top: 14px; color: var(--ds-color-accent-gold); font-family: var(--ds-font-display); font-size: 17px; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+
+/* ---- Settlement reveal ----------------------------------------------------- */
+
+.revealSheet { display: grid; width: 100%; max-width: 460px; gap: 14px; text-align: left; }
+.revealHead { display: grid; gap: 4px; text-align: center; }
+.revealTitle { margin: 0; color: var(--ds-color-accent-gold); font-family: var(--ds-font-display); font-size: 20px; font-weight: 900; letter-spacing: .12em; }
+.revealFixture { margin: 0; color: var(--ds-color-text-muted); font-size: 12px; }
+
+.verdictList { display: grid; gap: 8px; max-height: 42vh; overflow-y: auto; }
+.verdictRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--verdict-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--verdict-accent) 8%, var(--ds-color-background-secondary));
+  animation: revealRise 320ms cubic-bezier(.22, 1, .36, 1) both;
+}
+.verdictCopy { min-width: 0; flex: 1; }
+.verdictText { display: block; overflow: hidden; color: var(--ds-color-text-default); font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.verdictAnswer { display: block; margin-top: 2px; color: var(--ds-color-text-muted); font-size: 10px; }
+.verdictStamp { flex: none; color: var(--verdict-accent); font-family: var(--ds-font-display); font-size: 11px; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+.revealTotals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.revealCell { padding: 9px; border: 1px solid var(--ds-color-border-default); background: var(--ds-color-background-secondary); text-align: center; }
+.revealCell dt { color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.revealCell dd { margin: 4px 0 0; color: var(--cell-color, var(--ds-color-text-default)); font-family: var(--ds-font-display); font-size: 15px; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+.prizeBeat {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--prize-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--prize-accent) 12%, transparent);
+  text-align: center;
+}
+.prizeBeatWon { box-shadow: 0 0 26px color-mix(in srgb, var(--prize-accent) 30%, transparent); }
+
+.accuracyBar { height: 7px; background: rgb(0 0 0 / 35%); }
+.accuracyBar i { display: block; height: 100%; background: var(--ds-color-accent-cyan); transition: width 720ms cubic-bezier(.22, 1, .36, 1); }
+
+/* ---- Wider ------------------------------------------------------------- */
+
+@media (width >= 641px) {
+  .hubList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .questionStage,
+  .reviewList { max-width: 560px; margin: 0 auto; }
+}
+
+@media (width >= 1024px) {
+  /* The frame stops scrolling its own column at this width — the panels
+     grow instead, and the Match Circle bar joins the rail. */
+  .flow { height: auto; }
+  .flowScroll,
+  .flow > .flowScroll { min-height: 560px; height: auto; padding-bottom: 24px; overflow: visible; }
+  .dock { padding-bottom: 24px; }
+  .lockDock { padding-bottom: 14px; }
+  .settleDock { padding-bottom: 24px; }
+  .overlay { position: fixed; z-index: 60; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hubGlow,
+  .revealWord,
+  .optionReveal,
+  .numberBurst,
+  .seal,
+  .verdictRow,
+  .boostChipActive { animation: none; }
+  .numberBurst { display: none; }
+}

@@ -34,6 +34,7 @@ export type RankPodiumProps = {
   accent: string;
   /** The player's own portrait, so their card is their face and not a hash. */
   userAvatarSrc?: string;
+  userFrameColor?: string;
   onOpen?: (entry: LeaderboardEntry) => void;
 };
 
@@ -42,6 +43,7 @@ export function RankPodium({
   meta,
   accent,
   userAvatarSrc,
+  userFrameColor,
   onOpen,
 }: RankPodiumProps) {
   if (entries.length < 3) return null;
@@ -55,6 +57,7 @@ export function RankPodium({
       avatarSize={avatarSize}
       primary={primary}
       avatarSrc={entry.isUser ? userAvatarSrc : undefined}
+      frameColor={entry.isUser ? userFrameColor : undefined}
       onOpen={onOpen}
     />
   );
@@ -85,6 +88,7 @@ export type RankWinnerTileProps = {
   /** The champion layout: one wide row with the score set large at the end. */
   primary?: boolean;
   avatarSrc?: string;
+  frameColor?: string;
   onOpen?: (entry: LeaderboardEntry) => void;
 };
 
@@ -95,6 +99,7 @@ export function RankWinnerTile({
   avatarSize,
   primary = false,
   avatarSrc,
+  frameColor,
   onOpen,
 }: RankWinnerTileProps) {
   const plate = (
@@ -113,6 +118,7 @@ export function RankWinnerTile({
             ring={color}
             team={entry.team}
             src={avatarSrc}
+            frameColor={entry.isUser ? frameColor : undefined}
           />
           <WinnerCopy entry={entry} color={color} />
           <WinnerScore
@@ -141,6 +147,7 @@ export function RankWinnerTile({
               ring={color}
               team={entry.team}
               src={avatarSrc}
+              frameColor={entry.isUser ? frameColor : undefined}
             />
             <div className="min-w-0 flex-1">
               <p className="truncate text-base font-extrabold leading-none">

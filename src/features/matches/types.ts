@@ -1,12 +1,9 @@
 export type {
-  MatchDetailBoardEntry,
   MatchDetailCommentary,
   MatchDetailData,
   MatchDetailLineup,
   MatchDetailMarket,
   MatchDetailOutcome,
-  MatchDetailQuiz,
-  MatchDetailQuizState,
   MatchDetailScoreboard,
   MatchDetailStat,
   MatchDetailTimelineEvent,

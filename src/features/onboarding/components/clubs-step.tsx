@@ -1,5 +1,6 @@
-import { Monogram, SelectableTile } from "@/design-system";
+import { SelectableTile } from "@/design-system";
 import type { Sport } from "@/domain/sports";
+import { TeamBadge } from "@/features/matches";
 
 import { followableLeagueById } from "@/mocks/onboarding";
 import type { FollowableLeague } from "../types";
@@ -89,12 +90,7 @@ export function ClubsStep({
               className="aspect-[0.92] w-full"
             >
               <span className="flex size-full flex-col items-center justify-center gap-[7px] px-1.5 py-2">
-                <Monogram
-                  name={team.name}
-                  initials={team.shortName}
-                  accent={team.color}
-                  size={40}
-                />
+                <TeamBadge team={team} size={40} />
                 <span
                   className="w-full truncate text-center font-display text-2xs font-extrabold"
                   style={{

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { adPlacements } from "@/mocks/ads";
-import type { AdPlacementId } from "../types";
+import type { AdFormat, AdPlacementId } from "../types";
 
 import styles from "./ad-slot.module.css";
 
@@ -40,7 +40,7 @@ export function AdSlot({ placement, className }: AdSlotProps) {
   );
 }
 
-function CampaignCreative({ format }: { format: "horizontal" | "rectangle" }) {
+function CampaignCreative({ format }: { format: AdFormat }) {
   const src = format === "horizontal"
     ? "/assets/ads/velocity-lab-wide.png"
     : "/assets/ads/velocity-lab-rectangle.png";
@@ -51,7 +51,7 @@ function CampaignCreative({ format }: { format: "horizontal" | "rectangle" }) {
         src={src}
         alt=""
         fill
-        sizes={format === "horizontal" ? "(max-width: 767px) 320px, (max-width: 1023px) 728px, 970px" : "300px"}
+        sizes={imageSizes(format)}
         className={styles.image}
       />
       <span className={styles.scrim} />
@@ -64,14 +64,31 @@ function CampaignCreative({ format }: { format: "horizontal" | "rectangle" }) {
   );
 }
 
-function WireframeCreative({ format }: { format: "horizontal" | "rectangle" }) {
-  const dimensions = format === "horizontal" ? "320×100 → 970×90" : "300×250";
+function WireframeCreative({ format }: { format: AdFormat }) {
+  const dimensions = format === "horizontal"
+    ? "320×100 → 970×90"
+    : format === "skyscraper"
+      ? "160×600"
+      : format === "anchor"
+        ? "320×50 → 728×90"
+        : "300×250";
   const src = format === "horizontal"
     ? "/assets/ads/ad-space-horizontal.svg"
-    : "/assets/ads/ad-space-rectangle.svg";
+    : format === "skyscraper"
+      ? "/assets/ads/ad-space-skyscraper.svg"
+      : format === "anchor"
+        ? "/assets/ads/ad-space-anchor.svg"
+        : "/assets/ads/ad-space-rectangle.svg";
   return (
     <>
-      <Image src={src} alt="" fill sizes={format === "horizontal" ? "(max-width: 767px) 320px, (max-width: 1023px) 728px, 970px" : "300px"} className={styles.wireframeImage} />
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes={imageSizes(format)}
+        loading={format === "skyscraper" || format === "anchor" ? "eager" : undefined}
+        className={styles.wireframeImage}
+      />
       <div className={styles.wireframeCopy}>
         <span>Demo ad space</span>
         <strong>Responsive display</strong>
@@ -79,4 +96,14 @@ function WireframeCreative({ format }: { format: "horizontal" | "rectangle" }) {
       </div>
     </>
   );
+}
+
+function imageSizes(format: AdFormat) {
+  if (format === "horizontal") {
+    return "(max-width: 767px) 320px, (max-width: 1023px) 728px, 970px";
+  }
+
+  if (format === "skyscraper") return "160px";
+  if (format === "anchor") return "(max-width: 767px) 320px, 728px";
+  return "300px";
 }

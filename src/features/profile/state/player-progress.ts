@@ -14,6 +14,7 @@ import {
 import { useGameCareer } from "@/features/games";
 import { useEconomy } from "@/features/economy";
 import { collectionFromIds } from "@/features/packs";
+import { predictionCareer, usePredictions } from "@/features/predictions";
 
 import type { AchievementStats, CareerRecord } from "../types";
 
@@ -48,8 +49,10 @@ export function trackLevel(xpByTrack: TrackXp, track: ProgressTrack): number {
 export function usePlayerProgress(): PlayerProgress {
   const games = useGameCareer();
   const economy = useEconomy();
+  const predictions = usePredictions();
 
   return useMemo(() => {
+    const predicting = predictionCareer(predictions);
     const collection = collectionFromIds(
       economy.owned.playerCardIds,
       economy.owned.actionCardIds,
@@ -59,6 +62,8 @@ export function usePlayerProgress(): PlayerProgress {
     // exactly what the app's Cards / Meta track is for.
     const xpByTrack: TrackXp = { ...games.xpByTrack };
     if (collection.xp > 0) xpByTrack.cardsMeta = collection.xp;
+    // Settled prediction cards are the PREDICT track; nothing else writes it.
+    if (predicting.xp > 0) xpByTrack.prediction = predicting.xp;
 
     const totalXp = totalTrackXp(xpByTrack);
     const band = levelProgress(totalXp);
@@ -77,15 +82,15 @@ export function usePlayerProgress(): PlayerProgress {
       matchesPlayed: games.played,
       matchWins: games.won,
       bestMatchStreak: games.bestStreak,
-      // Clean sheets, the picks ledger, the prediction quiz and the coin
-      // economy all belong to features the web has not built yet. They read
-      // zero, which is what an untouched badge looks like either way.
+      // Clean sheets and the picks ledger belong to features the web has not
+      // built yet. They read zero, which is what an untouched badge looks like
+      // either way.
       cleanSheets: 0,
       shootoutWins: games.shootoutWins,
       basketballWins: games.basketballWins,
       tennisAchievements: games.tennisAchievements,
-      predictionsMade: 0,
-      correctPredictions: 0,
+      predictionsMade: predicting.made,
+      correctPredictions: predicting.correct,
       picksPlaced: 0,
       picksWon: 0,
       pickStreak: 0,
@@ -104,5 +109,5 @@ export function usePlayerProgress(): PlayerProgress {
       career,
       achievements,
     };
-  }, [economy, games]);
+  }, [economy, games, predictions]);
 }

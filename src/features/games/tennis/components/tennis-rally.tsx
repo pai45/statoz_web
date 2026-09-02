@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useDecks } from "@/features/cards-decks";
+import { activeLoadout, useDecks } from "@/features/cards-decks";
 import { settleCoinReward } from "@/features/economy";
 import { tennisPlayerCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { playColumnMaxWidth, resultDelayMs } from "../constants";
 import { tennisAthleteById } from "../data/athletes";
 import type { MatchSnapshot } from "../engine/tennis-game";
@@ -94,10 +95,11 @@ export function TennisRally({ game }: TennisRallyProps) {
   const hydrated = useIsHydrated();
   const progress = useTennisProgress();
   const gamesHref = `/games/${sportForGame(game)}`;
+  const tennisLoadout = activeLoadout(decks, "tennis");
 
   const athlete = useMemo(
-    () => athleteFromClaim(decks.loadouts.tennis?.playerId ? [decks.loadouts.tennis.playerId] : undefined),
-    [decks.loadouts.tennis],
+    () => athleteFromClaim(tennisLoadout?.playerId ? [tennisLoadout.playerId] : undefined),
+    [tennisLoadout],
   );
 
   const canResume =
@@ -148,17 +150,20 @@ export function TennisRally({ game }: TennisRallyProps) {
   if (view === "lobby" || config === null) {
     const masteryXp = athlete === null ? 0 : (progress.masteryXp[athlete.id] ?? 0);
     return (
-      <TennisLobby
-        playerName={athlete?.name ?? "—"}
-        difficulty="pro"
-        masteryXp={masteryXp}
-        setsWon={progress.setsWon}
-        winStreak={progress.currentWinStreak}
-        canResume={canResume}
-        ready={hydrated && athlete !== null}
-        backHref={gamesHref}
-        onPlay={canResume ? resumeMatch : play}
-      />
+      <>
+        <TennisLobby
+          playerName={athlete?.name ?? "—"}
+          difficulty="pro"
+          masteryXp={masteryXp}
+          setsWon={progress.setsWon}
+          winStreak={progress.currentWinStreak}
+          canResume={canResume}
+          ready={hydrated && athlete !== null}
+          backHref={gamesHref}
+          onPlay={canResume ? resumeMatch : play}
+        />
+        <GameLandingAd />
+      </>
     );
   }
 

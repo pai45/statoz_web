@@ -6,6 +6,7 @@ import { accentVar } from "@/design-system";
 import { sportForGame, type GameEntry } from "@/mocks/games";
 
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { completedCount } from "../engine/archive";
 import { dayKeyFor } from "../engine/day-keys";
 import {
@@ -107,20 +108,23 @@ export function FootballBingo({ game }: FootballBingoProps) {
   if (todayProgress === undefined) return <Opening />;
 
   return (
-    <BingoHome
-      todayProgress={todayProgress}
-      completedCount={completedCount(archive)}
-      // The app counts what the archive actually holds rather than re-deriving
-      // the range, so a day carried in from an older save still counts.
-      unlockedCount={Object.keys(archive.progressByDay).length}
-      now={now}
-      onPlay={() => {
-        setOpenDayKey(todayKey);
-        setView("grid");
-      }}
-      onOpenLogs={() => setView("logs")}
-      backHref={gamesHref}
-    />
+    <>
+      <BingoHome
+        todayProgress={todayProgress}
+        completedCount={completedCount(archive)}
+        // The app counts what the archive actually holds rather than re-deriving
+        // the range, so a day carried in from an older save still counts.
+        unlockedCount={Object.keys(archive.progressByDay).length}
+        now={now}
+        onPlay={() => {
+          setOpenDayKey(todayKey);
+          setView("grid");
+        }}
+        onOpenLogs={() => setView("logs")}
+        backHref={gamesHref}
+      />
+      <GameLandingAd />
+    </>
   );
 }
 

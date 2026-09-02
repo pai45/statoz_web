@@ -23,7 +23,18 @@ export type RankUserBarProps = {
   label?: string;
   /** The player's own portrait. Absent on a team board, which has a crest. */
   avatarSrc?: string;
+  frameColor?: string;
   onOpen?: () => void;
+  /**
+   * What stands where the rank normally does. A match board uses it for the
+   * two states that have no rank yet: `#--` while a card waits to settle, and
+   * `UNRANKED` before one is played at all.
+   */
+  rankText?: string;
+  /** A board the player has not scored on yet has no number to show. */
+  showScore?: boolean;
+  /** Turns the card into a call to action — the app's JOIN affordance. */
+  ctaLabel?: string;
 };
 
 export function RankUserBar({
@@ -32,7 +43,11 @@ export function RankUserBar({
   accent,
   label = "Your rank",
   avatarSrc,
+  frameColor,
   onOpen,
+  rankText,
+  showScore = true,
+  ctaLabel,
 }: RankUserBarProps) {
   const card = (
     <RankPlate
@@ -48,6 +63,7 @@ export function RankUserBar({
           highlight
           team={user.team}
           src={user.team ? undefined : avatarSrc}
+          frameColor={user.team ? undefined : frameColor}
         />
 
         <div className="min-w-0 flex-1">
@@ -64,9 +80,9 @@ export function RankUserBar({
           <div className="mt-0.5 flex items-baseline gap-2">
             <span
               className="ds-tabular font-display font-black leading-none"
-              style={{ fontSize: "28px" }}
+              style={{ fontSize: rankText ? "20px" : "28px" }}
             >
-              #{user.rank}
+              {rankText ?? `#${user.rank}`}
             </span>
             <span className="truncate text-base font-bold">{user.name}</span>
           </div>
@@ -82,6 +98,21 @@ export function RankUserBar({
         </div>
 
         <div className="flex shrink-0 flex-col items-end">
+          {ctaLabel ? (
+            <span
+              className="font-display font-black leading-none"
+              style={{
+                fontSize: "11px",
+                letterSpacing: "var(--ds-tracking-label)",
+                color: accent,
+                border: `1px solid ${withAlpha(accent, 0.6)}`,
+                padding: "7px 12px",
+              }}
+            >
+              {ctaLabel}
+            </span>
+          ) : showScore ? (
+            <>
           <ScoreText
             key={`user-${meta.unit}-${user.score}`}
             value={user.score}
@@ -98,6 +129,8 @@ export function RankUserBar({
           >
             {meta.unit.toLowerCase()}
           </span>
+            </>
+          ) : null}
         </div>
       </div>
     </RankPlate>
@@ -109,7 +142,7 @@ export function RankUserBar({
       type="button"
       onClick={onOpen}
       className="block w-full cursor-pointer text-left"
-      aria-label="Open your profile"
+      aria-label={ctaLabel ? `${ctaLabel} this board` : "Open your profile"}
     >
       {card}
     </button>

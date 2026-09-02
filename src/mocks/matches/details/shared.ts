@@ -1,19 +1,15 @@
 import type {
-  MatchDetailBoardEntry,
   MatchDetailData,
   MatchDetailLineup,
-  MatchDetailQuiz,
-  MatchDetailQuizState,
   MatchDetailScoreboard,
   SportMatch,
 } from "@/domain/matches";
 import { formatKickoffDate, formatKickoffTime } from "@/shared/utils";
 
-import { matchDetailRivals } from "../detail-rivals";
+import { matchBoardRivals, quizzesForMatch } from "../quizzes";
+import { buildReport } from "./report";
 
 export type DetailConfig = {
-  mainQuiz: { title: string; subtitle: string; questions: number; rewardXp: number };
-  eventQuiz?: { subtitle: string; rewardXp: number };
   lineup: { formation: string; roles: string[] };
   statLabels: string[];
   scoreRows: (match: SportMatch, seed: number) => MatchDetailScoreboard["scoreRows"];
@@ -26,44 +22,16 @@ export function buildMatchDetail(
   match: SportMatch,
   config: DetailConfig,
 ): MatchDetailData {
-  const state: MatchDetailQuizState = match.status === "scheduled"
-    ? "open"
-    : match.status === "live"
-      ? "locked"
-      : "finished";
-  const lockedMain = match.id === "epl_cfc_new" && state === "locked";
-  const main: MatchDetailQuiz = {
-    id: "main",
-    ...config.mainQuiz,
-    state,
-    answered: lockedMain || state === "finished" ? config.mainQuiz.questions : 0,
-    contest: match.sport === "football" ? {
-      entryLabel: state === "finished"
-        ? "FINISHED #2"
-        : lockedMain
-          ? "ENTRY PAID"
-          : "−25 OZ ENTRY",
-      prizeLabel: state === "finished" ? "+120 OZ WON" : "1ST · 2ND · 3RD",
-    } : undefined,
-  };
-  const quizzes: MatchDetailQuiz[] = [
-    main,
-    ...(config.eventQuiz ? [{
-      id: "events",
-      title: "Match Events Quiz",
-      subtitle: config.eventQuiz.subtitle,
-      questions: 3,
-      rewardXp: config.eventQuiz.rewardXp,
-      state,
-      answered: state === "finished" ? 3 : 0,
-    }] : []),
-  ];
+  const quizzes = quizzesForMatch(match);
   const seed = stableSeed(`${match.id}:scoreboard`);
+  const stats = config.statLabels.map((label, index) => statFor(label, seed, index));
+  const scoreRows = config.scoreRows(match, seed);
+  const report = buildReport({ match, seed, stats, scoreRows });
 
   return {
     quizzes,
     leaderboard: Object.fromEntries(
-      quizzes.map((quiz) => [quiz.id, leaderboardFor(`${match.id}:${quiz.id}`)]),
+      quizzes.map((quiz) => [quiz.id, matchBoardRivals(match.id, quiz.id)]),
     ),
     scoreboard: {
       facts: [
@@ -82,32 +50,17 @@ export function buildMatchDetail(
         { label: "LEAGUE", value: match.leagueId.toUpperCase() },
         { label: "SPORT", value: match.sport.toUpperCase() },
       ],
-      stats: config.statLabels.map((label, index) => statFor(label, seed, index)),
+      stats,
       timeline: timelineFor(match, config.motorsport === true),
       commentary: commentaryFor(match, config.motorsport === true),
       homeLineup: lineupFor(match.home.name, config.lineup, seed),
       awayLineup: lineupFor(match.away.name, config.lineup, seed + 19),
-      scoreRows: config.scoreRows(match, seed),
+      scoreRows,
       sessions: config.sessions,
       driverStandings: config.driverStandings,
+      ...report,
     },
   };
-}
-
-function leaderboardFor(key: string): MatchDetailBoardEntry[] {
-  const seed = stableSeed(key);
-  return Array.from({ length: 6 }, (_, index) => {
-    const rival = matchDetailRivals[(seed + index * 5) % matchDetailRivals.length];
-    return {
-      rank: index + 1,
-      name: rival.name,
-      points: 620 - index * 47 + ((seed + index * 13) % 31),
-      correct: 5 - (index % 3),
-      movement: rival.movement,
-      badge: "badge" in rival ? rival.badge : undefined,
-      isNew: "isNew" in rival ? rival.isNew : undefined,
-    };
-  });
 }
 
 function statFor(label: string, seed: number, index: number) {

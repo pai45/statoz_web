@@ -85,7 +85,7 @@ while ((cursor = leaguesSource.indexOf("FollowableLeague(", cursor)) >= 0) {
   }
   cursor = end + 1;
 }
-const shopDataTarget = join(appRoot, "src", "features", "shop", "data");
+const shopDataTarget = join(appRoot, "src", "mocks", "shop");
 mkdirSync(shopDataTarget, { recursive: true });
 writeFileSync(
   join(shopDataTarget, "frames.generated.ts"),

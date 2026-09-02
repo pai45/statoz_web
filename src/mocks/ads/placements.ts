@@ -14,4 +14,18 @@ export const adPlacements: Record<AdPlacementId, AdPlacement> = {
     creative: "campaign",
     desktopOnly: true,
   },
+  "platform-left-rail": {
+    format: "skyscraper",
+    creative: "wireframe",
+    desktopOnly: true,
+  },
+  "platform-right-rail": {
+    format: "skyscraper",
+    creative: "wireframe",
+    desktopOnly: true,
+  },
+  "game-landing-anchor": {
+    format: "anchor",
+    creative: "wireframe",
+  },
 };

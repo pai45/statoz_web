@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { accentVar, feedbackVar } from "@/design-system";
-import { useDecks } from "@/features/cards-decks";
-import { settleCoinReward } from "@/features/economy";
+import { activeLoadout, useDecks } from "@/features/cards-decks";
+import { equipCosmetic, settleCoinReward, useEconomy } from "@/features/economy";
 import { cricketBattingCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { resultDelayMs, stingMajorMs, stingMinorMs } from "../constants";
 import { kitById, opponentKit as opponentKitFor } from "../data/kits";
 import type { GameplayEvent } from "../engine/commands";
@@ -76,13 +77,18 @@ export function FinalOver({ game }: FinalOverProps) {
   const [view, setView] = useState<"lobby" | "playing">("lobby");
   const [session, setSession] = useState(0);
   const decks = useDecks();
+  const economy = useEconomy();
   const hydrated = useIsHydrated();
   const stats = useFinalOverStats();
   const gamesHref = `/games/${sportForGame(game)}`;
 
+  const selectedKitId = economy.owned.kitIds.includes(economy.equipped.kitId)
+    ? economy.equipped.kitId
+    : "voltage";
+  const cricketLoadout = activeLoadout(decks, "cricket");
   const squad = useMemo(
-    () => squadFromClaim(decks.loadouts.cricket?.batterIds),
-    [decks.loadouts.cricket],
+    () => squadFromClaim(cricketLoadout?.batterIds),
+    [cricketLoadout],
   );
 
   const play = useCallback(() => {
@@ -92,16 +98,24 @@ export function FinalOver({ game }: FinalOverProps) {
 
   if (view !== "playing" || squad === null) {
     return (
-      <FinalOverLobby
-        stats={stats}
-        tier={stats.tier}
-        kitId={stats.kitId}
-        squadReady={squad !== null && hydrated}
-        backHref={gamesHref}
-        onTierChange={(tier) => saveLobbySelection(tier, stats.kitId)}
-        onKitChange={(kitId) => saveLobbySelection(stats.tier, kitId)}
-        onPlay={play}
-      />
+      <>
+        <FinalOverLobby
+          stats={stats}
+          tier={stats.tier}
+          kitId={selectedKitId}
+          ownedKitIds={economy.owned.kitIds}
+          squadReady={squad !== null && hydrated}
+          backHref={gamesHref}
+          onTierChange={(tier) => saveLobbySelection(tier, selectedKitId)}
+          onKitChange={(kitId) => {
+            if (!economy.owned.kitIds.includes(kitId)) return;
+            equipCosmetic("kit", kitId);
+            saveLobbySelection(stats.tier, kitId);
+          }}
+          onPlay={play}
+        />
+        <GameLandingAd />
+      </>
     );
   }
 
@@ -110,7 +124,7 @@ export function FinalOver({ game }: FinalOverProps) {
       key={session}
       squad={squad}
       tier={stats.tier}
-      kitId={stats.kitId}
+      kitId={selectedKitId}
       hintsSeen={stats.hintsSeen}
       onPlayAgain={play}
       onExit={() => setView("lobby")}

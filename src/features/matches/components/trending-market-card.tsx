@@ -21,7 +21,7 @@ export function TrendingMarketCard({
 }: TrendingMarketCardProps) {
   market = pickMarketById(market.id) ?? market;
   const future = kind === "future";
-  const accent = accentVar(future ? "gold" : "lime");
+  const accent = accentVar("cyan");
   const leader = leadingOutcome(market);
   const hot = isHot(market);
 
@@ -34,7 +34,7 @@ export function TrendingMarketCard({
       footer={
         <TileFooter
           status={market.resolved ? "SETTLED" : "MARKET OPEN"}
-          accent={market.resolved ? "var(--ds-color-success)" : accent}
+          accent={accent}
           volumeOz={market.volumeOz}
         />
       }

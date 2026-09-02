@@ -6,10 +6,22 @@ import type { Sport } from "@/domain/sports";
 import type { PlayerRole } from "@/domain/cards";
 import { readEconomy, useEconomy } from "@/features/economy";
 
-import type { DeckSnapshot, LoadoutFor, SportLoadout } from "../types";
+import type {
+  DeckLoadouts,
+  DeckSlot,
+  DeckSnapshot,
+  LoadoutFor,
+  SportLoadout,
+} from "../types";
 
-const storageKey = "statoz.decks.v1";
-const emptyDecks: DeckSnapshot = Object.freeze({ version: 1, loadouts: {} });
+const storageKey = "statoz.decks.v2";
+const legacyStorageKey = "statoz.decks.v1";
+const initialSlot: DeckSlot = Object.freeze({ id: "slot-1", name: "My Squad", loadouts: {} });
+const emptyDecks: DeckSnapshot = Object.freeze({
+  version: 2,
+  activeDeckId: initialSlot.id,
+  slots: [initialSlot],
+});
 const listeners = new Set<() => void>();
 let cachedRaw: string | null = null;
 let cachedValue: DeckSnapshot = emptyDecks;
@@ -58,30 +70,46 @@ function coerceLoadout(sport: Sport, value: unknown): SportLoadout | null {
   };
 }
 
-function coerce(value: unknown): DeckSnapshot {
-  if (!value || typeof value !== "object") return emptyDecks;
-  const record = value as Record<string, unknown>;
-  const source =
-    record.loadouts && typeof record.loadouts === "object"
-      ? (record.loadouts as Record<string, unknown>)
-      : {};
-  const loadouts: DeckSnapshot["loadouts"] = {};
-  for (const sport of [
-    "football",
-    "cricket",
-    "basketball",
-    "tennis",
-    "motorsport",
-  ] as const) {
+function coerceLoadouts(value: unknown): DeckLoadouts {
+  const source = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const loadouts: DeckLoadouts = {};
+  for (const sport of ["football", "cricket", "basketball", "tennis", "motorsport"] as const) {
     const loadout = coerceLoadout(sport, source[sport]);
     if (loadout) Object.assign(loadouts, { [sport]: loadout });
   }
-  return { version: 1, loadouts };
+  return loadouts;
+}
+
+function coerce(value: unknown): DeckSnapshot {
+  if (!value || typeof value !== "object") return emptyDecks;
+  const record = value as Record<string, unknown>;
+  if (record.version === 2 && Array.isArray(record.slots)) {
+    const slots = record.slots.flatMap((value, index): DeckSlot[] => {
+      if (!value || typeof value !== "object") return [];
+      const slot = value as Record<string, unknown>;
+      const id = typeof slot.id === "string" && slot.id ? slot.id : `slot-${index + 1}`;
+      const rawName = typeof slot.name === "string" ? slot.name.trim() : "";
+      return [{ id, name: rawName.slice(0, 24) || `Squad ${index + 1}`, loadouts: coerceLoadouts(slot.loadouts) }];
+    });
+    if (slots.length === 0) return emptyDecks;
+    const requested = typeof record.activeDeckId === "string" ? record.activeDeckId : "";
+    return {
+      version: 2,
+      activeDeckId: slots.some((slot) => slot.id === requested) ? requested : slots[0].id,
+      slots,
+    };
+  }
+  // V1 stored one unnamed active loadout map. Preserve it as the first profile.
+  const loadouts = coerceLoadouts(record.loadouts);
+  return { version: 2, activeDeckId: "slot-1", slots: [{ ...initialSlot, loadouts }] };
 }
 
 function readRaw(): string | null {
   try {
-    return window.localStorage.getItem(storageKey);
+    const current = window.localStorage.getItem(storageKey);
+    if (current !== null) return `v2:${current}`;
+    const legacy = window.localStorage.getItem(legacyStorageKey);
+    return legacy === null ? null : `v1:${legacy}`;
   } catch {
     return null;
   }
@@ -89,7 +117,8 @@ function readRaw(): string | null {
 
 function claimSeeded(snapshot: DeckSnapshot): DeckSnapshot {
   const economy = readEconomy();
-  const loadouts = { ...snapshot.loadouts };
+  const active = activeDeck(snapshot);
+  const loadouts = { ...active.loadouts };
   let changed = false;
   for (const sport of [
     "football",
@@ -99,7 +128,7 @@ function claimSeeded(snapshot: DeckSnapshot): DeckSnapshot {
     "motorsport",
   ] as const) {
     const claim = economy.starterClaims[sport];
-    if (!loadouts[sport] && claim) {
+    if (claim && !isLoadoutComplete(loadouts[sport])) {
       Object.assign(loadouts, {
         [sport]: loadoutFromClaim(
           sport,
@@ -110,20 +139,37 @@ function claimSeeded(snapshot: DeckSnapshot): DeckSnapshot {
       changed = true;
     }
   }
-  return changed ? { version: 1, loadouts } : snapshot;
+  return changed
+    ? {
+        ...snapshot,
+        slots: snapshot.slots.map((slot) => slot.id === active.id ? { ...slot, loadouts } : slot),
+      }
+    : snapshot;
 }
 
 function getSnapshot(): DeckSnapshot {
   const raw = readRaw();
-  if (raw === cachedRaw) {
-    cachedValue = claimSeeded(cachedValue);
-    return cachedValue;
-  }
+  if (raw === cachedRaw) return cachedValue;
   cachedRaw = raw;
   try {
-    cachedValue = claimSeeded(raw ? coerce(JSON.parse(raw)) : emptyDecks);
+    const parsed = raw ? coerce(JSON.parse(raw.slice(3))) : emptyDecks;
+    cachedValue = claimSeeded(parsed);
+    if (raw?.startsWith("v1:") || cachedValue !== parsed) {
+      const serialized = JSON.stringify(cachedValue);
+      window.localStorage.setItem(storageKey, serialized);
+      cachedRaw = `v2:${serialized}`;
+    }
   } catch {
     cachedValue = claimSeeded(emptyDecks);
+    if (cachedValue !== emptyDecks) {
+      const serialized = JSON.stringify(cachedValue);
+      try {
+        window.localStorage.setItem(storageKey, serialized);
+        cachedRaw = `v2:${serialized}`;
+      } catch {
+        // Keep the repaired snapshot in memory when browser storage is blocked.
+      }
+    }
   }
   return cachedValue;
 }
@@ -136,7 +182,7 @@ function notify(): void {
 function subscribe(onChange: () => void): () => void {
   listeners.add(onChange);
   const onStorage = (event: StorageEvent) => {
-    if (event.key === storageKey || event.key === null) notify();
+    if (event.key === storageKey || event.key === legacyStorageKey || event.key === null) notify();
   };
   window.addEventListener("storage", onStorage);
   return () => {
@@ -157,7 +203,7 @@ function write(next: DeckSnapshot): DeckSnapshot {
 }
 
 export function useDecks(): DeckSnapshot {
-  // Economy changes may introduce a newly claimed starter pack.
+  // Keep this store subscribed while the economy settles after a starter claim.
   useEconomy();
   return useSyncExternalStore(subscribe, getSnapshot, () => emptyDecks);
 }
@@ -170,11 +216,16 @@ export function readDecks(): DeckSnapshot {
 export function saveLoadout<S extends Sport>(
   sport: S,
   loadout: LoadoutFor<S>,
+  deckId?: string,
 ): DeckSnapshot {
   const current = readDecks();
+  const targetId = deckId ?? current.activeDeckId;
   return write({
-    version: 1,
-    loadouts: { ...current.loadouts, [sport]: loadout },
+    ...current,
+    activeDeckId: targetId,
+    slots: current.slots.map((slot) => slot.id === targetId
+      ? { ...slot, loadouts: { ...slot.loadouts, [sport]: loadout } }
+      : slot),
   });
 }
 
@@ -184,13 +235,64 @@ export function seedLoadoutFromClaim(
   actionCardIds: string[] = [],
 ): DeckSnapshot {
   const current = readDecks();
-  if (current.loadouts[sport]) return current;
+  const active = activeDeck(current);
+  // A pre-existing blank or partial draft must not block the one-time starter
+  // grant from producing a playable deck. Keep a complete custom loadout, but
+  // replace an incomplete one with the role-ordered starter pack.
+  if (isLoadoutComplete(active.loadouts[sport])) return current;
   return write({
-    version: 1,
-    loadouts: {
-      ...current.loadouts,
-      [sport]: loadoutFromClaim(sport, playerCardIds, actionCardIds),
-    },
+    ...current,
+    slots: current.slots.map((slot) => slot.id === active.id ? {
+      ...slot,
+      loadouts: {
+        ...slot.loadouts,
+        [sport]: loadoutFromClaim(sport, playerCardIds, actionCardIds),
+      },
+    } : slot),
+  });
+}
+
+export function activeDeck(snapshot: DeckSnapshot): DeckSlot {
+  return snapshot.slots.find((slot) => slot.id === snapshot.activeDeckId) ?? snapshot.slots[0] ?? initialSlot;
+}
+
+export function activeLoadout<S extends Sport>(snapshot: DeckSnapshot, sport: S): LoadoutFor<S> | undefined {
+  return activeDeck(snapshot).loadouts[sport] as LoadoutFor<S> | undefined;
+}
+
+export function applyDeck(deckId: string): DeckSnapshot {
+  const current = readDecks();
+  if (!current.slots.some((slot) => slot.id === deckId)) return current;
+  return write({ ...current, activeDeckId: deckId });
+}
+
+export function createDeck(): DeckSnapshot {
+  const current = readDecks();
+  const id = typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? `slot-${crypto.randomUUID()}`
+    : `slot-${Date.now()}`;
+  const slot: DeckSlot = { id, name: `Squad ${current.slots.length + 1}`, loadouts: {} };
+  return write({ ...current, activeDeckId: id, slots: [...current.slots, slot] });
+}
+
+export function renameDeck(deckId: string, name: string): DeckSnapshot {
+  const current = readDecks();
+  const safeName = name.trim().slice(0, 24);
+  if (!safeName) return current;
+  return write({
+    ...current,
+    slots: current.slots.map((slot) => slot.id === deckId ? { ...slot, name: safeName } : slot),
+  });
+}
+
+export function deleteDeck(deckId: string): DeckSnapshot {
+  const current = readDecks();
+  if (current.slots.length <= 1 || !current.slots.some((slot) => slot.id === deckId)) return current;
+  const slots = current.slots.filter((slot) => slot.id !== deckId);
+  return write({
+    ...current,
+    slots,
+    activeDeckId: current.activeDeckId === deckId ? slots[0].id : current.activeDeckId,
   });
 }
 

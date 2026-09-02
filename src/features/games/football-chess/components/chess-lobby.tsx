@@ -182,6 +182,9 @@ export function ChessLobby({
           <Button accent={gold} variant="ghost" fullWidth href={backHref}>
             BACK TO GAMES
           </Button>
+          <Button accent={gold} variant="ghost" fullWidth href="/decks/football?returnTo=/play/football-chess">
+            DECK BUILDER
+          </Button>
         </div>
       </div>
     </div>

@@ -298,7 +298,14 @@ export function HoopDuelLobby({
           </div>
         </div>
 
-        <div className={`${styles.rise} mt-4 flex justify-center`} style={rise(lobbyLinksDelayMs)}>
+        <div className={`${styles.rise} mt-4 flex justify-center gap-5`} style={rise(lobbyLinksDelayMs)}>
+          <Link
+            href="/decks/basketball?returnTo=/play/hoop-duel"
+            className="py-2 font-display font-black leading-none text-gold underline-offset-4 hover:underline"
+            style={{ fontSize: "9px", letterSpacing: "1.8px" }}
+          >
+            ROSTER DECK
+          </Link>
           <Link
             href={backHref}
             className="py-2 font-display font-black leading-none text-muted underline-offset-4 hover:underline"

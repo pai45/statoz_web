@@ -1,7 +1,7 @@
 import type { CardTier } from "@/domain/cards";
 import type { Sport } from "@/domain/sports";
 
-import { shopFrames } from "@/features/shop/data/frames.generated";
+import { shopFrames } from "./frames.generated";
 
 export type ShopCategory = "avatars" | "frames" | "banners" | "kits" | "coins" | "packs" | "cards";
 
@@ -111,14 +111,15 @@ export const shopLiveries: ColorProduct[] = [
 
 export const colorProducts = [...shopKits, ...shopJerseys, ...shopLiveries];
 
-export type CoinBundle = { id: string; label: string; inr: number; coins: number; bonus: number; tag?: string };
+/** A coin bundle. `accent` is the tier's colour: bronze up to the magenta max pack. */
+export type CoinBundle = { id: string; label: string; inr: number; coins: number; bonus: number; tag?: string; accent: string };
 export const coinBundles: CoinBundle[] = [
-  { id: "rookie", label: "Rookie", inr: 10, coins: 1000, bonus: 0 },
-  { id: "starter", label: "Starter", inr: 50, coins: 5500, bonus: 10 },
-  { id: "pro", label: "Pro", inr: 100, coins: 12000, bonus: 20, tag: "POPULAR" },
-  { id: "elite", label: "Elite", inr: 250, coins: 32500, bonus: 30 },
-  { id: "champion", label: "Champion", inr: 500, coins: 70000, bonus: 40, tag: "BEST VALUE" },
-  { id: "legendary", label: "Legendary", inr: 1000, coins: 150000, bonus: 50, tag: "MAX PACK" },
+  { id: "rookie", label: "Rookie", inr: 10, coins: 1000, bonus: 0, accent: "#cd7f32" },
+  { id: "starter", label: "Starter", inr: 50, coins: 5500, bonus: 10, accent: "#c0c0c0" },
+  { id: "pro", label: "Pro", inr: 100, coins: 12000, bonus: 20, tag: "POPULAR", accent: "#5cdfff" },
+  { id: "elite", label: "Elite", inr: 250, coins: 32500, bonus: 30, accent: "#a855f7" },
+  { id: "champion", label: "Champion", inr: 500, coins: 70000, bonus: 40, tag: "BEST VALUE", accent: "#ffd700" },
+  { id: "legendary", label: "Legendary", inr: 1000, coins: 150000, bonus: 50, tag: "MAX PACK", accent: "#ff3df7" },
 ];
 
 export type ShopPack = {
@@ -130,6 +131,11 @@ export type ShopPack = {
   actionCount: number;
   guarantee: string;
   accent: string;
+  /**
+   * The rarest pack in its row. It trades its own accent for the foil magenta,
+   * wears the gold corner star, and is the one tile allowed to glow.
+   */
+  gradient?: boolean;
   odds: Record<CardTier, number>;
 };
 
@@ -137,11 +143,45 @@ export const standardPacks: ShopPack[] = [
   { id: "starter", label: "Starter Pack", coinPrice: 0, inr: 0, playerCount: 5, actionCount: 6, guarantee: "FREE SQUAD / 5 PLAYERS + 6 ACTIONS", accent: "#5cdfff", odds: { bronze: 70, silver: 25, gold: 5, platinum: 0 } },
   { id: "bronze", label: "Bronze Pack", coinPrice: 150, inr: 50, playerCount: 1, actionCount: 2, guarantee: "3 CARDS / MOSTLY BRONZE", accent: "#cd7f32", odds: { bronze: 65, silver: 28, gold: 6, platinum: 1 } },
   { id: "gold", label: "Gold Pack", coinPrice: 400, inr: 400, playerCount: 2, actionCount: 2, guarantee: "4 CARDS / SILVER OR GOLD SHOT", accent: "#ffd700", odds: { bronze: 35, silver: 45, gold: 16, platinum: 4 } },
-  { id: "elite", label: "Elite Pack", coinPrice: 900, inr: 1000, playerCount: 2, actionCount: 3, guarantee: "5 HIGH-END CARDS / BEST ODDS", accent: "#ff3df7", odds: { bronze: 10, silver: 40, gold: 35, platinum: 15 } },
+  { id: "elite", label: "Elite Pack", coinPrice: 900, inr: 1000, playerCount: 2, actionCount: 3, guarantee: "5 HIGH-END CARDS / BEST ODDS", accent: "#ff3df7", gradient: true, odds: { bronze: 10, silver: 40, gold: 35, platinum: 15 } },
 ];
 
 export const racingPacks: ShopPack[] = [
   { id: "racing-grid", label: "Grid Pack", coinPrice: 150, inr: 50, playerCount: 1, actionCount: 0, guarantee: "1 DRIVER / MOSTLY BRONZE", accent: "#35e7ff", odds: { bronze: 65, silver: 28, gold: 6, platinum: 1 } },
   { id: "racing-podium", label: "Podium Pack", coinPrice: 400, inr: 400, playerCount: 2, actionCount: 0, guarantee: "2 DRIVERS / SILVER OR GOLD SHOT", accent: "#ff3df7", odds: { bronze: 35, silver: 45, gold: 16, platinum: 4 } },
-  { id: "racing-pole", label: "Pole Pack", coinPrice: 900, inr: 1000, playerCount: 3, actionCount: 0, guarantee: "3 DRIVERS / BEST PLATINUM ODDS", accent: "#ffd700", odds: { bronze: 10, silver: 40, gold: 35, platinum: 15 } },
+  { id: "racing-pole", label: "Pole Pack", coinPrice: 900, inr: 1000, playerCount: 3, actionCount: 0, guarantee: "3 DRIVERS / BEST PLATINUM ODDS", accent: "#ffd700", gradient: true, odds: { bronze: 10, silver: 40, gold: 35, platinum: 15 } },
 ];
+
+/**
+ * How a pack's foil sweeps: the colours in the band, how bright it is, how many
+ * bands travel at once, and how fast. All four escalate with rarity, so the
+ * rarest pack in a row is the one carrying a full rainbow.
+ */
+export type PackHolo = { colors: string[]; intensity: number; bands: number; speed: number };
+
+export const packHolo: Record<string, PackHolo> = {
+  starter: { colors: ["#5cdfff", "#ffffff", "#a855f7"], intensity: 0.35, bands: 1, speed: 1 },
+  bronze: { colors: ["#cd7f32", "#ffd9a8", "#ffffff"], intensity: 0.35, bands: 1, speed: 1 },
+  gold: { colors: ["#ffd700", "#ffffff", "#ffe9a8", "#ffd700"], intensity: 0.42, bands: 2, speed: 1.15 },
+  "racing-grid": { colors: ["#5cdfff", "#ffffff", "#a855f7"], intensity: 0.38, bands: 1, speed: 1.05 },
+  "racing-podium": { colors: ["#ff3df7", "#a855f7", "#5cdfff", "#ff3df7"], intensity: 0.44, bands: 2, speed: 1.2 },
+  "racing-pole": { colors: ["#ffd700", "#ff3df7", "#5cdfff", "#ffd700"], intensity: 0.52, bands: 2, speed: 1.35 },
+};
+
+/** The foil every other pack falls back to — the elite wrap's full rainbow. */
+export const eliteHolo: PackHolo = {
+  colors: ["#ff3df7", "#a855f7", "#5cdfff", "#ffd700", "#ff3df7"],
+  intensity: 0.5,
+  bands: 2,
+  speed: 1.3,
+};
+
+/** The magenta a pack takes when it is the rarest in its row. */
+export const foilMagenta = "#ff3df7";
+
+/** Art is shared across rows: the racing packs wear the standard tiers' wraps. */
+export const packArtIds: Record<string, string> = {
+  "racing-grid": "bronze",
+  "racing-podium": "gold",
+  "racing-pole": "platinum",
+};

@@ -108,6 +108,7 @@
   /* Shape — StatOz cuts corners instead of rounding them. */
   --ds-shape-signal-cut: 12px;
   --ds-shape-signal-notch: 34px;
+  --ds-shape-signal-step: 8px;
   --ds-shape-signal-lift: 6px;
   --ds-shape-fixture-cut: 12px;
   --ds-shape-fixture-notch-width: 96px;
@@ -173,6 +174,16 @@
     10px 100%,
     0 calc(100% - 10px),
     0 10px
+  );
+  --ds-clip-chip: polygon(
+    8px 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    8px 100%,
+    0 calc(100% - 8px),
+    0 8px
   );
   --ds-clip-panel: polygon(
     12px 0,

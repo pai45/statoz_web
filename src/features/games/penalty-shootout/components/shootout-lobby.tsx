@@ -188,9 +188,7 @@ export function ShootoutLobby({
             <SecondaryAction
               label="Deck Builder"
               delayMs={lobbyActionsDelayMs}
-              // There is no deck builder on the web yet; the squad comes from
-              // the starter pack. Saying so beats a button that goes nowhere.
-              disabledReason="The deck builder is not built yet"
+              href="/decks/football?returnTo=/play/penalty-shootout"
             />
             <SecondaryAction
               label="Match History"
@@ -298,36 +296,35 @@ function SecondaryAction({
   label,
   delayMs,
   onClick,
-  disabledReason,
+  href,
 }: {
   label: string;
   delayMs: number;
   onClick?: () => void;
-  disabledReason?: string;
+  href?: string;
 }) {
-  const disabled = onClick === undefined;
+  const className = `${styles.deal} grid h-11 w-full place-items-center font-display font-extrabold leading-compact cursor-pointer`;
+  const style = {
+    "--deal-delay": `${delayMs}ms`,
+    "--deal-from": "0px",
+    "--deal-lift": "95px",
+    fontSize: "var(--ds-text-2xs)",
+    letterSpacing: "var(--ds-tracking-label)",
+    color: cyan,
+    background: withAlpha("var(--ds-color-background-secondary)", 0.82),
+    border: `1px solid ${withAlpha(cyan, 0.45)}`,
+  } as CSSProperties;
+
+  if (href) {
+    return <Link href={href} className={className} style={style}>{label.toUpperCase()}</Link>;
+  }
 
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={disabled}
-      title={disabled ? disabledReason : undefined}
-      className={`${styles.deal} h-11 w-full font-display font-extrabold leading-compact ${
-        disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"
-      }`}
-      style={
-        {
-          "--deal-delay": `${delayMs}ms`,
-          "--deal-from": "0px",
-          "--deal-lift": "95px",
-          fontSize: "var(--ds-text-2xs)",
-          letterSpacing: "var(--ds-tracking-label)",
-          color: cyan,
-          background: withAlpha("var(--ds-color-background-secondary)", 0.82),
-          border: `1px solid ${withAlpha(cyan, 0.45)}`,
-        } as CSSProperties
-      }
+      className={className}
+      style={style}
     >
       {label.toUpperCase()}
     </button>

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
 
 import { accentVar, Button, withAlpha } from "@/design-system";
-import { useDecks } from "@/features/cards-decks";
+import { activeLoadout, useDecks } from "@/features/cards-decks";
 import { settleCoinReward } from "@/features/economy";
 import {
   footballAttackers,
@@ -15,6 +15,7 @@ import type { PlayerCard } from "@/domain/cards";
 
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { randomOpponentName } from "../../shared/data/opponent-names";
 import { generateShootoutOpponent } from "../../shared/engine/opponent";
 import { initialShootout, shootoutReducer } from "../engine/shootout";
@@ -52,14 +53,14 @@ export function PenaltyShootout({ game, entry }: PenaltyShootoutProps) {
   const [view, setView] = useState<View>("lobby");
   const [session, setSession] = useState(0);
   const decks = useDecks();
+  const footballLoadout = activeLoadout(decks, "football");
   const gamesHref = `/games/${sportForGame(game)}`;
 
   const squad = useMemo(
     () => {
-      const loadout = decks.loadouts.football;
-      return loadout ? squadFromClaim([...loadout.attackers, ...loadout.defenders, ...(loadout.keeperId ? [loadout.keeperId] : [])]) : null;
+      return footballLoadout ? squadFromClaim([...footballLoadout.attackers, ...footballLoadout.defenders, ...(footballLoadout.keeperId ? [footballLoadout.keeperId] : [])]) : null;
     },
-    [decks.loadouts.football],
+    [footballLoadout],
   );
 
   const play = useCallback(() => {
@@ -69,11 +70,14 @@ export function PenaltyShootout({ game, entry }: PenaltyShootoutProps) {
 
   if (view !== "playing" || squad === null) {
     return (
-      <ShootoutLobby
-        squadReady={squad !== null}
-        onPlay={play}
-        backHref={gamesHref}
-      />
+      <>
+        <ShootoutLobby
+          squadReady={squad !== null}
+          onPlay={play}
+          backHref={gamesHref}
+        />
+        <GameLandingAd />
+      </>
     );
   }
 
@@ -91,13 +95,8 @@ export function PenaltyShootout({ game, entry }: PenaltyShootoutProps) {
 /**
  * The player's five takers: two attackers, two defenders, then the keeper.
  *
- * Flutter reads them off the active deck built in the Deck Builder. There is no
- * deck builder here yet, but the football starter pack deals exactly that
- * shape, and the pack gate has already run by the time this mounts — so the
- * cards the player was actually given are the cards they take penalties with.
- *
- * Returning null is the web's `deckReady == false`: the lobby says the squad is
- * incomplete and holds the CTA rather than fielding a squad nobody picked.
+ * These IDs come from the active named football deck. Returning null is the
+ * web's `deckReady == false`: the lobby holds the CTA until the squad is valid.
  */
 function squadFromClaim(
   playerCardIds: string[] | undefined,

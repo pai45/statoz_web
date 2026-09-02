@@ -35,6 +35,8 @@ export type RivalAvatarProps = {
   highlight?: boolean;
   /** Overrides the ring colour — the podium tints it by placing. */
   ring?: string;
+  /** Equipped shop frame color for the player's own avatar. */
+  frameColor?: string;
   /** A team row shows a crest instead of a face, and no ring. */
   team?: SportTeam;
   /**
@@ -51,6 +53,7 @@ export function RivalAvatar({
   size,
   highlight = false,
   ring,
+  frameColor,
   team,
   src,
   className,
@@ -67,7 +70,7 @@ export function RivalAvatar({
     );
   }
 
-  const color = ring ?? (highlight ? cyan : "var(--ds-color-border-default)");
+  const color = frameColor ?? ring ?? (highlight ? cyan : "var(--ds-color-border-default)");
 
   return (
     <Avatar

@@ -9,13 +9,14 @@ import {
   footballGoalkeepers,
   footballPlayerCards,
 } from "@/features/packs";
-import { useDecks } from "@/features/cards-decks";
+import { activeLoadout, useDecks } from "@/features/cards-decks";
 import type { PlayerCard } from "@/domain/cards";
 
 import { randomOpponentName } from "../../shared/data/opponent-names";
 import { generateShootoutOpponent } from "../../shared/engine/opponent";
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { isDraw, isFinished, playerWon } from "../engine/match";
 import {
   readFootballChessStats,
@@ -83,10 +84,11 @@ export function FootballChess({ game }: FootballChessProps) {
   const hydrated = useIsHydrated();
   const stats = useFootballChessStats();
   const gamesHref = `/games/${sportForGame(game)}`;
+  const footballLoadout = activeLoadout(decks, "football");
 
   const squad = useMemo(
-    () => squadFromLoadout(decks.loadouts.football),
-    [decks.loadouts.football],
+    () => squadFromLoadout(footballLoadout),
+    [footballLoadout],
   );
 
   const play = useCallback(() => {
@@ -96,14 +98,17 @@ export function FootballChess({ game }: FootballChessProps) {
 
   if (view !== "playing" || squad === null) {
     return (
-      <ChessLobby
-        stats={stats}
-        formation={stats.formation}
-        squadReady={squad !== null && hydrated}
-        backHref={gamesHref}
-        onFormationChange={(formation) => saveFormation(formation)}
-        onPlay={play}
-      />
+      <>
+        <ChessLobby
+          stats={stats}
+          formation={stats.formation}
+          squadReady={squad !== null && hydrated}
+          backHref={gamesHref}
+          onFormationChange={(formation) => saveFormation(formation)}
+          onPlay={play}
+        />
+        <GameLandingAd />
+      </>
     );
   }
 

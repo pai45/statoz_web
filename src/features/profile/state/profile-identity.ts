@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 
 import type { Sport } from "@/domain/sports";
+import { randomPlayerTag } from "@/shared/utils";
 
 import type { ProfileIdentity } from "../types";
 
@@ -139,33 +140,6 @@ function patch(changes: Partial<ProfileIdentity>): void {
 }
 
 /* ---- The player tag ------------------------------------------------------ */
-
-/** No 0/O/1/I/L look-alikes, so a tag can be read aloud or copied by hand. */
-const tagAlphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-
-/**
- * An 8-character `XXXX-XXXX` tag expanded deterministically from a seed.
- *
- * The same LCG the app uses, which matters because both sides must agree on
- * what a given seed spells. `Math.imul` keeps the multiply inside 32 bits —
- * plain multiplication would pass 2^53 and start rounding, and the low bits are
- * the only part the mask keeps.
- */
-function tagFromSeed(seed: number): string {
-  let state = (seed ^ 0x5f3759df) & 0x7fffffff;
-  let out = "";
-  for (let i = 0; i < 8; i += 1) {
-    if (i === 4) out += "-";
-    state = (Math.imul(state, 1103515245) + 12345) & 0x7fffffff;
-    out += tagAlphabet[state % tagAlphabet.length];
-  }
-  return out;
-}
-
-/** A fresh tag, minted once for this browser and then kept. */
-function randomPlayerTag(): string {
-  return tagFromSeed(Math.floor(Math.random() * 0x7fffffff));
-}
 
 /**
  * The player's tag, minting one on first call.

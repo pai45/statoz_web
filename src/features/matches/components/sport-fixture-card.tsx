@@ -5,6 +5,7 @@ import type { SportMatch, SportTeam } from "@/domain/matches";
 import { formatKickoffTime, formatOzCompact } from "@/shared/utils";
 
 import styles from "./sport-fixture-card.module.css";
+import { TeamBadge } from "./team-badge";
 
 export type SportFixtureCardProps = {
   match: SportMatch;
@@ -119,7 +120,7 @@ function TeamColumn({
 }) {
   return (
     <div className={`flex min-w-0 flex-1 flex-col ${alignEnd ? "items-end text-right" : "items-start text-left"}`}>
-      <FixtureBadge team={team} />
+      <TeamBadge team={team} />
       <span className={`mt-2 line-clamp-2 text-base font-bold leading-tight ${dim ? "text-[var(--ds-color-fixture-dim-name)]" : "text-foreground"}`}>
         {team.name}
       </span>
@@ -132,24 +133,10 @@ function TeamColumn({
   );
 }
 
-function FixtureBadge({ team }: { team: SportTeam }) {
-  const badgeStyle = {
-    "--badge-primary": team.color,
-    "--badge-secondary": team.secondaryColor ?? team.color,
-    "--badge-text": team.badgeTextColor ?? "var(--ds-color-text-default)",
-  } as CSSProperties;
-  return (
-    <span className={styles.badge} style={badgeStyle} role="img" aria-label={team.name}>
-      <span aria-hidden className={styles.badgeShadow} />
-      <span className={styles.badgeFace}>{team.shortName}</span>
-    </span>
-  );
-}
-
 function RaceIdentity({ match }: { match: SportMatch }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <FixtureBadge team={match.home} />
+      <TeamBadge team={match.home} />
       <span className={`mt-2 line-clamp-2 text-base font-bold leading-tight ${match.status === "finished" ? "text-[var(--ds-color-fixture-dim-name)]" : "text-foreground"}`}>
         {match.home.name}
       </span>

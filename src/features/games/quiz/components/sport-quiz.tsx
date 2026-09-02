@@ -16,6 +16,7 @@ import { collectionFromIds } from "@/features/packs";
 import { formatInt } from "@/shared/utils";
 
 import type { GameLauncherProps } from "../../components/game-launcher";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { sportForGame } from "@/mocks/games";
 import { useGameCareer } from "../../state/game-career";
 import { entryCost } from "../constants";
@@ -176,7 +177,8 @@ export function SportQuiz({ game }: GameLauncherProps) {
   const ladderMode = view.name === "ladder" ? view.mode : null;
 
   return (
-    <div className="relative flex min-h-dvh flex-col">
+    <>
+      <div className="relative flex min-h-dvh flex-col">
       <QuizHeader
         title={
           ladderMode
@@ -213,17 +215,19 @@ export function SportQuiz({ game }: GameLauncherProps) {
         />
       )}
 
-      {briefing ? (
-        <QuizBriefing
-          sport={sport}
-          mode={briefing.mode}
-          setNumber={briefing.setNumber}
-          coins={economy.coins}
-          onCancel={() => setBriefing(null)}
-          onStart={confirmEntry}
-        />
-      ) : null}
-    </div>
+        {briefing ? (
+          <QuizBriefing
+            sport={sport}
+            mode={briefing.mode}
+            setNumber={briefing.setNumber}
+            coins={economy.coins}
+            onCancel={() => setBriefing(null)}
+            onStart={confirmEntry}
+          />
+        ) : null}
+      </div>
+      {view.name === "lobby" && hydrated ? <GameLandingAd /> : null}
+    </>
   );
 }
 

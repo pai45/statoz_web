@@ -1,5 +1,6 @@
-import { Monogram } from "@/design-system";
 import type { SportTeam } from "@/domain/matches";
+
+import { TeamBadge } from "./team-badge";
 
 export type TeamLockupProps = {
   team: SportTeam;
@@ -16,7 +17,7 @@ export function TeamLockup({ team, alignEnd = false }: TeamLockupProps) {
         alignEnd ? "items-end text-right" : "items-start text-left",
       ].join(" ")}
     >
-      <Monogram name={team.name} initials={team.shortName} accent={team.color} />
+      <TeamBadge team={team} size={34} />
       {/* One step below the tile's clock or score: the teams identify the
           fixture, the figure is what the tile is about. */}
       <span className="w-full truncate font-display text-sm font-black tracking-tight">

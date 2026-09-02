@@ -8,6 +8,7 @@ import { spendCoins, useEconomy } from "@/features/economy";
 import { sportForGame, type GameEntry } from "@/mocks/games";
 
 import type { GameId } from "../../types";
+import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { useClock } from "../../shared/state/use-clock";
 import { extraAttemptCost, hintCost } from "../constants";
 import {
@@ -288,16 +289,19 @@ export function GuessPlayer({ game }: GuessPlayerProps) {
   if (todayRecord === undefined) return <Opening />;
 
   return (
-    <GuessHome
-      archive={archive}
-      todayRecord={todayRecord}
-      currentDayKey={todayKey}
-      now={now}
-      onOpenToday={openToday}
-      onOpenLogs={openLogs}
-      backHref={gamesHref}
-      sportLabel={`${deck.sport.toUpperCase()} DECK`}
-    />
+    <>
+      <GuessHome
+        archive={archive}
+        todayRecord={todayRecord}
+        currentDayKey={todayKey}
+        now={now}
+        onOpenToday={openToday}
+        onOpenLogs={openLogs}
+        backHref={gamesHref}
+        sportLabel={`${deck.sport.toUpperCase()} DECK`}
+      />
+      <GameLandingAd />
+    </>
   );
 }
 
