@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { notFound } from "next/navigation";
 
 import { sportOrder, type Sport } from "@/domain/sports";
@@ -10,5 +12,9 @@ export function generateStaticParams() {
 export default async function DeckPage({ params }: PageProps<"/decks/[sport]">) {
   const { sport } = await params;
   if (!sportOrder.includes(sport as Sport)) notFound();
-  return <DeckEditor sport={sport as Sport} />;
+  return (
+    <Suspense fallback={null}>
+      <DeckEditor sport={sport as Sport} />
+    </Suspense>
+  );
 }
