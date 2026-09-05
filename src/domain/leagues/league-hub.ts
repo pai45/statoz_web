@@ -55,4 +55,3 @@ export type LeagueHubSnapshot = {
   groups: LeagueStandingGroup[];
   leaderCategories: LeagueLeaderCategory[];
 };
-

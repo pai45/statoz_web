@@ -42,4 +42,3 @@ function TeamHeader({ competitor, standing }: { competitor: SportTeam; standing?
 function FormPips({ form }: { form: string }) {
   return <span className={styles.formPips}>{form.split("").map((result, index) => <i key={`${result}-${index}`} data-result={result}>{result}</i>)}</span>;
 }
-
