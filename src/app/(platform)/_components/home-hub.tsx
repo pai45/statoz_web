@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import {
@@ -57,6 +58,7 @@ export type HomeHubProps = {
  * reset the other's browse position.
  */
 export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
+  const router = useRouter();
   const [tab, setTab] = useState(0);
   const [matchSport, setMatchSport] = useState<SportHubSelection>(null);
   const [gamesSport, setGamesSport] = useState<SportHubSelection>(null);
@@ -82,6 +84,7 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
             selected={matchSport}
             onSelect={setMatchSport}
             onMore={() => setSelectorMode("matches")}
+            onSearch={() => router.push("/matches/search")}
           />
           <div className="flex-1 overflow-y-auto px-4 py-3">
             {matchSport === null ? (

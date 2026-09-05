@@ -178,6 +178,9 @@ function LeaderboardBoard({
         tabs={sportTabs}
         activeIndex={sportOrder.indexOf(sport)}
         accent={accent}
+        iconColors={sportOrder.map((entry) =>
+          accentVar(sportModuleFor(entry).accent),
+        )}
         onChange={(index) => setSport(sportOrder[index])}
         className="shrink-0"
       />

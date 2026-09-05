@@ -5,9 +5,16 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import { activeLoadout, useDecks } from "@/features/cards-decks";
 import { settleCoinReward, useEconomy } from "@/features/economy";
 
+import { levelFromXp } from "@/domain/progression";
+
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import {
+  GameMatchGate,
+  matchmakingFighter,
+  useMatchmakingPlayer,
+} from "../../shared/components/matchmaking";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import { randomOpponentName } from "../../shared/data/opponent-names";
 import { resultDelayMs } from "../constants";
@@ -29,7 +36,6 @@ import {
   useHoopDuelGame,
   useHoopDuelHud,
 } from "../state/use-hoop-duel-engine";
-import { basketballDifficultyLabels } from "../types";
 import type {
   BasketballAthlete,
   BasketballMatchConfig,
@@ -40,7 +46,6 @@ import { HoopDuelArena } from "./hoop-duel-arena";
 import { HoopDuelControls } from "./hoop-duel-controls";
 import { HoopDuelHudBar, ShotMeter, StaminaRail, StingLayer } from "./hoop-duel-hud";
 import { HoopDuelLobby } from "./hoop-duel-lobby";
-import { HoopDuelMatchmaking } from "./hoop-duel-matchmaking";
 import {
   HalftimeOverlay,
   OvertimeOverlay,
@@ -145,6 +150,8 @@ type SessionProps = {
 function HoopDuelSession({ roster, stats, onRematch, onExit, jerseyId }: SessionProps) {
   const reducedMotion = usePrefersReducedMotion();
   const rewardId = `hoop-duel-${useId()}`;
+  const level = levelFromXp(stats.xp);
+  const player = useMatchmakingPlayer(`LV ${level}`);
 
   /**
    * Drawn once, in the browser, when the session mounts — never during a server
@@ -285,16 +292,24 @@ function HoopDuelSession({ roster, stats, onRematch, onExit, jerseyId }: Session
         </div>
       </div>
 
+      {/*
+        * The queue sits over the warm canvas rather than replacing it, so the
+        * court is already drawn the moment the tip-off stamp clears.
+        */}
       {phase === "intro" ? (
-        <HoopDuelMatchmaking
-          playerName="PLAYER ONE"
-          rivalName={rivalName}
-          rivalTeam={config.cpuRoster[config.cpuStarterIndex].teamCode}
-          rivalRating={config.cpuRoster[config.cpuStarterIndex].ovr}
-          difficultyLabel={basketballDifficultyLabels[config.difficulty]}
-          onReady={beginPlay}
-          onCancel={onExit}
-        />
+        <div className="absolute inset-0 z-50">
+          <GameMatchGate
+            goLabel="TIP OFF!"
+            config={{
+              title: "HOOP DUEL",
+              queueLabel: "SCANNING GLOBAL HOOP QUEUE",
+              player,
+              opponent: matchmakingFighter(rivalName, `LV ${level}`),
+            }}
+            onReady={beginPlay}
+            onCancel={onExit}
+          />
+        </div>
       ) : null}
 
       {phase === "halftime" ? (

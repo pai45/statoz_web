@@ -2,7 +2,15 @@
 
 import type { CSSProperties } from "react";
 
-import { CheckIcon, FootballIcon, GridViewIcon, accentVar } from "@/design-system";
+import {
+  CheckIcon,
+  FootballIcon,
+  GridViewIcon,
+  HistoryIcon,
+  InsightsIcon,
+  MicIcon,
+  accentVar,
+} from "@/design-system";
 import type {
   MatchDetailCommentary,
   MatchDetailScoreboard,
@@ -27,7 +35,14 @@ export function TimelineList({
   events: MatchDetailTimelineEvent[];
 }) {
   if (events.length === 0) {
-    return <EmptyPanel title="Event log pending" message="Goals, cards, and substitutions will appear here." />;
+    return (
+      <EmptyPanel
+        icon={HistoryIcon}
+        spark={FootballIcon}
+        title="Event log pending"
+        message="Goals, cards and substitutions will be tracked here."
+      />
+    );
   }
   return (
     <div className={styles.tight}>
@@ -71,8 +86,10 @@ export function CommentaryView({ commentary }: { commentary: MatchDetailCommenta
   if (commentary.length === 0) {
     return (
       <EmptyPanel
-        title="No commentary yet"
-        message="Play-by-play commentary will appear here once the match starts."
+        icon={MicIcon}
+        spark={InsightsIcon}
+        title="Match comms silent"
+        message="The play-by-play channel opens once commentary is available."
       />
     );
   }

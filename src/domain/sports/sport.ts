@@ -7,7 +7,7 @@ export type Sport =
   | "motorsport";
 
 /** Design-system accent token name a sport is identified by. */
-export type SportAccent = "cyan" | "lime" | "gold" | "racing";
+export type SportAccent = "white" | "cyan" | "lime" | "gold" | "racing";
 
 export type SportModule = {
   sport: Sport;
@@ -28,7 +28,7 @@ export const sportModules: Record<Sport, SportModule> = {
     sport: "cricket",
     label: "Cricket",
     shortLabel: "CRKT",
-    accent: "lime",
+    accent: "white",
   },
   basketball: {
     sport: "basketball",
@@ -40,7 +40,7 @@ export const sportModules: Record<Sport, SportModule> = {
     sport: "tennis",
     label: "Tennis",
     shortLabel: "TENNIS",
-    accent: "cyan",
+    accent: "lime",
   },
   motorsport: {
     sport: "motorsport",
@@ -58,6 +58,11 @@ export const sportOrder: Sport[] = [
   "tennis",
   "motorsport",
 ];
+
+/** Ordered tab palette, derived from the same source as every sport surface. */
+export const sportTabColors: SportAccent[] = sportOrder.map(
+  (sport) => sportModules[sport].accent,
+);
 
 export function sportModuleFor(sport: Sport): SportModule {
   return sportModules[sport];

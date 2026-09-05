@@ -6,7 +6,7 @@ import { CheckIcon, Progress, accentVar } from "@/design-system";
 import { useAuthSession } from "@/features/auth";
 import { PackRevealSequence, type PackRevealItem } from "@/features/packs";
 import { useProfileIdentity } from "@/features/profile";
-import { useCountUp } from "@/shared/hooks";
+import { useCountUp, useFullScreenMomentActive } from "@/shared/hooks";
 
 import { streakMilestoneFor, streakMilestones } from "../data/milestones";
 import { claimStreakMilestone } from "../rewards";
@@ -27,7 +27,11 @@ export function StreakCelebrationHost() {
   const session = useAuthSession();
   const snapshot = useStreakSnapshot();
   const profile = useProfileIdentity();
-  const celebration = session.status === "authenticated" ? snapshot.celebrationQueue[0] : undefined;
+  // A feature's own moment — a sealed prediction, a locked pick — owns the
+  // screen while it plays; the streak waits its turn rather than covering it.
+  const momentActive = useFullScreenMomentActive();
+  const celebration =
+    session.status === "authenticated" && !momentActive ? snapshot.celebrationQueue[0] : undefined;
   const [reveal, setReveal] = useState<{ items: PackRevealItem[]; label: string } | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 

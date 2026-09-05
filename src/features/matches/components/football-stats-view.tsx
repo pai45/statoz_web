@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 
-import { FilterChips, accentVar } from "@/design-system";
+import { BoltIcon, FilterChips, ShowChartIcon, accentVar } from "@/design-system";
 import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
 
-import { LineupsView, CommentaryView, TimelineList } from "./match-report-parts";
+import { CommentaryView, TimelineList } from "./match-report-parts";
+import { MatchPitchView } from "./match-pitch-view";
 import {
   EmptyPanel,
   MatchIntelPanel,
@@ -44,7 +45,7 @@ export function FootballStatsView({
         {tab === "OVERVIEW" ? <Overview match={match} scoreboard={scoreboard} /> : null}
         {tab === "MOMENTUM" ? <Momentum match={match} scoreboard={scoreboard} /> : null}
         {tab === "EVENTS" ? <TimelineList match={match} events={scoreboard.timeline} /> : null}
-        {tab === "LINEUPS" ? <LineupsView match={match} scoreboard={scoreboard} /> : null}
+        {tab === "LINEUPS" ? <MatchPitchView match={match} scoreboard={scoreboard} /> : null}
         {tab === "COMMENTARY" ? <CommentaryView commentary={scoreboard.commentary} /> : null}
       </div>
     </div>
@@ -117,7 +118,14 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
 
 function Momentum({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
   if (!scoreboard.trace) {
-    return <EmptyPanel title="Momentum pending" message="The pressure trace opens once the match kicks off." />;
+    return (
+      <EmptyPanel
+        icon={ShowChartIcon}
+        spark={BoltIcon}
+        title="Pressure feed offline"
+        message="Momentum will map the match once enough live actions arrive."
+      />
+    );
   }
   return (
     <div className={styles.stack}>

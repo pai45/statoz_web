@@ -25,11 +25,6 @@ export const lobbyActionsDelayMs = 470;
 
 /* ---- Phase timeline ---------------------------------------------------- */
 
-/** Opponent reveal: the queue search, the rival landing, and the beat after. */
-export const opponentSearchMs = 2600;
-export const opponentLockMs = 360;
-export const opponentHoldMs = 700;
-
 /** Lineup: both squads deal in, then the kick loop takes over. */
 export const lineupRevealMs = 850;
 

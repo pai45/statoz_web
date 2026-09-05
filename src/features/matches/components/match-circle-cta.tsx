@@ -1,32 +1,38 @@
 "use client";
 
-import type { SportMatch } from "@/domain/matches";
-import { Icon, type IconProps } from "@/design-system/icons/icon";
+import Link from "next/link";
 
+import { ForumIcon } from "@/design-system";
+import { compactMatchCircleCount, visibleCount, type SportMatch } from "@/domain/matches";
+
+import { threadFor, useMatchCircle } from "../state/match-circle-store";
 import styles from "./match-detail.module.css";
 
-function ForumIcon(props: IconProps) {
-  return (
-    <Icon viewBox="0 -960 960 960" {...props}>
-      <path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80l160-160h560q33 0 56.5-23.5T880-320v-480q0-33-23.5-56.5T800-880H160q-33 0-56.5 23.5T80-800v720Zm80-213v-507h640v480H207l-47 27Z" />
-    </Icon>
-  );
-}
-
+/**
+ * The bar docked under the match tabs, and the way into the discussion.
+ *
+ * It is chrome, not a call to action: a quiet 62px rail with a cyan hairline
+ * along its top edge, carrying the thread's post count. Every tab scrolls
+ * above it, so it never covers what it sits beneath.
+ */
 export function MatchCircleCta({ match }: { match: SportMatch }) {
-  const countLabel = "1.2k";
+  const snapshot = useMatchCircle();
+  const count = visibleCount(threadFor(snapshot, match));
+  const label = compactMatchCircleCount(count);
 
   return (
-    <button
-      type="button"
+    <Link
+      href={`/matches/${match.id}/circle`}
       className={styles.circleCta}
-      aria-label={`Open Match Circle, ${countLabel} discussion posts for ${match.home.name} versus ${match.away.name}`}
+      aria-label={`Open Match Circle, ${label} discussion posts for ${match.home.name} versus ${match.away.name}`}
     >
       <span className={styles.circleCtaInner}>
-        <ForumIcon size={20} />
+        <ForumIcon size={20} aria-hidden="true" />
         <span className={styles.circleLabel}>Match Circle</span>
-        <span className={styles.circleCount}>{countLabel}</span>
+        <span className={styles.circleCount} suppressHydrationWarning>
+          {label}
+        </span>
       </span>
-    </button>
+    </Link>
   );
 }

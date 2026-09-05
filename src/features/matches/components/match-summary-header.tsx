@@ -1,20 +1,23 @@
-import type { SportMatch } from "@/domain/matches";
+import type { SportMatch, SportTeam } from "@/domain/matches";
 import { formatKickoffTime } from "@/shared/utils";
 
 import styles from "./match-detail.module.css";
 import { TeamBadge } from "./team-badge";
 
+/**
+ * The fixture, above the tabs: the clock or the minute, the two badges either
+ * side of the score, and the teams' colours as a split rule under them.
+ *
+ * Cricket reads differently and says so — an innings does not fit a score
+ * slot, so it sits under each side's name and the middle carries only "vs".
+ */
 export function MatchSummaryHeader({ match }: { match: SportMatch }) {
   if (match.sport === "motorsport") {
     return <GrandPrixSummary match={match} />;
   }
 
+  const cricket = match.sport === "cricket";
   const hasScore = match.homeScore != null || match.awayScore != null;
-  const score = match.sport === "cricket"
-    ? "VS"
-    : hasScore
-      ? `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}`
-      : "-";
 
   return (
     <section className={styles.summary} aria-label="Match summary">
@@ -29,18 +32,19 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
 
         <div className={styles.summaryTeams}>
           <TeamBadge team={match.home} size={44} />
-          <span className={styles.teamName} style={{ marginLeft: 10 }}>
-            {match.home.name}
-          </span>
-          <span
-            className={`${styles.summaryScore} ${hasScore || match.sport === "cricket" ? "" : styles.summaryScoreEmpty}`}
-          >
-            {score}
-          </span>
-          <span className={`${styles.teamName} ${styles.teamNameAway}`}>
-            {match.away.name}
-          </span>
-          <span style={{ width: 10, flex: "none" }} />
+          <TeamDetails team={match.home} score={match.homeScore} cricket={cricket} />
+
+          {cricket ? (
+            <span className={styles.summaryVs}>vs</span>
+          ) : (
+            <span
+              className={`${styles.summaryScore} ${hasScore ? "" : styles.summaryScoreEmpty}`}
+            >
+              {hasScore ? `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}` : "-"}
+            </span>
+          )}
+
+          <TeamDetails team={match.away} score={match.awayScore} cricket={cricket} alignEnd />
           <TeamBadge team={match.away} size={44} />
         </div>
 
@@ -50,6 +54,27 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
         </div>
       </div>
     </section>
+  );
+}
+
+/** A side's name, with its innings under it on cricket fixtures. */
+function TeamDetails({
+  team,
+  score,
+  cricket,
+  alignEnd = false,
+}: {
+  team: SportTeam;
+  score?: number | string;
+  cricket: boolean;
+  alignEnd?: boolean;
+}) {
+  const innings = cricket && score != null && String(score) !== "" ? String(score) : null;
+  return (
+    <span className={`${styles.summaryTeam} ${alignEnd ? styles.summaryTeamEnd : ""}`}>
+      <span className={styles.teamName}>{team.name}</span>
+      {innings ? <span className={styles.teamInnings}>{innings}</span> : null}
+    </span>
   );
 }
 

@@ -4,13 +4,20 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import { accentVar, feedbackVar } from "@/design-system";
 import { activeLoadout, useDecks } from "@/features/cards-decks";
-import { equipCosmetic, settleCoinReward, useEconomy } from "@/features/economy";
+import { settleCoinReward, useEconomy } from "@/features/economy";
 import { cricketBattingCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
+import { levelFromXp } from "@/domain/progression";
+
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
-import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import {
+  GameMatchGate,
+  matchmakingFighter,
+  useMatchmakingPlayer,
+} from "../../shared/components/matchmaking";
+import { randomOpponentName } from "../../shared/data/opponent-names";
 import { resultDelayMs, stingMajorMs, stingMinorMs } from "../constants";
 import { kitById, opponentKit as opponentKitFor } from "../data/kits";
 import type { GameplayEvent } from "../engine/commands";
@@ -74,13 +81,17 @@ function squadFromClaim(
 }
 
 export function FinalOver({ game }: FinalOverProps) {
-  const [view, setView] = useState<"lobby" | "playing">("lobby");
+  const [view, setView] = useState<"lobby" | "matchmaking" | "playing">("lobby");
   const [session, setSession] = useState(0);
+  /** The rival the queue lands on. Drawn on the press, never on the server. */
+  const [rival, setRival] = useState("");
   const decks = useDecks();
   const economy = useEconomy();
   const hydrated = useIsHydrated();
   const stats = useFinalOverStats();
   const gamesHref = `/games/${sportForGame(game)}`;
+  const level = levelFromXp(stats.xp);
+  const player = useMatchmakingPlayer(`LV ${level}`);
 
   const selectedKitId = economy.owned.kitIds.includes(economy.equipped.kitId)
     ? economy.equipped.kitId
@@ -92,30 +103,37 @@ export function FinalOver({ game }: FinalOverProps) {
   );
 
   const play = useCallback(() => {
+    setRival(randomOpponentName());
     setSession((value) => value + 1);
-    setView("playing");
+    setView("matchmaking");
   }, []);
 
-  if (view !== "playing" || squad === null) {
+  if (view === "lobby" || squad === null) {
     return (
-      <>
-        <FinalOverLobby
-          stats={stats}
-          tier={stats.tier}
-          kitId={selectedKitId}
-          ownedKitIds={economy.owned.kitIds}
-          squadReady={squad !== null && hydrated}
-          backHref={gamesHref}
-          onTierChange={(tier) => saveLobbySelection(tier, selectedKitId)}
-          onKitChange={(kitId) => {
-            if (!economy.owned.kitIds.includes(kitId)) return;
-            equipCosmetic("kit", kitId);
-            saveLobbySelection(stats.tier, kitId);
-          }}
-          onPlay={play}
-        />
-        <GameLandingAd />
-      </>
+      <FinalOverLobby
+        stats={stats}
+        tier={stats.tier}
+        squadReady={squad !== null && hydrated}
+        backHref={gamesHref}
+        onTierChange={(tier) => saveLobbySelection(tier, selectedKitId)}
+        onPlay={play}
+      />
+    );
+  }
+
+  if (view === "matchmaking") {
+    return (
+      <GameMatchGate
+        goLabel="PLAY!"
+        config={{
+          title: "FINAL OVER",
+          queueLabel: "SCANNING GLOBAL CRICKET QUEUE",
+          player,
+          opponent: matchmakingFighter(rival, `LV ${level}`),
+        }}
+        onReady={() => setView("playing")}
+        onCancel={() => setView("lobby")}
+      />
     );
   }
 

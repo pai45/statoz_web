@@ -1,18 +1,9 @@
 "use client";
 
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useState } from "react";
 
-import {
-  FlagIcon,
-  PickIcon,
-  QuizIcon,
-  TrophyIcon,
-  UnderlineTabs,
-  accentVar,
-  type IconProps,
-} from "@/design-system";
+import { UnderlineTabs, accentVar } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
-import { sportModuleFor } from "@/domain/sports";
 import { MatchPicksPanel } from "@/features/picks";
 import { MatchPredictTab } from "@/features/predictions";
 
@@ -32,11 +23,12 @@ import styles from "./match-detail.module.css";
 
 type MainTab = "predict" | "picks" | "tops" | "stats";
 
-const mainTabs: { id: MainTab; label: string; icon: ComponentType<IconProps> }[] = [
-  { id: "predict", label: "PREDICT", icon: QuizIcon },
-  { id: "picks", label: "PICKS", icon: PickIcon },
-  { id: "tops", label: "TOPS", icon: TrophyIcon },
-  { id: "stats", label: "STATS", icon: FlagIcon },
+/** Labels only, as on the app's strip — the underline is the whole signal. */
+const mainTabs: { id: MainTab; label: string }[] = [
+  { id: "predict", label: "PREDICT" },
+  { id: "picks", label: "PICKS" },
+  { id: "tops", label: "TOPS" },
+  { id: "stats", label: "STATS" },
 ];
 
 export function MatchTabsView({ match, detail }: { match: SportMatch; detail: MatchDetailData }) {
@@ -47,27 +39,15 @@ export function MatchTabsView({ match, detail }: { match: SportMatch; detail: Ma
     return () => window.clearTimeout(task);
   }, []);
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);
-  const accent = accentVar(sportModuleFor(match.sport).accent);
-  const tabs = mainTabs.map(({ id, label, icon: Icon }) => ({
-    id,
-    label,
-    icon: (
-      <span className={styles.mainTabLabel}>
-        <Icon size={15} aria-hidden="true" />
-        <span>{label}</span>
-      </span>
-    ),
-  }));
-
   return (
     <section className={styles.tabsBody} aria-label="Match content">
       <UnderlineTabs
         label="Match detail tabs"
         className={styles.mainTabs}
-        tabs={tabs}
+        tabs={mainTabs}
         activeIndex={activeIndex}
         onChange={(index) => setActiveTab(mainTabs[index].id)}
-        accent={accent}
+        accent={accentVar("cyan")}
       />
 
       <div className={styles.tabPanel}>
@@ -75,7 +55,6 @@ export function MatchTabsView({ match, detail }: { match: SportMatch; detail: Ma
           <MatchPredictTab
             match={match}
             quizzes={detail.quizzes}
-            onOpenPicks={() => setActiveTab("picks")}
           />
         ) : null}
         {activeTab === "picks" ? <MatchPicksPanel matchId={match.id} /> : null}

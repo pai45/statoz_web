@@ -8,6 +8,7 @@
   --ds-color-background-muted: #070c1f;
   --ds-color-background-nav: #1a253a;
   --ds-color-background-quiz-hub: #06152b;
+  --ds-color-background-data: #10192d;
 
   /* Text */
   --ds-color-text-default: #ffffff;
@@ -26,6 +27,7 @@
   --ds-color-border-inactive: #94a3b8;
 
   /* Accents */
+  --ds-color-accent-white: var(--ds-color-text-default);
   --ds-color-accent-cyan: #5cdfff;
   --ds-color-accent-violet: #c27aff;
   --ds-color-accent-orange: #ff8904;
@@ -67,6 +69,8 @@
   --ds-color-fixture-shadow: #04060b;
   --ds-color-fixture-base: #141c2b;
   --ds-color-fixture-strip: #0f1826;
+  /* The brighter fill a fixture card's call-to-action strip takes. */
+  --ds-color-fixture-strip-focal: #173a5e;
   --ds-color-fixture-border: #2a3550;
   --ds-color-fixture-predicted: #2c7a8c;
   --ds-color-fixture-kickoff: #c8a45a;
@@ -93,6 +97,22 @@
   --ds-gradient-pack-headline: linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%);
   --ds-gradient-card-nameplate: linear-gradient(to right, #202836 0%, #121824 100%);
   --ds-gradient-fixture-card: linear-gradient(to bottom, #1b2336 0%, #121a28 100%);
+  --ds-gradient-league-table: linear-gradient(135deg, #121b30 0%, #0e1628 100%);
+  /* The bed a decision sheet is taken on, raked from lit slate to hull dark. */
+  --ds-gradient-hud-sheet: linear-gradient(135deg, #152139 0%, #0b101c 100%);
+  /* The lit top edge of that sheet: cyan into violet, fading at both ends. */
+  --ds-gradient-hud-edge: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--ds-color-accent-cyan) 28%,
+    var(--ds-color-accent-violet) 72%,
+    transparent 100%
+  );
+  --ds-gradient-dock-bar: linear-gradient(
+    to bottom,
+    color-mix(in srgb, #1d293d 88%, transparent) 0%,
+    #17233d 100%
+  );
   --ds-gradient-streak-milestone: linear-gradient(
     135deg,
     color-mix(in srgb, var(--ds-color-accent-gold) 24%, transparent) 0%,
@@ -120,6 +140,8 @@
   --ds-shape-panel-cut: 12px;
   --ds-shape-hud-cut: 14px;
   --ds-shape-hud-accent-cut: 4px;
+  --ds-shape-hud-sheet-cut: 18px;
+  --ds-shape-hud-sheet-accent-cut: 4px;
   --ds-shape-compact-hud-cut: 12px;
   --ds-shape-compact-hud-accent-cut: 3px;
   /* A card scales its chamfer to its own width; these are the resting values a
@@ -154,6 +176,25 @@
     calc(100% - 12px) 100%,
     12px 100%,
     0 calc(100% - 12px)
+  );
+  --ds-clip-fixture-flat: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
+  --ds-plate-cut: 9px;
+  --ds-clip-octagon-plate: polygon(
+    var(--ds-plate-cut) 0,
+    calc(100% - var(--ds-plate-cut)) 0,
+    100% var(--ds-plate-cut),
+    100% calc(100% - var(--ds-plate-cut)),
+    calc(100% - var(--ds-plate-cut)) 100%,
+    var(--ds-plate-cut) 100%,
+    0 calc(100% - var(--ds-plate-cut)),
+    0 var(--ds-plate-cut)
   );
   --ds-clip-octagon: polygon(
     15% 0,
@@ -204,6 +245,16 @@
     4px 100%,
     0 calc(100% - 4px),
     0 14px
+  );
+  --ds-clip-hud-sheet: polygon(
+    18px 0,
+    calc(100% - 4px) 0,
+    100% 4px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    4px 100%,
+    0 calc(100% - 4px),
+    0 18px
   );
   --ds-clip-compact-hud: polygon(
     12px 0,

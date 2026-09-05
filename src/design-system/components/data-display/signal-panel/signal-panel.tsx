@@ -124,7 +124,7 @@ export function SignalPanel({
           style={{
             ...clip,
             background:
-              "color-mix(in srgb, var(--panel-accent) 4.5%, var(--ds-color-background-elevated))",
+              "color-mix(in srgb, var(--panel-accent) 8%, var(--ds-color-background-elevated))",
           }}
         />
         {/* The one bright line on the panel. It stops where the notch steps in

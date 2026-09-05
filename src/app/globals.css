@@ -25,6 +25,7 @@
 
   /* Accents */
   --color-accent: var(--ds-color-accent-cyan);
+  --color-sport-white: var(--ds-color-accent-white);
   --color-cyan: var(--ds-color-accent-cyan);
   --color-violet: var(--ds-color-accent-violet);
   --color-orange: var(--ds-color-accent-orange);

@@ -87,14 +87,6 @@ import {
 } from "./shop-tiles";
 import styles from "./shop-screen.module.css";
 
-const sportAccents: Record<Sport, string> = {
-  football: accentVar("cyan"),
-  cricket: accentVar("lime"),
-  basketball: accentVar("gold"),
-  tennis: accentVar("cyan"),
-  motorsport: accentVar("racing"),
-};
-
 const roleAccents: Record<string, string> = {
   attacker: accentVar("cyan"), defender: accentVar("violet"), goalkeeper: accentVar("gold"), batsman: accentVar("cyan"), bowler: accentVar("violet"), basketballGuard: accentVar("gold"), basketballWing: accentVar("cyan"), basketballBig: accentVar("violet"), tennisSingles: accentVar("lime"), f1Driver: accentVar("racing"), f2Driver: accentVar("racing"), nascarDriver: accentVar("racing"), indycarDriver: accentVar("racing"),
 };
@@ -153,7 +145,7 @@ function ShopCatalog({ economy }: { economy: EconomySnapshot }) {
   const [acquired, setAcquired] = useState<ShopAcquisition | null>(null);
   const [coinCelebration, setCoinCelebration] = useState<{ key: string; amount: number } | null>(null);
   const [reveal, setReveal] = useState<PackRevealItem[] | null>(null);
-  const accent = sportAccents[sport];
+  const accent = accentVar(sportModuleFor(sport).accent);
 
   function changeCategory(index: number) {
     const next = shopCategories[index].id;
@@ -295,14 +287,8 @@ function ShopCatalog({ economy }: { economy: EconomySnapshot }) {
         tabs={sportOrder.map((entry) => ({
           id: entry,
           label: sportModuleFor(entry).label.toUpperCase(),
-          icon: (
-            <span className="flex items-center gap-2 px-3">
-              <SportIcon sport={entry} size={18} />
-              <span className="font-display text-2xs font-black tracking-wide">
-                {sportModuleFor(entry).shortLabel}
-              </span>
-            </span>
-          ),
+          icon: <SportIcon sport={entry} size={18} />,
+          showLabel: true,
         }))}
         activeIndex={sportOrder.indexOf(sport)}
         onChange={(index) => {
@@ -310,6 +296,9 @@ function ShopCatalog({ economy }: { economy: EconomySnapshot }) {
           setFilter("ALL");
         }}
         accent={accent}
+        iconColors={sportOrder.map((entry) =>
+          accentVar(sportModuleFor(entry).accent),
+        )}
         label="Shop sports"
         minTabWidth={116}
         className="sticky top-0 z-10 bg-surface-nav/95"

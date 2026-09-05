@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { AdSlot } from "@/features/ads";
-import { PlatformNav, PlatformTopBar } from "@/features/shell";
+import { PlatformBreadcrumbs, PlatformNav, PlatformTopBar } from "@/features/shell";
 
 /**
  * The platform shell. Navigation sits at the bottom on phones and moves to a
@@ -40,6 +40,7 @@ export default function PlatformLayout({ children }: LayoutProps<"/">) {
 
           <div className="flex min-w-0 flex-1 flex-col">
             <PlatformTopBar />
+            <PlatformBreadcrumbs />
             <main className="flex min-h-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)]">
               {children}
             </main>

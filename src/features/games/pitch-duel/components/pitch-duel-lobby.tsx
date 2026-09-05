@@ -1,9 +1,10 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Button, Glyph, Progress } from "@/design-system";
+import { Glyph } from "@/design-system";
 import { levelProgress } from "@/domain/progression";
 
 import type { PitchDuelHistoryEntry, PitchDuelProgress } from "../types";
@@ -31,29 +32,20 @@ export function PitchDuelLobby({
 
   return (
     <section className={styles.lobby} aria-labelledby="pitch-duel-title">
-      <header className={styles.lobbyHeader}>
-        <button type="button" onClick={onExit} aria-label="Back to football games">
-          <Glyph name="chevron_left" size={19} />
-        </button>
-        <div>
-          <strong>PITCH DUEL</strong>
-          <span>{"// MATCH LOBBY"}</span>
-        </div>
-        <div className={styles.levelBadge} aria-label={`Level ${band.level}`}>
-          <span>LVL</span><b>{band.level}</b>
-          <Progress value={band.fraction} accent={cyan} label={`Level ${band.level} progress`} height={3} />
-        </div>
-      </header>
+      <button type="button" className={styles.lobbyExit} onClick={onExit}>
+        <Glyph name="chevron_left" size={18} />
+        <span>FOOTBALL GAMES</span>
+      </button>
 
       <div className={styles.lobbyBody}>
         <div className={`${styles.lobbyColumn} ${styles.rise}`}>
           <div className={styles.statusStrip}>
-            <i /><b>DECK ONLINE</b><span /> <small>SYS://PITCH_DUEL v1.0.0</small>
+            <i /><b>ONLINE</b><span /> <small>SYS://PITCH_DUEL V1.0.0</small>
           </div>
 
           <div className={styles.lobbyHero}>
             <div className={styles.heroEmblem} aria-hidden>
-              <span><Glyph name="sports_soccer" size={55} /></span><i /><i />
+              <span><Glyph name="sports_soccer" size={42} /></span><i /><i />
             </div>
             <div>
               <h1 id="pitch-duel-title">PITCH DUEL</h1>
@@ -68,9 +60,14 @@ export function PitchDuelLobby({
             <HudStat label="WINS" value={`${progress.wins}`} accent={lime} />
           </div>
 
-          <Button size="lg" glow fullWidth accent={cyan} onClick={onPlay} leadingIcon={<Glyph name="play_arrow" size={20} />} className={styles.lobbyPlay}>
-            PLAY MATCH
-          </Button>
+          <button type="button" className={styles.lobbyPlay} onClick={onPlay}>
+            <span className={styles.playGlyph} aria-hidden>
+              <Glyph name="chevron_right" size={24} />
+              <Glyph name="chevron_right" size={24} />
+            </span>
+            <i aria-hidden />
+            <b>PLAY MATCH</b>
+          </button>
 
           <div className={styles.lobbyActions}>
             <Link href="/decks/football?returnTo=/play/pitch-duel">DECK BUILDER</Link>
@@ -91,6 +88,8 @@ export function PitchDuelLobby({
           </div>
           <p className={styles.resetNotice} role="status">{tutorialReset ? "Walkthrough armed for the next match." : ""}</p>
         </div>
+
+        <DailyDrop sport="football" />
       </div>
 
       {historyOpen ? <PitchDuelHistory entries={progress.history} onClose={() => setHistoryOpen(false)} /> : null}

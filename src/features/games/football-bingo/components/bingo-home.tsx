@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import { accentVar, Badge, Button, Glyph, withAlpha } from "@/design-system";
 
 import { bingoStatus, formatCountdown } from "../engine/day-keys";
@@ -158,6 +160,7 @@ export function BingoHome({
           </button>
         </div>
       </div>
+        <DailyDrop sport="football" />
     </div>
   );
 }

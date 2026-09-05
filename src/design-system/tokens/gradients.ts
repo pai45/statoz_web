@@ -25,6 +25,20 @@ export const gradients = {
   cardNameplate: "linear-gradient(to right, #202836 0%, #121824 100%)",
   /** The neutral navy body shared by sport fixture cards. */
   fixtureCard: "linear-gradient(to bottom, #1b2336 0%, #121a28 100%)",
+  /** Dense data surface used by league standings and ranked rows. */
+  leagueTable: "linear-gradient(135deg, #121b30 0%, #0e1628 100%)",
+  /** The bed a decision sheet is taken on, raked from lit slate to hull dark. */
+  hudSheet: "linear-gradient(135deg, #152139 0%, #0b101c 100%)",
+  /** The lit top edge of that sheet: cyan into violet, fading at both ends. */
+  hudEdge: [
+    "linear-gradient(to right, transparent 0%,",
+    "var(--ds-color-accent-cyan) 28%,",
+    "var(--ds-color-accent-violet) 72%,",
+    "transparent 100%)",
+  ].join(" "),
+  /** The docked bar under a match's tabs — panel slate falling to hull navy. */
+  dockBar:
+    "linear-gradient(to bottom, color-mix(in srgb, #1d293d 88%, transparent) 0%, #17233d 100%)",
   /** Earned streak milestone surface, warming from gold into the dark stack. */
   streakMilestone:
     "linear-gradient(135deg, color-mix(in srgb, var(--ds-color-accent-gold) 24%, transparent) 0%, var(--ds-color-background-secondary) 50%, var(--ds-color-background-elevated) 100%)",

@@ -1,6 +1,14 @@
 "use client";
 
-import { useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
+
+import { FilterChips, FullscreenExitIcon, FullscreenIcon } from "@/design-system";
 
 import type { MatchTrace, SportMatch } from "@/domain/matches";
 
@@ -17,24 +25,55 @@ import styles from "./match-stats.module.css";
 
 const viewWidth = 1000;
 const viewHeight = 220;
+const inningsModes = ["FULL GAME", "POWERPLAY", "DEATH OVERS"] as const;
+
+type InningsMode = (typeof inningsModes)[number];
+
+function phaseBounds(mode: InningsMode, pointCount: number) {
+  if (mode === "POWERPLAY") return { start: 0, end: Math.min(6, pointCount) };
+  if (mode === "DEATH OVERS") return { start: Math.max(0, pointCount - 4), end: pointCount };
+  return { start: 0, end: pointCount };
+}
 
 export function MatchTraceChart({
   match,
   trace,
   homeLabel,
   awayLabel,
+  showInningsModes = false,
 }: {
   match: SportMatch;
   trace: MatchTrace;
   homeLabel?: string;
   awayLabel?: string;
+  /** Adds full-game, powerplay, and death-over views plus native fullscreen. */
+  showInningsModes?: boolean;
 }) {
   const canvas = useRef<HTMLDivElement>(null);
-  const points = Math.max(trace.home.length, trace.away.length);
-  const [selected, setSelected] = useState(points - 1);
+  const panel = useRef<HTMLElement>(null);
+  const sourcePoints = Math.max(trace.home.length, trace.away.length, 1);
+  const [mode, setMode] = useState<InningsMode>(inningsModes[0]);
+  const [selected, setSelected] = useState(sourcePoints - 1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const { start, end } = phaseBounds(mode, sourcePoints);
+  const home = trace.home.slice(start, end);
+  const away = trace.away.slice(start, end);
+  const ticks = trace.ticks.slice(start, end);
+  const markers = (trace.markers ?? [])
+    .filter((marker) => marker.index >= start && marker.index < end)
+    .map((marker) => ({ ...marker, index: marker.index - start }));
+  const points = Math.max(home.length, away.length, 1);
   const index = Math.min(Math.max(selected, 0), Math.max(0, points - 1));
 
-  const all = [...trace.home, ...trace.away];
+  useEffect(() => {
+    const updateFullscreenState = () => {
+      setIsFullscreen(document.fullscreenElement === panel.current);
+    };
+    document.addEventListener("fullscreenchange", updateFullscreenState);
+    return () => document.removeEventListener("fullscreenchange", updateFullscreenState);
+  }, []);
+
+  const all = [...home, ...away];
   const min = Math.min(...all, 0);
   const max = Math.max(...all, 1);
   const spread = Math.max(1, max - min);
@@ -50,17 +89,63 @@ export function MatchTraceChart({
     setSelected(Math.round(percent * (points - 1)));
   };
 
+  const selectMode = (nextMode: string) => {
+    const next = nextMode as InningsMode;
+    const bounds = phaseBounds(next, sourcePoints);
+    setMode(next);
+    setSelected(Math.max(0, bounds.end - bounds.start - 1));
+  };
+
+  const toggleFullscreen = async () => {
+    if (!panel.current) return;
+    try {
+      if (document.fullscreenElement === panel.current) {
+        await document.exitFullscreen();
+      } else {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        await panel.current.requestFullscreen();
+      }
+    } catch {
+      // The browser may reject fullscreen when device policy disables it.
+    }
+  };
+
   return (
-    <section className={styles.tracePanel}>
+    <section ref={panel} className={styles.tracePanel}>
       <header className={styles.traceHead}>
-        <b>{trace.title}</b>
+        <span className={styles.traceTitleRow}>
+          <b>{trace.title}</b>
+          {showInningsModes ? (
+            <span className={styles.traceActions}>
+              <button
+                type="button"
+                className={styles.traceFullscreen}
+                aria-label={isFullscreen ? "Exit run race fullscreen" : "Open run race fullscreen"}
+                aria-pressed={isFullscreen}
+                onClick={toggleFullscreen}
+              >
+                {isFullscreen ? <FullscreenExitIcon size={18} /> : <FullscreenIcon size={18} />}
+              </button>
+              <small>{points} OVERS</small>
+            </span>
+          ) : null}
+        </span>
+        {showInningsModes ? (
+          <FilterChips
+            options={[...inningsModes]}
+            selected={mode}
+            onSelect={selectMode}
+            label="Run race period"
+            className={styles.traceModes}
+          />
+        ) : null}
         <span className={styles.traceReadout}>
           <span style={{ color: match.home.color }} className="ds-tabular">
-            {homeLabel ?? match.home.shortName} {trace.home[index] ?? 0}
+            {homeLabel ?? match.home.shortName} {home[index] ?? 0}
           </span>
-          <small>{trace.ticks[index] ?? ""}</small>
+          <small>{ticks[index] ?? ""}</small>
           <span style={{ color: match.away.color }} className="ds-tabular">
-            {awayLabel ?? match.away.shortName} {trace.away[index] ?? 0}
+            {awayLabel ?? match.away.shortName} {away[index] ?? 0}
           </span>
         </span>
       </header>
@@ -74,7 +159,7 @@ export function MatchTraceChart({
         aria-valuemin={0}
         aria-valuemax={Math.max(0, points - 1)}
         aria-valuenow={index}
-        aria-valuetext={`${trace.ticks[index] ?? index}: ${match.home.shortName} ${trace.home[index] ?? 0} ${trace.unit}, ${match.away.shortName} ${trace.away[index] ?? 0} ${trace.unit}`}
+        aria-valuetext={`${ticks[index] ?? index}: ${match.home.shortName} ${home[index] ?? 0} ${trace.unit}, ${match.away.shortName} ${away[index] ?? 0} ${trace.unit}`}
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId);
           scrub(event);
@@ -88,8 +173,8 @@ export function MatchTraceChart({
         }}
       >
         <svg viewBox={`0 0 ${viewWidth} ${viewHeight}`} preserveAspectRatio="none" aria-hidden="true">
-          <path d={path(trace.away)} fill="none" stroke={match.away.color} strokeWidth={3} vectorEffect="non-scaling-stroke" />
-          <path d={path(trace.home)} fill="none" stroke={match.home.color} strokeWidth={3} vectorEffect="non-scaling-stroke" />
+          <path d={path(away)} fill="none" stroke={match.away.color} strokeWidth={3} vectorEffect="non-scaling-stroke" />
+          <path d={path(home)} fill="none" stroke={match.home.color} strokeWidth={3} vectorEffect="non-scaling-stroke" />
         </svg>
 
         <span
@@ -98,7 +183,7 @@ export function MatchTraceChart({
           aria-hidden="true"
         />
 
-        {(trace.markers ?? []).map((marker) => (
+        {markers.map((marker) => (
           <span
             key={`${marker.index}-${marker.label}`}
             className={[styles.traceMarker, marker.decisive ? styles.traceMarkerFocal : ""].filter(Boolean).join(" ")}
@@ -112,9 +197,9 @@ export function MatchTraceChart({
       </div>
 
       <footer className={styles.traceAxis}>
-        <span>{trace.ticks[0]}</span>
-        <span>{trace.ticks[Math.floor(points / 2)]}</span>
-        <span>{trace.ticks.at(-1)}</span>
+        <span>{ticks[0]}</span>
+        <span>{ticks[Math.floor(points / 2)]}</span>
+        <span>{ticks.at(-1)}</span>
       </footer>
     </section>
   );

@@ -6,6 +6,7 @@ import { activeLoadout, useDecks } from "@/features/cards-decks";
 import { settleCoinReward } from "@/features/economy";
 import { tennisPlayerCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
+import { levelFromXp } from "@/domain/progression";
 
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
@@ -40,7 +41,10 @@ import { TennisArena } from "./tennis-arena";
 import { KeyboardLegend, TennisControls } from "./tennis-controls";
 import { TennisHud, TennisStatusRails, TennisStingLayer } from "./tennis-hud";
 import { TennisLobby } from "./tennis-lobby";
-import { TennisMatchmaking } from "./tennis-matchmaking";
+import {
+  GameMatchGate,
+  matchmakingFighter,
+} from "../../shared/components/matchmaking";
 import {
   PauseOverlay,
   QuitDialog,
@@ -167,6 +171,14 @@ export function TennisRally({ game }: TennisRallyProps) {
     );
   }
 
+  /*
+   * Tennis banks per-athlete mastery rather than match XP, so the level the
+   * queue shows is what that mastery adds up to — the same number the profile's
+   * tennis track reports.
+   */
+  const level = levelFromXp(
+    Object.values(progress.masteryXp).reduce((sum, xp) => sum + xp, 0),
+  );
   const opponentName =
     tennisPlayerCards.find((card) => card.id === config.opponentId)?.name ?? "RIVAL";
   const playerName =
@@ -174,9 +186,14 @@ export function TennisRally({ game }: TennisRallyProps) {
 
   if (view === "matchmaking") {
     return (
-      <TennisMatchmaking
-        playerName={playerName}
-        opponentName={opponentName}
+      <GameMatchGate
+        goLabel="PLAY!"
+        config={{
+          title: "TENNIS RALLY",
+          queueLabel: "SCANNING GLOBAL TENNIS QUEUE",
+          player: matchmakingFighter(playerName, `LV ${level}`),
+          opponent: matchmakingFighter(opponentName, `LV ${level}`),
+        }}
         onReady={() => setView("playing")}
         onCancel={backToLobby}
       />

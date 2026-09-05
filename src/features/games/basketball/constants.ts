@@ -25,17 +25,6 @@ export const stepbackSwipePx = 34;
 export const padPressMs = 90;
 export const actionCueSwitchMs = 140;
 
-/* ---- Matchmaking gate ----------------------------------------------------- */
-
-/** Queue scan, the rival landing, and the beat before TIP OFF is offered. */
-export const matchmakingSearchMs = 2600;
-export const matchmakingLockMs = 360;
-export const matchmakingHoldMs = 700;
-
-/** The 3-2-1, then the TIP OFF stamp that hands over to the court. */
-export const countdownTickMs = 1000;
-export const countdownStampMs = 780;
-
 /* ---- Overlays ------------------------------------------------------------- */
 
 /** The OVERTIME stinger auto-advances; a tap skips it. */

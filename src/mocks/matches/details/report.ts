@@ -1,4 +1,6 @@
 import type {
+  BattingLine,
+  BowlingLine,
   BoxScore,
   FeedEvent,
   InningsLine,
@@ -317,6 +319,55 @@ function parseInnings(score: SportMatch["homeScore"]): { runs: number; wickets: 
   return { runs: Number(parsed[1]), wickets: Number(parsed[2]), overs: Number(parsed[3] ?? 20) };
 }
 
+const dismissals = ["c & b", "b", "lbw", "c keeper b", "run out", "st keeper b", "c mid-on b"];
+
+/**
+ * The batting card behind an innings summary: the wickets that fell, in order,
+ * then whoever is still in. Runs are dealt down from the innings total so the
+ * card always adds up to the score above it.
+ */
+function battingCard(
+  batting: string,
+  bowling: string,
+  seed: number,
+  runs: number,
+  wickets: number,
+): BattingLine[] {
+  const out = Math.min(wickets, 9);
+  const lines: BattingLine[] = [];
+  let left = runs;
+  const count = Math.min(out + 2, 11);
+  for (let index = 0; index < count; index += 1) {
+    const last = index === count - 1;
+    const share = last ? left : Math.max(1, Math.round((left * (3 + ((seed + index * 7) % 5))) / 14));
+    const scored = Math.max(0, Math.min(left, share));
+    left -= scored;
+    lines.push({
+      name: player(batting, seed, index + 1),
+      dismissal:
+        index < out
+          ? `${dismissals[(seed + index) % dismissals.length]} ${player(bowling, seed, (index % 4) + 1)}`
+          : undefined,
+      runs: scored,
+      balls: Math.max(1, scored + ((seed + index * 5) % 9) - 3),
+      fours: Math.floor(scored / 9),
+      sixes: Math.floor(scored / 22),
+    });
+  }
+  return lines;
+}
+
+/** Four bowlers, sharing the wickets that fell. */
+function bowlingCard(bowling: string, seed: number, runs: number, wickets: number): BowlingLine[] {
+  return Array.from({ length: 4 }, (_, index) => ({
+    name: player(bowling, seed, index + 1),
+    overs: `${3 + ((seed + index) % 2)}.${(seed + index) % 6}`,
+    maidens: (seed + index) % 3 === 0 ? 1 : 0,
+    runs: Math.max(6, Math.round(runs / 4) + ((seed + index * 3) % 11) - 5),
+    wickets: index < wickets % 4 ? 1 + ((seed + index) % 2) : 0,
+  }));
+}
+
 function cricketReport({ match, seed }: ReportInput): MatchReport {
   const home = parseInnings(match.homeScore);
   const away = parseInnings(match.awayScore);
@@ -333,6 +384,8 @@ function cricketReport({ match, seed }: ReportInput): MatchReport {
       runRate: (home.runs / Math.max(1, home.overs)).toFixed(2),
       topBat: `${player(match.home.name, seed, 1)} ${38 + (seed % 30)}`,
       topBowl: `${player(match.away.name, seed, 3)} ${2 + (seed % 3)}/${18 + (seed % 14)}`,
+      batting: battingCard(match.home.name, match.away.name, seed, home.runs, home.wickets),
+      bowling: bowlingCard(match.away.name, seed, home.runs, home.wickets),
     });
   }
   if (away) {
@@ -344,6 +397,10 @@ function cricketReport({ match, seed }: ReportInput): MatchReport {
       runRate: (away.runs / Math.max(1, away.overs)).toFixed(2),
       topBat: `${player(match.away.name, seed, 2)} ${31 + (seed % 26)}`,
       topBowl: `${player(match.home.name, seed, 4)} ${2 + ((seed >> 1) % 3)}/${16 + (seed % 17)}`,
+      batting: battingCard(match.away.name, match.home.name, seed + 5, away.runs, away.wickets),
+      bowling: bowlingCard(match.home.name, seed + 5, away.runs, away.wickets),
+      // The side batting second is chasing whatever the first innings set.
+      target: home ? home.runs + 1 : undefined,
     });
   }
 

@@ -41,9 +41,15 @@
   vector-effect: non-scaling-stroke;
 }
 
+/* The wash under the leading line, so a stacked chart still reads at a glance. */
+.area {
+  fill: color-mix(in srgb, var(--series-color, var(--line-chart-accent)) 16%, transparent);
+  stroke: none;
+}
+
 .line {
   fill: none;
-  stroke: var(--line-chart-accent);
+  stroke: var(--series-color, var(--line-chart-accent));
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2.4;

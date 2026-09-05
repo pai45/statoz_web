@@ -31,7 +31,7 @@
 .statsScroll {
   min-height: 0;
   flex: 1;
-  padding: 14px 16px calc(96px + env(safe-area-inset-bottom));
+  padding: 14px 16px 28px;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   scrollbar-color: var(--ds-color-border-strong) transparent;
@@ -47,7 +47,7 @@
 
 .statPill {
   padding: 4px 8px;
-  border: 1px solid color-mix(in srgb, var(--pill-color) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pill-color) 70%, transparent);
   background: color-mix(in srgb, var(--pill-color) 12%, transparent);
   color: var(--pill-color);
   font-size: 9px;
@@ -90,32 +90,52 @@
 .pulseMetrics { display: flex; gap: 10px; }
 .miniMetric {
   display: grid;
+  min-width: 0;
+  height: 45px;
   flex: 1;
-  gap: 3px;
-  padding: 8px 10px;
-  border: 1px solid var(--ds-color-border-muted);
-  background: var(--ds-color-background-secondary);
+  align-content: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid var(--ds-color-border-default);
+  background: color-mix(in srgb, var(--ds-color-background-primary) 42%, transparent);
 }
-.miniMetric small { color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
-.miniMetric b { color: var(--ds-color-text-default); font-size: 13px; font-variant-numeric: tabular-nums; }
+.miniMetric small { overflow: hidden; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 9px; font-weight: 900; letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+.miniMetric b { overflow: hidden; color: var(--ds-color-text-default); font-family: var(--ds-font-body); font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---- Data rows ------------------------------------------------------------- */
 
-.sectionHeading { margin: 0; color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .18em; }
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: color-mix(in srgb, var(--ds-color-accent-cyan) 70%, transparent);
+  font-family: var(--ds-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .2em;
+}
+.sectionHeading::after {
+  height: 1px;
+  flex: 1;
+  content: "";
+  background: color-mix(in srgb, var(--ds-color-border-strong) 30%, transparent);
+}
 
 .statsRow {
   display: grid;
   width: 100%;
   gap: 8px;
   padding: 10px;
-  border: 1px solid color-mix(in srgb, var(--row-accent) 40%, transparent);
-  background: var(--ds-color-background-secondary);
+  border: 1px solid var(--row-edge, color-mix(in srgb, var(--row-accent) 40%, transparent));
+  background: var(--ds-color-background-data);
   text-align: left;
 }
 button.statsRow { cursor: pointer; transition: background 160ms ease, border-color 160ms ease; }
 button.statsRow:hover { border-color: var(--row-accent); }
 button.statsRow:focus-visible { outline: 2px solid var(--row-accent); outline-offset: 2px; }
-.statsRowSelected { border-color: var(--row-accent); background: color-mix(in srgb, var(--row-accent) 12%, var(--ds-color-background-secondary)); }
+.statsRowSelected { border-color: var(--row-accent); background: color-mix(in srgb, var(--row-accent) 12%, var(--ds-color-background-data)); }
 
 .comparisonHead { display: grid; grid-template-columns: 62px 1fr 62px; align-items: center; }
 .comparisonHead b { font-size: 16px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
@@ -150,9 +170,31 @@ button.statsRow:focus-visible { outline: 2px solid var(--row-accent); outline-of
 
 /* ---- Trace ----------------------------------------------------------------- */
 
-.tracePanel { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--ds-color-border-muted); background: var(--ds-color-background-secondary); }
+.tracePanel { position: relative; display: grid; gap: 10px; padding: 12px; border: 1px solid var(--ds-color-border-muted); background: var(--ds-color-background-secondary); }
 .traceHead { display: grid; gap: 6px; }
 .traceHead b { color: var(--ds-color-text-default); font-size: 10px; letter-spacing: .14em; }
+.traceTitleRow { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: 10px; }
+.traceActions { display: flex; align-items: center; gap: 4px; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); }
+.traceActions small { min-width: 56px; font-size: 9px; font-weight: 900; letter-spacing: .12em; text-align: right; }
+.traceFullscreen {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--ds-color-accent-cyan);
+  cursor: pointer;
+}
+.traceFullscreen:hover { color: var(--ds-color-text-default); }
+.traceFullscreen:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -4px; }
+.traceModes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ds-space-6);
+  padding: 0;
+}
+.traceModes > button { width: 100%; padding-right: var(--ds-space-8); padding-left: var(--ds-space-8); font-size: var(--ds-text-2xs); }
 .traceReadout { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--ds-font-display); font-size: 11px; font-weight: 900; }
 .traceReadout small { color: var(--ds-color-text-muted); font-size: 9px; letter-spacing: .12em; }
 
@@ -165,6 +207,21 @@ button.statsRow:focus-visible { outline: 2px solid var(--row-accent); outline-of
 .traceMarkerFocal { box-shadow: 0 0 12px var(--marker-color); }
 
 .traceAxis { display: flex; justify-content: space-between; color: var(--ds-color-text-muted); font-size: 8px; letter-spacing: .12em; }
+
+.tracePanel:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding:
+    max(var(--ds-space-16), env(safe-area-inset-top))
+    max(var(--ds-space-16), env(safe-area-inset-right))
+    max(var(--ds-space-16), env(safe-area-inset-bottom))
+    max(var(--ds-space-16), env(safe-area-inset-left));
+  border: 0;
+  background: var(--ds-color-background-secondary);
+}
+.tracePanel:fullscreen .traceCanvas { height: auto; min-height: 0; }
 
 /* ---- Lists ----------------------------------------------------------------- */
 
@@ -188,16 +245,53 @@ button.statsRow:focus-visible { outline: 2px solid var(--row-accent); outline-of
 
 .feedMarker { min-width: 44px; color: var(--ds-color-accent-cyan); font-size: 12px; font-variant-numeric: tabular-nums; }
 
-.emptyPanel { display: grid; place-items: center; gap: 6px; padding: 28px 16px; border: 1px dashed var(--ds-color-border-default); text-align: center; }
-.emptyPanel strong { color: var(--ds-color-text-default); font-family: var(--ds-font-display); font-size: 13px; font-weight: 900; letter-spacing: .06em; }
-.emptyPanel p { margin: 0; color: var(--ds-color-text-muted); font-size: 12px; }
+
+/* ---- Cricket card ---------------------------------------------------------- */
+
+/* The innings a card is showing. */
+.inningsTabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.inningsTabs::-webkit-scrollbar { display: none; }
+.inningsTab {
+  flex: none;
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid var(--ds-color-border-default);
+  border-radius: var(--ds-radius-pill);
+  background: var(--ds-color-background-secondary);
+  color: var(--ds-color-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+.inningsTabActive {
+  border-color: var(--ds-color-accent-cyan);
+  background: color-mix(in srgb, var(--ds-color-accent-cyan) 20%, transparent);
+  color: var(--ds-color-accent-cyan);
+  font-weight: 700;
+}
+.inningsTab:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: 2px; }
+
+.inningsHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.inningsHead strong { display: block; color: var(--ds-color-text-default); font-size: 13px; font-weight: 700; }
+.inningsHead small { display: block; margin-top: 2px; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .09em; }
+.inningsScore { text-align: right; }
+.inningsScore b { display: block; font-family: var(--ds-font-display); font-size: 13px; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+/* Batting and bowling: a name that can carry a second line, then the figures. */
+.card { width: 100%; border-collapse: collapse; background: var(--ds-color-background-data); }
+.card th,
+.card td { padding: 10px 8px; border-bottom: 1px solid var(--ds-color-border-subtle); text-align: right; font-size: 11px; font-variant-numeric: tabular-nums; }
+.card th { color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.card th:first-child,
+.card td:first-child { width: 42%; text-align: left; }
+.card td strong { display: block; overflow: hidden; color: var(--ds-color-text-default); font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.card td small { display: block; overflow: hidden; color: var(--ds-color-text-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.card td b { color: var(--ds-color-text-default); font-weight: 800; }
+.card tbody tr:last-child th,
+.card tbody tr:last-child td { border-bottom: 0; }
 
 /* ---- Desktop --------------------------------------------------------------- */
 
 @media (width >= 900px) {
-  /* A report is a reading surface, so the panels pair up rather than stretch. */
-  .stack { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
-  .stack > .spanFull { grid-column: 1 / -1; }
   .statsScroll { padding-right: 24px; padding-left: 24px; }
 }
 

@@ -2,25 +2,133 @@
 
 import { useState } from "react";
 
-import type { PickMarket, PickPosition } from "@/domain/predictions";
-import { useAuthSession, useRequireAuth } from "@/features/auth";
+import { BoltIcon, FlashOnIcon, NoDataState, PickIcon, ScheduleIcon, SettingsIcon, TimerIcon, accentVar } from "@/design-system";
+import type { PickMarketType } from "@/domain/predictions";
+import { useAuthSession } from "@/features/auth";
 import { HowToPlayButton } from "@/features/how-to-play";
 
-import { selectFilteredMarkets, selectPositionsForMarket, setTypeFilter, settlePosition, usePicks } from "../state/picks-store";
+import {
+  resetFilters,
+  selectFilteredMarkets,
+  selectPositionsForMarket,
+  setTypeFilter,
+  usePicks,
+} from "../state/picks-store";
 import { PickMarketCard } from "./pick-market-card";
-import { PickTradeDrawer, PicksSettingsDrawer } from "./pick-drawers";
-import { SettlementReveal } from "./settlement-reveal";
+import { PicksSettingsSheet } from "./picks-settings-sheet";
+import { usePickTrading } from "./pick-trading";
 import styles from "./picks.module.css";
 
+const typeFilters: { id: PickMarketType | "all"; label: string }[] = [
+  { id: "all", label: "ALL" },
+  { id: "match", label: "MATCHES" },
+  { id: "event", label: "EVENT" },
+  { id: "future", label: "FUTURES" },
+];
+
+/** Every open market, filtered by type on the strip and by league in the sheet. */
 export function PicksScreen() {
-  const picks = usePicks(); const session = useAuthSession(); const requireAuth = useRequireAuth();
-  const markets = selectFilteredMarkets(picks); const [settings, setSettings] = useState(false); const [trade, setTrade] = useState<{ market: PickMarket; outcomeId: string } | null>(null); const [settled, setSettled] = useState<PickPosition | null>(null);
-  const openTrade = (market: PickMarket, outcomeId: string) => { if (!requireAuth({ intent: "lock a pick", message: "Log in to buy shares and save your picks." })) return; setTrade({ market, outcomeId }); };
-  const claim = (position: PickPosition) => { if (!requireAuth({ intent: "claim a pick", message: "Log in to claim your pick result." })) return; const result = settlePosition(position.id); if (result) setSettled(result); };
-  return <main className={styles.page}>
-    <div className={styles.header}><h1 className={styles.title}>ALL PICKS</h1><div className={styles.headerActions}><HowToPlayButton mode="pick"/><button type="button" className={styles.iconButton} aria-label="Filter and sort picks" onClick={() => setSettings(true)}>☷</button></div></div>
-    <nav className={styles.filters} aria-label="Pick types">{([['all','ALL'],['match','MATCHES'],['event','EVENT'],['future','FUTURES']] as const).map(([id,label]) => <button type="button" key={id} className={`${styles.filter} ${picks.typeFilter === id ? styles.filterActive : ''}`} aria-pressed={picks.typeFilter === id} onClick={() => setTypeFilter(id)}>{label}</button>)}</nav>
-    {!picks.hydrated ? <div className={styles.grid} aria-label="Loading picks">{[0,1,2].map((item) => <div className={styles.empty} key={item}>LOADING MARKET…</div>)}</div> : markets.length ? <div className={styles.grid}>{markets.map((market) => <PickMarketCard key={market.id} market={market} positions={session.isAuthenticated ? selectPositionsForMarket(picks,market.id) : []} onPick={openTrade} onClaim={claim}/>)}</div> : <div className={styles.empty}><div><strong>NO MARKETS FOUND</strong><p>Adjust or clear your filters to see more picks.</p></div></div>}
-    <PicksSettingsDrawer open={settings} onClose={() => setSettings(false)} picks={picks}/><PickTradeDrawer key={`${trade?.market.id ?? "closed"}:${trade?.outcomeId ?? "none"}`} market={trade?.market ?? null} outcomeId={trade?.outcomeId ?? null} onClose={() => setTrade(null)}/><SettlementReveal position={settled} onClose={() => setSettled(null)}/>
-  </main>;
+  const picks = usePicks();
+  const session = useAuthSession();
+  const markets = selectFilteredMarkets(picks);
+  const [settings, setSettings] = useState(false);
+  const { openTrade, claim, overlays } = usePickTrading();
+
+  const filtered =
+    picks.typeFilter !== "all" ||
+    picks.leagueFilter !== "all" ||
+    picks.sportFilter !== "all" ||
+    picks.statusFilter !== "all";
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>ALL PICKS</h1>
+        <div className={styles.headerActions}>
+          <HowToPlayButton mode="pick" />
+          <button
+            type="button"
+            className={styles.settingsButton}
+            aria-label="Filter and sort picks"
+            onClick={() => setSettings(true)}
+          >
+            <SettingsIcon size={17} />
+          </button>
+        </div>
+      </div>
+
+      <nav className={styles.filters} aria-label="Pick types">
+        {typeFilters.map((filter) => (
+          <button
+            type="button"
+            key={filter.id}
+            className={`${styles.filter} ${picks.typeFilter === filter.id ? styles.filterActive : ""}`}
+            aria-pressed={picks.typeFilter === filter.id}
+            onClick={() => setTypeFilter(filter.id)}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </nav>
+
+      {!picks.hydrated ? (
+        <PicksSkeleton />
+      ) : markets.length ? (
+        <div className={styles.grid}>
+          {markets.map((market, index) => (
+            <div key={market.id} className={styles.cardEnter} style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}>
+              <PickMarketCard
+                market={market}
+                positions={session.isAuthenticated ? selectPositionsForMarket(picks, market.id) : []}
+                onPick={openTrade}
+                onClaim={claim}
+              />
+            </div>
+          ))}
+        </div>
+      ) : filtered ? (
+        <NoDataState
+          icon={PickIcon}
+          spark={ScheduleIcon}
+          title="No picks found"
+          message="Try another league, market type, or clear filters."
+          action={
+            <button type="button" className={styles.clearAction} onClick={resetFilters}>
+              <TimerIcon size={16} aria-hidden="true" />
+              CLEAR FILTERS
+            </button>
+          }
+        />
+      ) : picks.positions.length > 0 ? (
+        <NoDataState
+          icon={ScheduleIcon}
+          spark={BoltIcon}
+          title="No live picks"
+          message="Fresh pick markets will appear here soon."
+        />
+      ) : (
+        <NoDataState
+          icon={PickIcon}
+          spark={FlashOnIcon}
+          accent={accentVar("lime")}
+          title="Be the 1st to pick"
+          message="No one has submitted a pick yet. Make the opening call."
+        />
+      )}
+
+      <PicksSettingsSheet open={settings} onClose={() => setSettings(false)} picks={picks} />
+      {overlays}
+    </main>
+  );
+}
+
+/** Four pulsing plates while the markets hydrate, as the app shows. */
+function PicksSkeleton() {
+  return (
+    <div className={styles.skeleton} aria-label="Loading picks" aria-busy="true">
+      {[76, 138, 138, 138].map((height, index) => (
+        <span key={index} className={styles.skeletonPlate} style={{ height }} />
+      ))}
+    </div>
+  );
 }

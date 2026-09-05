@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import type { CSSProperties } from "react";
 
 import {
@@ -88,6 +90,7 @@ export function QuizLobby({ sport, progress, onPickMode }: QuizLobbyProps) {
           </div>
         ))}
       </div>
+        <DailyDrop sport={sport} />
     </div>
   );
 }

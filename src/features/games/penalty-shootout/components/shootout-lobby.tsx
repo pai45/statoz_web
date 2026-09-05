@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useState } from "react";
@@ -196,6 +198,7 @@ export function ShootoutLobby({
               onClick={() => setHistoryOpen(true)}
             />
           </div>
+        <DailyDrop sport="football" />
         </div>
       </div>
 

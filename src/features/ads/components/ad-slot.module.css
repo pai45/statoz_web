@@ -7,18 +7,6 @@
   display: none;
 }
 
-.label {
-  display: block;
-  margin-bottom: var(--ds-space-6);
-  color: var(--ds-color-text-muted);
-  font-family: var(--ds-font-display);
-  font-size: var(--ds-text-2xs);
-  font-weight: 900;
-  letter-spacing: var(--ds-tracking-ultra);
-  line-height: var(--ds-leading-compact);
-  text-align: center;
-}
-
 .frame {
   position: relative;
   isolation: isolate;

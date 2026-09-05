@@ -228,6 +228,24 @@ export function ExpandMoreIcon(props: IconProps) {
   );
 }
 
+/** Material Symbols `fullscreen` (rounded). */
+export function FullscreenIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M120-120v-240h80v104l104-104 56 56-104 104h104v80H120Zm480 0v-80h104L600-304l56-56 104 104v-104h80v240H600ZM304-600 200-704v104h-80v-240h240v80H256l104 104-56 56Zm352 0-56-56 104-104H600v-80h240v240h-80v-104L656-600Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `fullscreen_exit` (rounded). */
+export function FullscreenExitIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z" />
+    </Icon>
+  );
+}
+
 /** Material Symbols `quiz` (rounded). */
 export function QuizIcon(props: IconProps) {
   return (
@@ -960,6 +978,83 @@ export function SendIcon(props: IconProps) {
   return (
     <Icon viewBox="0 -960 960 960" {...props}>
       <path d="M80.4-120L920-480 80.4-840 80-560l600 80-600 80z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `forum` — the match's discussion thread. */
+export function ForumIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80l160-160h560q33 0 56.5-23.5T880-320v-480q0-33-23.5-56.5T800-880H160q-33 0-56.5 23.5T80-800v720Zm80-213v-507h640v480H207l-47 27Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `mic` — commentary that has not started. */
+export function MicIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-400q-50 0-85-35t-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35Zm-40 280v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm40-360q17 0 28.5-11.5T520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `favorite` (outlined) — a comment you have not liked yet. */
+export function HeartOutlineIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `chat_bubble` (outlined) — answering one comment. */
+export function ChatBubbleIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M240-240 80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240Zm-34-80h594v-480H160v525l46-45Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `add_comment` (outlined) — the spark on an unstarted thread. */
+export function AddCommentIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M440-400h80v-120h120v-80H520v-120h-80v120H320v80h120v120ZM240-240 80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240Zm-34-80h594v-480H160v525l46-45Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `delete` (outlined) — removing your own comment. */
+export function DeleteIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
+    </Icon>
+  );
+}
+
+/** Material Symbols `error` (outlined) — what a composer refused to send. */
+export function ErrorIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z" />
+    </Icon>
+  );
+}
+
+/**
+ * Material Symbols `person_off` — who a deleted comment used to belong to.
+ * Drawn as the person glyph under the set's standard cancel stroke, so the
+ * slash lands where every other "off" icon puts it.
+ */
+export function PersonOffIcon(props: IconProps) {
+  return (
+    <Icon viewBox="0 -960 960 960" {...props}>
+      <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Z" />
+      <path d="m112-848 736 736-56 56-736-736 56-56Z" />
     </Icon>
   );
 }

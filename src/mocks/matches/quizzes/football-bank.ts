@@ -28,6 +28,48 @@ const bool = () => trueFalse;
 const winnerOptions = (home: string, away: string) => [home, away, "Draw"];
 const firstGoalOptions = (home: string, away: string) => [home, away, "No goal scored"];
 
+/**
+ * The art each question is asked over, keyed by question id. Several questions
+ * deliberately share one image; anything absent falls back to the default.
+ */
+const backgroundById: Record<string, string> = {
+  exact_score: "match_result_mcq",
+  match_result_mcq: "match_result_mcq",
+  match_ends_in_draw: "match_ends_in_draw",
+  both_teams_to_score: "both_teams_to_score",
+  first_scorer_wins: "first_scorer_wins",
+  halftime_leader_wins: "halftime_leader_wins",
+  match_has_red_card: "match_has_red_card",
+  team_red_card_b: "match_has_red_card",
+  match_over_4_yellow_cards: "match_over_4_yellow_cards",
+  first_goal_before_30: "first_goal_before_30",
+  match_over_8_corners: "match_over_8_corners",
+  total_corners_range_mcq: "match_over_8_corners",
+  team_corners_range_mcq: "match_over_8_corners",
+  team_five_plus_corners: "match_over_8_corners",
+  team_wins_match: "team_wins_match",
+  team_clean_sheet: "team_clean_sheet",
+  team_possession_over_60: "team_possession_over_60",
+  team_five_plus_shots_on_target: "team_five_plus_shots_on_target",
+  team_red_card_a: "team_gets_red_card",
+  team_yellow_card_a: "total_yellow_cards_range_mcq",
+  team_yellow_card_b: "total_yellow_cards_range_mcq",
+  total_yellow_cards_range_mcq: "total_yellow_cards_range_mcq",
+  team_ten_plus_fouls: "team_ten_plus_fouls",
+  total_cards_range_mcq: "team_ten_plus_fouls",
+  halftime_leader_mcq: "halftime_leader_mcq",
+  first_goal_team_mcq: "first_goal_team_mcq",
+  first_goal_window_mcq: "first_goal_team_mcq",
+  total_goals_range_mcq: "total_goals_range_mcq",
+  team_shots_range_mcq: "team_shots_range_mcq",
+  team_goals_range_mcq: "team_goals_range_mcq",
+  team_scores_two_plus: "team_goals_range_mcq",
+};
+
+export function questionBackground(id: string): string {
+  return `/assets/backgrounds/predictions/${backgroundById[id] ?? "default"}.webp`;
+}
+
 const rewardByCategory: Record<BankCategory, number> = {
   matchMcq: 90,
   teamMcq: 90,
@@ -97,6 +139,7 @@ function toQuestion(entry: BankQuestion, home: string, away: string): QuizQuesti
     options: entry.options(home, away),
     type: "multipleChoice",
     reward: rewardByCategory[entry.category],
+    backgroundAsset: questionBackground(entry.id),
   };
 }
 
@@ -123,6 +166,7 @@ export function buildFootballQuiz(
         options: [],
         type: "exactScore",
         reward: 125,
+        backgroundAsset: questionBackground("exact_score"),
       },
       toQuestion(matchResult, home, away),
       toQuestion(pick(seed, 1, matchCategory), home, away),

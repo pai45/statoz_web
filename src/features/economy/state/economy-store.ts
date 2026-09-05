@@ -53,6 +53,7 @@ function freshEconomy(): EconomySnapshot {
       liveryId: "gridLine",
     },
     starterClaims: {},
+    dailyDropLastClaimedAt: null,
     transactions: [
       {
         id: "opening-balance",
@@ -173,6 +174,9 @@ function coerceEconomy(value: unknown): EconomySnapshot {
         typeof equipped.liveryId === "string" ? equipped.liveryId : "gridLine",
     },
     starterClaims: coerceClaims(record.starterClaims),
+    dailyDropLastClaimedAt: typeof record.dailyDropLastClaimedAt === "number" &&
+      Number.isFinite(record.dailyDropLastClaimedAt) && record.dailyDropLastClaimedAt >= 0
+      ? record.dailyDropLastClaimedAt : null,
     transactions: coerceTransactions(record.transactions),
     settledRewardIds: stringList(record.settledRewardIds).slice(
       -rewardGuardLimit,
@@ -412,6 +416,36 @@ export function addCoinTopUp(input: {
       subtitle: input.title,
     }),
   });
+}
+
+/** One shared daily claim; inventory and cooldown are committed together. */
+export function claimDailyDrop(input: {
+  sport: Sport;
+  playerCardIds: string[];
+  actionCardIds: string[];
+}): boolean {
+  const current = readEconomy();
+  const now = Date.now();
+  if (current.dailyDropLastClaimedAt !== null &&
+      now - current.dailyDropLastClaimedAt < 24 * 60 * 60 * 1000) return false;
+  if (input.playerCardIds.length + input.actionCardIds.length !== 1) return false;
+  write({
+    ...current,
+    dailyDropLastClaimedAt: now,
+    owned: {
+      ...current.owned,
+      playerCardIds: mergeUnique(current.owned.playerCardIds, input.playerCardIds),
+      actionCardIds: mergeUnique(current.owned.actionCardIds, input.actionCardIds),
+    },
+    transactions: transaction(current, {
+      id: `daily-drop-${now}`,
+      kind: "grant",
+      delta: 0,
+      title: "DAILY DROP",
+      subtitle: input.sport.toUpperCase(),
+    }),
+  });
+  return true;
 }
 
 export function grantCards(input: {

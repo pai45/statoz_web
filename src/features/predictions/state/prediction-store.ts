@@ -311,6 +311,11 @@ export type SettlementOutcome = {
   rank: number;
   prizeOz: number;
   fieldSize: number;
+  /**
+   * The share of the field the player matched or beat, 0..1. Null when the
+   * board fielded no one to compare against.
+   */
+  beatenShare: number | null;
 };
 
 /**
@@ -336,12 +341,16 @@ export function settlePrediction(
     (rival) => Math.min(rival.correct, scorable) > marked.correctCount,
   ).length;
   const rank = ahead + 1;
+  const beaten = rivals.filter(
+    (rival) => marked.correctCount >= Math.min(rival.correct, scorable),
+  ).length;
   const prizeOz = isContestQuiz(quiz) ? scorelineContestPrizeFor(rank) : 0;
   const outcome: SettlementOutcome = {
     ...marked,
     rank: isContestQuiz(quiz) ? rank : 0,
     prizeOz,
     fieldSize: rivals.length + 1,
+    beatenShare: rivals.length === 0 ? null : beaten / rivals.length,
   };
 
   // Already settled: report the stored verdict, pay nothing.

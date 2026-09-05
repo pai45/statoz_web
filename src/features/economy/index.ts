@@ -1,6 +1,7 @@
 export {
   addCoinTopUp,
   claimStarterPack,
+  claimDailyDrop,
   equipCosmetic,
   grantCards,
   owns,

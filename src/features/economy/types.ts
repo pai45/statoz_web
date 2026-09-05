@@ -57,6 +57,7 @@ export type EconomySnapshot = {
     liveryId: string | null;
   };
   starterClaims: Partial<Record<Sport, StarterClaim>>;
+  dailyDropLastClaimedAt: number | null;
   transactions: EconomyTransaction[];
   settledRewardIds: string[];
 };

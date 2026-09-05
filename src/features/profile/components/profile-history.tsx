@@ -5,6 +5,7 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 
 import {
   accentVar,
+  CalendarIcon,
   CheckIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -215,6 +216,9 @@ function ProfileHistoryArchive({ section }: ProfileHistoryScreenProps) {
           activeIndex={sportOrder.indexOf(sport)}
           onChange={(index) => setSport(sportOrder[index])}
           accent={config.accent}
+          iconColors={sportOrder.map((item) =>
+            accentVar(sportModuleFor(item).accent),
+          )}
           minTabWidth={72}
           className={styles.sportTabs}
         />
@@ -285,6 +289,7 @@ function PredictionHistory({
           />
         ) : null
       }
+      singleColumn
     >
       {records.map((record) => (
         <PredictionCard key={record.id} record={record} accent={accent} />
@@ -416,6 +421,7 @@ function HistoryBody({
   filters,
   distribution,
   empty,
+  singleColumn = false,
   children,
 }: {
   accent: string;
@@ -424,6 +430,7 @@ function HistoryBody({
   filters?: ReactNode;
   distribution?: ReactNode;
   empty: ReactNode;
+  singleColumn?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -439,7 +446,9 @@ function HistoryBody({
       {filters ? <div className={styles.filters}>{filters}</div> : null}
       {empty ? empty : <>
         <div className={styles.adSlot}><AdSlot placement="history-feed" /></div>
-        <div className={styles.recordsGrid}>{children}</div>
+        <div className={`${styles.recordsGrid} ${singleColumn ? styles.recordsSingle : ""}`}>
+          {children}
+        </div>
       </>}
     </div>
   );
@@ -558,32 +567,52 @@ function PredictionCard({
 }) {
   const match = matchById(record.matchId);
   if (!match) return null;
+  const reviewReady = record.status === "unresolved";
 
   return (
     <article
-      className={styles.fixtureCard}
+      className={`${styles.fixtureCard} ${styles.predictionCard}`}
       style={{ "--card-accent": accent, "--state-color": statusColor(record.status) } as CSSProperties}
     >
       <div aria-hidden className={styles.cardLift} />
+      <div className={`${styles.cardTag} ${styles.predictionStatus}`}>
+        {statusLabel(record.status)}
+      </div>
       <div className={styles.cardFrame}>
         <div className={styles.cardBody}>
-          <div className={styles.cardTag} style={{ color: statusColor(record.status) }}>
-            {statusLabel(record.status)}
-          </div>
           <div className={styles.cardMeta}>
             <span>{match.leagueLabel}</span>
-            <time dateTime={record.submittedAt}>{formatKickoffDate(record.submittedAt)}</time>
           </div>
           <Matchup match={match} />
-          <p className={styles.cardNote}>{record.note}</p>
         </div>
-        <div className={styles.cardStrip}>
-          <span className={styles.stripText}>
-            QUIZ {record.answered}/{record.questions}
-          </span>
-          <span className={styles.stripAccent}>
-            {record.status === "won" ? `+${record.potentialXp} XP` : `POTENTIAL +${record.potentialXp} XP`}
-          </span>
+        <div
+          className={`${styles.cardStrip} ${styles.predictionStrip} ${reviewReady ? styles.reviewStrip : ""}`}
+        >
+          {reviewReady ? (
+            <span className={styles.reviewAction}>
+              <CalendarIcon size={14} aria-hidden="true" />
+              RESULTS READY – TAP TO REVEAL
+            </span>
+          ) : (
+            <>
+              <span className={styles.predictionReward}>
+                {record.status === "won" ? <TrendingUpIcon size={13} aria-hidden="true" /> : null}
+                {record.status === "won"
+                  ? `+${record.potentialXp} XP`
+                  : `POTENTIAL +${record.potentialXp} XP`}
+              </span>
+              <span
+                className={styles.quizMarks}
+                aria-label={`${record.correct} of ${record.questions} answers correct`}
+              >
+                {Array.from({ length: record.questions }, (_, index) => (
+                  <i key={index} data-correct={index < record.correct} aria-hidden="true">
+                    ·
+                  </i>
+                ))}
+              </span>
+            </>
+          )}
         </div>
       </div>
       <Link

@@ -11,6 +11,8 @@ export const colors = {
     nav: "#1a253a",
     /** Solid navy bed beneath the two-team wash on quiz objective cards. */
     quizHub: "#06152b",
+    /** The flat bed under charts and the data rows a report is built from. */
+    data: "#10192d",
   },
   text: {
     default: "#ffffff",
@@ -30,6 +32,8 @@ export const colors = {
     inactive: "#94a3b8",
   },
   accent: {
+    /** Neutral sport identity used by cricket; aliases the primary text ink. */
+    white: "#ffffff",
     cyan: "#5cdfff",
     violet: "#c27aff",
     orange: "#ff8904",
@@ -60,6 +64,8 @@ export const colors = {
     shadow: "#04060b",
     base: "#141c2b",
     strip: "#0f1826",
+    /** The brighter fill a fixture card's call-to-action strip takes. */
+    stripFocal: "#173a5e",
     border: "#2a3550",
     predicted: "#2c7a8c",
     kickoff: "#c8a45a",
@@ -127,4 +133,89 @@ export function rarityVar(
   shade: "light" | "base" | "deep" = "base",
 ): string {
   return `var(--ds-color-rarity-${name}-${shade})`;
+}
+
+/*
+ * Identity colours — a club's, a driver's, a market outcome's — arrive as data
+ * and land on filled plates. Two things have to be worked out from the colour
+ * itself: what ink reads on top of it, and whether it is dark enough to
+ * disappear into the surface it sits on. Both are pure, so they can run during
+ * a server render.
+ */
+
+/** Parses `#rgb` / `#rrggbb`. Anything else (a `var()`, a name) is not ours. */
+function parseHex(color: string): [number, number, number] | null {
+  const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim());
+  if (!match) return null;
+  const digits = match[1];
+  const full =
+    digits.length === 3
+      ? digits.split("").map((digit) => digit + digit).join("")
+      : digits;
+  return [
+    Number.parseInt(full.slice(0, 2), 16),
+    Number.parseInt(full.slice(2, 4), 16),
+    Number.parseInt(full.slice(4, 6), 16),
+  ];
+}
+
+/** WCAG relative luminance, 0 (black) to 1 (white). */
+function luminance([red, green, blue]: [number, number, number]): number {
+  const channel = (value: number) => {
+    const scaled = value / 255;
+    return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
+}
+
+function contrastRatio(a: number, b: number): number {
+  const [light, dark] = a > b ? [a, b] : [b, a];
+  return (light + 0.05) / (dark + 0.05);
+}
+
+/**
+ * The ink that reads on a plate filled with `color` — dark on a light fill,
+ * light on a dark one, at the same threshold the app uses.
+ *
+ * A colour this cannot parse gets the light ink, which is the safe answer for
+ * the dark palette everything else here is built on.
+ */
+export function readableInk(color: string): string {
+  const rgb = parseHex(color);
+  if (!rgb) return "var(--ds-color-text-default)";
+  return luminance(rgb) > 0.48
+    ? "var(--ds-color-text-inverse)"
+    : "var(--ds-color-text-default)";
+}
+
+/**
+ * Keeps an identity colour distinguishable from the surface behind it.
+ *
+ * A colour that already clears `ratio` is returned untouched — most do. One
+ * that does not is mixed toward white in tenths until it does, so a near-black
+ * club colour still reads as that club rather than as a hole in the card.
+ */
+export function liftForContrast(
+  color: string,
+  { against, ratio = 2.2 }: { against: string; ratio?: number },
+): string {
+  const fill = parseHex(color);
+  const surface = parseHex(against);
+  if (!fill || !surface) return color;
+
+  const surfaceLuminance = luminance(surface);
+  if (contrastRatio(luminance(fill), surfaceLuminance) >= ratio) return color;
+
+  let lifted = fill;
+  for (let mix = 10; mix <= 60; mix += 10) {
+    lifted = [
+      Math.round(fill[0] + (255 - fill[0]) * (mix / 100)),
+      Math.round(fill[1] + (255 - fill[1]) * (mix / 100)),
+      Math.round(fill[2] + (255 - fill[2]) * (mix / 100)),
+    ];
+    if (contrastRatio(luminance(lifted), surfaceLuminance) >= ratio) break;
+  }
+  // A hex rather than a `color-mix`, so the result can be measured again --
+  // the ink on this plate is decided from the colour that ends up on it.
+  return `#${lifted.map((channel) => channel.toString(16).padStart(2, "0")).join("")}`;
 }

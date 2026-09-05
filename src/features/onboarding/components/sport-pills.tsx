@@ -2,8 +2,6 @@ import { accentVar, glow } from "@/design-system";
 import { sportModuleFor, sportOrder, type Sport } from "@/domain/sports";
 import { SportIcon } from "@/features/matches";
 
-const LIME = accentVar("lime");
-
 export type SportPillsProps = {
   selected: Sport;
   onSelect: (sport: Sport) => void;
@@ -20,7 +18,7 @@ export function SportPills({ selected, onSelect }: SportPillsProps) {
       {sportOrder.map((sport) => {
         const entry = sportModuleFor(sport);
         const active = sport === selected;
-        const color = active ? LIME : accentVar(entry.accent);
+        const color = accentVar(entry.accent);
 
         return (
           <button
@@ -39,7 +37,7 @@ export function SportPills({ selected, onSelect }: SportPillsProps) {
               borderColor: `color-mix(in srgb, ${color} ${active ? 95 : 48}%, transparent)`,
               borderWidth: active ? 2 : 1,
               boxShadow: active
-                ? glow(LIME, { alpha: 0.14, blur: 12, spread: -3 })
+                ? glow(color, { alpha: 0.14, blur: 12, spread: -3 })
                 : undefined,
             }}
           >
@@ -47,7 +45,12 @@ export function SportPills({ selected, onSelect }: SportPillsProps) {
               sport={sport}
               size={22}
               className="transition-transform duration-150"
-              style={{ transform: active ? "scale(1.1)" : undefined }}
+              style={{
+                color: active
+                  ? color
+                  : `color-mix(in srgb, ${color} 62%, transparent)`,
+                transform: active ? "scale(1.1)" : undefined,
+              }}
             />
           </button>
         );

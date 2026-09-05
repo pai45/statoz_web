@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { SportMatch } from "@/domain/matches";
 import {
@@ -14,7 +15,7 @@ import {
 import { useAuthSession, useRequireAuth } from "@/features/auth";
 import { useEconomy } from "@/features/economy";
 import { matchBoardRivals, matchDemoAnchor, votesForQuestion } from "@/mocks/matches";
-import { useDemoNow } from "@/shared/hooks";
+import { holdFullScreenMoment, useDemoNow } from "@/shared/hooks";
 
 import {
   chargeContestEntry,
@@ -47,24 +48,19 @@ import styles from "./predictions.module.css";
 /**
  * The PREDICT tab.
  *
- * The app opens a quiz as a pushed page over the match detail; the web keeps it
- * inside the tab and swaps the hub for the flow, because the tab is already a
- * full-height column and pushing a route would lose the fixture header the
- * player is answering about.
+ * The tab owns the quiz-set hub. Opening a quiz pushes the dedicated fullscreen
+ * route, matching the app while keeping each quiz directly addressable on web.
  */
 
 export function MatchPredictTab({
   match,
   quizzes,
-  onOpenPicks,
 }: {
   match: SportMatch;
   quizzes: PredictionQuiz[];
-  onOpenPicks?: () => void;
 }) {
-  const [openQuizId, setOpenQuizId] = useState<string | null>(null);
+  const router = useRouter();
   const [notice, setNotice] = useState<string | null>(null);
-  const openQuiz = quizzes.find((quiz) => quiz.id === openQuizId);
 
   if (quizzes.length === 0) {
     return (
@@ -75,15 +71,7 @@ export function MatchPredictTab({
     );
   }
 
-  return openQuiz ? (
-    <QuizScreen
-      match={match}
-      quiz={openQuiz}
-      showAllQuizzes={quizzes.length > 1}
-      onBackToHub={() => setOpenQuizId(null)}
-      onOpenPicks={onOpenPicks}
-    />
-  ) : (
+  return (
     <QuizHub
       match={match}
       quizzes={quizzes}
@@ -91,7 +79,7 @@ export function MatchPredictTab({
       onNotice={setNotice}
       onOpen={(quizId) => {
         setNotice(null);
-        setOpenQuizId(quizId);
+        router.push(`/matches/${match.id}/predict/${quizId}`);
       }}
     />
   );
@@ -161,7 +149,7 @@ function QuizHub({
 
 /* ---- One quiz -------------------------------------------------------------- */
 
-function QuizScreen({
+export function PredictionQuizScreen({
   match,
   quiz,
   showAllQuizzes,
@@ -186,6 +174,15 @@ function QuizScreen({
   const [lockOverlay, setLockOverlay] = useState<{ automatic: boolean } | null>(null);
   const [settlement, setSettlement] = useState<SettlementOutcome | null>(null);
   const [entryError, setEntryError] = useState<string | null>(null);
+
+  /*
+   * Submitting a card ticks the daily streak, which has a celebration of its
+   * own. A submitted card is mid-decision until it is locked, so the draft
+   * summary and the seal keep the screen and the streak follows them — the app
+   * holds its celebrations across this same transition.
+   */
+  const submitted = session.justSubmitted;
+  useEffect(() => (submitted ? holdFullScreenMoment() : undefined), [submitted]);
 
   const votes = useMemo(
     () =>
@@ -352,6 +349,16 @@ function QuizScreen({
 
   return (
     <div className={`${styles.flow} relative`}>
+      {/* The question is asked over its own art, which the number burst covers
+          on its way in. */}
+      {question?.backgroundAsset && session.revealPhase !== "numberIntro" ? (
+        <span
+          key={question.backgroundAsset}
+          aria-hidden
+          className={styles.questionBackdrop}
+          style={{ backgroundImage: `url(${question.backgroundAsset})` }}
+        />
+      ) : null}
       {session.revealPhase === "numberIntro" ? (
         <QuizNumberBurst number={session.index + 1} run={session.index} />
       ) : null}

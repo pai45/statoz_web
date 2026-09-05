@@ -1,59 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
-import type { PickMarket, PickPosition } from "@/domain/predictions";
-import { useAuthSession, useRequireAuth } from "@/features/auth";
+import { ChevronRightIcon, NoDataState, PickIcon, ScheduleIcon, accentVar } from "@/design-system";
+import { useAuthSession } from "@/features/auth";
 import { pickMarketsForMatch } from "@/mocks/picks";
 
-import {
-  selectPositionsForMarket,
-  settlePosition,
-  usePicks,
-} from "../state/picks-store";
-import { PickTradeDrawer } from "./pick-drawers";
+import { selectPositionsForMarket, usePicks } from "../state/picks-store";
 import { PickMarketCard } from "./pick-market-card";
-import { SettlementReveal } from "./settlement-reveal";
+import { usePickTrading } from "./pick-trading";
 import styles from "./picks.module.css";
 
+/** The markets on one fixture, under the same roof as its quizzes. */
 export function MatchPicksPanel({ matchId }: { matchId: string }) {
   const markets = pickMarketsForMatch(matchId);
   const picks = usePicks();
   const session = useAuthSession();
-  const requireAuth = useRequireAuth();
-  const [trade, setTrade] = useState<{
-    market: PickMarket;
-    outcomeId: string;
-  } | null>(null);
-  const [settled, setSettled] = useState<PickPosition | null>(null);
-
-  function open(market: PickMarket, outcomeId: string) {
-    if (!requireAuth({
-      intent: "lock a pick",
-      message: "Log in to buy shares and save this pick.",
-    })) return;
-    setTrade({ market, outcomeId });
-  }
-
-  function claim(position: PickPosition) {
-    if (!requireAuth({
-      intent: "claim a pick",
-      message: "Log in to claim your pick result.",
-    })) return;
-    const result = settlePosition(position.id);
-    if (result) setSettled(result);
-  }
+  const { openTrade, claim, overlays } = usePickTrading();
 
   return (
     <div className={styles.matchPanel}>
       <Link href="/picks" className={styles.matchHeader}>
-        <span className={styles.matchHeaderIcon} aria-hidden>◎</span>
+        <PickIcon size={18} aria-hidden="true" />
         <span>
           <strong>VIEW ALL PICKS</strong>
           <small>Browse every open market</small>
         </span>
-        <b aria-hidden>›</b>
+        <ChevronRightIcon size={20} aria-hidden="true" />
       </Link>
 
       {markets.length ? (
@@ -62,29 +35,23 @@ export function MatchPicksPanel({ matchId }: { matchId: string }) {
             <PickMarketCard
               key={market.id}
               market={market}
-              positions={session.isAuthenticated
-                ? selectPositionsForMarket(picks, market.id)
-                : []}
-              onPick={open}
+              positions={session.isAuthenticated ? selectPositionsForMarket(picks, market.id) : []}
+              onPick={openTrade}
               onClaim={claim}
             />
           ))}
         </div>
       ) : (
-        <div className={styles.empty}>
-          NO PICK MARKET IS OPEN FOR THIS FIXTURE.
-          <br />
-          VIEW ALL PICKS TO FIND ANOTHER EDGE.
-        </div>
+        <NoDataState
+          icon={PickIcon}
+          spark={ScheduleIcon}
+          accent={accentVar("lime")}
+          title="No picks for this match"
+          message="Match-linked picks will appear here when markets open."
+        />
       )}
 
-      <PickTradeDrawer
-        key={`${trade?.market.id ?? "closed"}:${trade?.outcomeId ?? "none"}`}
-        market={trade?.market ?? null}
-        outcomeId={trade?.outcomeId ?? null}
-        onClose={() => setTrade(null)}
-      />
-      <SettlementReveal position={settled} onClose={() => setSettled(null)} />
+      {overlays}
     </div>
   );
 }

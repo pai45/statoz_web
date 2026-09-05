@@ -1,6 +1,8 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
+
+import styles from "./filter-chips.module.css";
 
 export type FilterChipsProps = {
   options: string[];
@@ -27,18 +29,35 @@ export function FilterChips({
   label,
   className,
 }: FilterChipsProps) {
+  function moveSelection(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % options.length;
+    if (event.key === "ArrowLeft") nextIndex = (index - 1 + options.length) % options.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = options.length - 1;
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    onSelect(options[nextIndex]);
+    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+      '[role="tab"]',
+    );
+    tabs?.[nextIndex]?.focus();
+  }
+
   return (
     <div
       role="tablist"
       aria-label={label}
-      className={[
-        "flex shrink-0 gap-1.75 overflow-x-auto px-4 py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-        className ?? "",
-      ]
+      className={[styles.list, className ?? ""]
         .filter(Boolean)
         .join(" ")}
     >
-      {options.map((option) => {
+      {options.map((option, index) => {
         const active = option === selected;
         return (
           <button
@@ -46,21 +65,16 @@ export function FilterChips({
             type="button"
             role="tab"
             aria-selected={active}
+            tabIndex={active ? 0 : -1}
             onClick={() => onSelect(option)}
-            className="shrink-0 px-2.75 py-1.5 font-display text-3xs font-black whitespace-nowrap tracking-ultra transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            onKeyDown={(event) => moveSelection(event, index)}
+            className={styles.chip}
+            data-active={active || undefined}
             style={{
-              clipPath: "var(--ds-clip-chip)",
-              color: active ? accent : "var(--ds-color-text-muted)",
-              background: active ? `color-mix(in srgb, ${accent} 14%, transparent)` : "transparent",
-              boxShadow: `inset 0 0 0 1px ${
-                active
-                  ? `color-mix(in srgb, ${accent} 72%, transparent)`
-                  : "color-mix(in srgb, var(--ds-color-border-default) 28%, transparent)"
-              }`,
-              outlineColor: accent,
+              "--filter-chip-accent": accent,
             } as CSSProperties}
           >
-            {option}
+            <span>{option}</span>
           </button>
         );
       })}

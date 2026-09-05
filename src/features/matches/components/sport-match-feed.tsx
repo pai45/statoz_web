@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type {
   CSSProperties,
   PointerEvent as ReactPointerEvent,
@@ -12,7 +13,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EventBusyIcon,
-  ExpandMoreIcon,
 } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
 import type { Sport } from "@/domain/sports";
@@ -38,7 +38,6 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
   );
   const [selectedPeriod, setSelectedPeriod] = useState(() => initialPeriod(fixtures, weekMode));
   const [direction, setDirection] = useState<"left" | "right">("left");
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
 
   const currentIndex = Math.max(0, periods.indexOf(selectedPeriod));
@@ -62,7 +61,6 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
     if (!next) return;
     setDirection(delta < 0 ? "right" : "left");
     setSelectedPeriod(next);
-    setExpanded(new Set());
   }
 
   function selectDate(value: string) {
@@ -71,7 +69,6 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
     const next = periods.includes(normalized) ? normalized : closestPeriod(periods, normalized);
     setDirection(next < selectedPeriod ? "right" : "left");
     setSelectedPeriod(next);
-    setExpanded(new Set());
   }
 
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
@@ -126,15 +123,6 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
               matches={matches}
               showDate={weekMode || day !== selectedPeriod}
               direction={direction}
-              expanded={expanded}
-              onToggle={(key) => {
-                setExpanded((current) => {
-                  const next = new Set(current);
-                  if (next.has(key)) next.delete(key);
-                  else next.add(key);
-                  return next;
-                });
-              }}
             />
           ))
         )}
@@ -226,15 +214,11 @@ function DayGroup({
   matches,
   showDate,
   direction,
-  expanded,
-  onToggle,
 }: {
   day: string;
   matches: SportMatch[];
   showDate: boolean;
   direction: "left" | "right";
-  expanded: Set<string>;
-  onToggle: (key: string) => void;
 }) {
   const leagues = groupByLeague(matches);
   let animationIndex = 0;
@@ -247,21 +231,19 @@ function DayGroup({
       ) : null}
       <div className="flex flex-col gap-5">
         {leagues.map(([league, leagueMatches]) => {
-          const expansionKey = `${day}:${league.id}`;
-          const isExpanded = expanded.has(expansionKey);
-          const visible = isExpanded ? leagueMatches : leagueMatches.slice(0, PREVIEW_COUNT);
+          const visible = leagueMatches.slice(0, PREVIEW_COUNT);
           const remaining = leagueMatches.length - PREVIEW_COUNT;
           const headingId = `league-${day}-${league.id}`;
           return (
             <section key={league.id} aria-labelledby={headingId}>
-              <div className="mb-2 flex min-h-9 items-center gap-2.5">
+              <Link href={`/leagues/${league.id}`} className="mb-2 flex min-h-11 items-center gap-2.5 no-underline">
                 <h3 id={headingId} className="ds-tabular shrink-0 font-display text-lg font-black tracking-mega text-cyan/85">
                   {league.shortCode}
                 </h3>
                 <span aria-hidden className="h-px flex-1" style={{ background: `color-mix(in srgb, ${league.accent} 25%, transparent)` }} />
                 <span className="shrink-0 font-display text-2xs font-extrabold tracking-ultra text-muted">STANDING</span>
                 <ChevronRightIcon size={13} className="shrink-0 text-cyan/70" />
-              </div>
+              </Link>
               <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {visible.map((match) => {
                   const index = animationIndex++;
@@ -280,17 +262,15 @@ function DayGroup({
                 })}
               </ul>
               {remaining > 0 ? (
-                <button
-                  type="button"
-                  aria-expanded={isExpanded}
-                  onClick={() => onToggle(expansionKey)}
+                <Link
+                  href={`/leagues/${league.id}?tab=games`}
                   className="ml-auto mt-2 flex min-h-11 items-center gap-1 font-display text-2xs font-black tracking-ultra"
                   style={{ color: league.accent }}
-                  aria-label={isExpanded ? `Show fewer ${league.name} games` : `View ${remaining} more ${league.name} games`}
+                  aria-label={`View ${remaining} more ${league.name} games`}
                 >
-                  {isExpanded ? "SHOW LESS" : "VIEW MORE"}
-                  <ExpandMoreIcon size={14} className={isExpanded ? "rotate-180" : ""} />
-                </button>
+                  VIEW MORE
+                  <ChevronRightIcon size={14} />
+                </Link>
               ) : null}
             </section>
           );

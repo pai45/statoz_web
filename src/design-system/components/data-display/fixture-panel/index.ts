@@ -1,1 +1,1 @@
-export { FixturePanel, type FixturePanelProps } from "./fixture-panel";
+export { FixturePanel, FixtureStrip, type FixturePanelProps } from "./fixture-panel";

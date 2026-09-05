@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { FilterChips, accentVar } from "@/design-system";
+import { FilterChips, GridOnIcon, ShowChartIcon, accentVar } from "@/design-system";
 import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
 
 import { CommentaryView, LineupsView, TimelineList } from "./match-report-parts";
@@ -130,7 +130,13 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
 
 function Flow({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
   if (!scoreboard.trace) {
-    return <EmptyPanel title="Flow pending" message="The win-probability trace opens at tip-off." />;
+    return (
+      <EmptyPanel
+        icon={ShowChartIcon}
+        title="Flow feed unavailable"
+        message="Win probability and scoring coordinates have not arrived."
+      />
+    );
   }
   return (
     <div className={styles.stack}>
@@ -156,7 +162,13 @@ function Flow({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetai
 function BoxScoreView({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
   const box = scoreboard.boxScore;
   if (!box) {
-    return <EmptyPanel title="Box score pending" message="Player lines appear once the game is under way." />;
+    return (
+      <EmptyPanel
+        icon={GridOnIcon}
+        title="Box score unavailable"
+        message="Player totals have not been published for this fixture."
+      />
+    );
   }
   return (
     <div className={styles.stack}>

@@ -17,6 +17,8 @@ export type PicksSnapshot = {
   leagueFilter: string; statusFilter: PickStatusFilter; sort: PickSort;
 };
 export type PlacePickResult = { ok: true; position: PickPosition } | { ok: false; reason: "market" | "outcome" | "closed" | "stake" | "insufficient" };
+/** What one Claim All pass settled, so the caller credits and reveals once. */
+export type BatchSettlement = { settledCount: number; wonCount: number; stakeOz: number; payoutOz: number };
 
 const storageKey = "statoz.picks.v1";
 const listeners = new Set<() => void>();
@@ -102,12 +104,70 @@ export function selectFilteredMarkets(snapshot: PicksSnapshot): PickMarket[] {
   const start = (market: PickMarket) => Date.parse(market.closesAt ?? "9999-12-31");
   return filtered.toSorted((a, b) => {
     if (snapshot.sort === "volume") return b.volumeOz - a.volumeOz;
-    if (snapshot.sort === "trending") return Math.abs(b.outcomes[0]?.delta ?? 0) - Math.abs(a.outcomes[0]?.delta ?? 0);
+    if (snapshot.sort === "trending") return trendScore(b) - trendScore(a);
     if (snapshot.sort === "new") return start(b) - start(a);
+    // Closing puts what can still be backed first, then soonest to close.
+    if (snapshot.sort === "closing" && openStatus(a.status) !== openStatus(b.status)) {
+      return openStatus(a.status) ? -1 : 1;
+    }
     return start(a) - start(b);
   });
 }
+
+/**
+ * How far a market has moved over its whole history, summed across every
+ * outcome — a two-sided swing counts twice, which is what makes it trending.
+ */
+function trendScore(market: PickMarket): number {
+  const history = market.priceHistory ?? [];
+  if (history.length < 2) return 0;
+  const first = history[0].percentsByOutcome;
+  const last = history[history.length - 1].percentsByOutcome;
+  return market.outcomes.reduce((score, outcome) => {
+    const start = first[outcome.id];
+    const end = last[outcome.id];
+    return start === undefined || end === undefined ? score : score + Math.abs(end - start);
+  }, 0);
+}
 export function selectPositionsForMarket(snapshot: PicksSnapshot, marketId: string): PickPosition[] { return snapshot.positions.filter((position) => position.marketId === marketId); }
+
+function isFinal(position: PickPosition): boolean {
+  return position.status === "won" || position.status === "lost" || position.status === "voided";
+}
+
+/** Every result waiting to be claimed, newest first. */
+export function selectClaimable(snapshot: PicksSnapshot): PickPosition[] {
+  return snapshot.positions
+    .filter((position) => position.status === "settleable")
+    .toSorted((a, b) => Date.parse(b.submittedAt) - Date.parse(a.submittedAt));
+}
+
+/**
+ * Consecutive wins walking back from the most recently resolved pick. A void
+ * is neutral and skipped; a loss ends the run.
+ */
+export function selectWinStreak(snapshot: PicksSnapshot): number {
+  const resolved = snapshot.positions
+    .filter(isFinal)
+    .toSorted((a, b) => Date.parse(b.resolvedAt ?? b.submittedAt) - Date.parse(a.resolvedAt ?? a.submittedAt));
+  let streak = 0;
+  for (const position of resolved) {
+    if (position.status === "voided") continue;
+    if (position.status !== "won") break;
+    streak += 1;
+  }
+  return streak;
+}
+
+/** Oz riding on picks that have not resolved. */
+export function selectOpenExposureOz(snapshot: PicksSnapshot): number {
+  return snapshot.positions.filter((position) => !isFinal(position)).reduce((sum, position) => sum + position.stakeOz, 0);
+}
+
+/** Payout minus stake across everything already resolved. */
+export function selectRealizedProfitOz(snapshot: PicksSnapshot): number {
+  return snapshot.positions.filter(isFinal).reduce((sum, position) => sum + position.payoutOz - position.stakeOz, 0);
+}
 
 export function placePick(input: { marketId: string; outcomeId: string; stakeOz: number }): PlacePickResult {
   const market = pickMarketById(input.marketId); if (!market) return { ok: false, reason: "market" };
@@ -124,12 +184,58 @@ export function placePick(input: { marketId: string; outcomeId: string; stakeOz:
   return { ok: true, position };
 }
 
+/**
+ * Settles every claimable position in one pass and returns the aggregate, so a
+ * batch credits coins once and plays a single reveal.
+ */
+export function settleAllClaimable(): BatchSettlement {
+  const snapshot = getSnapshot();
+  const claimable = selectClaimable(snapshot);
+  const settledById = new Map<string, PickPosition>();
+  let wonCount = 0;
+  let stakeOz = 0;
+  let payoutOz = 0;
+
+  for (const position of claimable) {
+    const market = pickMarketById(position.marketId);
+    if (!market || (market.status !== "settled" && market.status !== "voided")) continue;
+    const settled = resolvePosition(position, market);
+    settledById.set(settled.id, settled);
+    stakeOz += settled.stakeOz;
+    payoutOz += settled.payoutOz;
+    if (settled.status === "won") wonCount += 1;
+  }
+
+  if (settledById.size === 0) return { settledCount: 0, wonCount: 0, stakeOz: 0, payoutOz: 0 };
+  if (payoutOz > 0) {
+    settleCoinReward({
+      id: `pick-payout-batch:${[...settledById.keys()].sort().join("|")}`,
+      coins: payoutOz,
+      title: "PICKS CLAIMED",
+      subtitle: `${settledById.size} picks settled`,
+    });
+  }
+  write({ ...snapshot, positions: snapshot.positions.map((item) => settledById.get(item.id) ?? item) });
+  return { settledCount: settledById.size, wonCount, stakeOz, payoutOz };
+}
+
+/** The settled shape of one position against its resolved market. */
+function resolvePosition(position: PickPosition, market: PickMarket): PickPosition {
+  const won = market.status === "settled" && market.resolvedOutcomeId === position.outcomeId;
+  const payoutOz = market.status === "voided" ? position.stakeOz : won ? payoutForShares(position.shareCount) : 0;
+  return {
+    ...position,
+    status: market.status === "voided" ? "voided" : won ? "won" : "lost",
+    payoutOz,
+    resolvedAt: new Date().toISOString(),
+    resultNote: market.resultNote ?? market.voidReason,
+  };
+}
+
 export function settlePosition(positionId: string): PickPosition | null {
   const snapshot = getSnapshot(); const position = snapshot.positions.find((item) => item.id === positionId); if (!position || position.status !== "settleable") return null;
   const market = pickMarketById(position.marketId); if (!market || (market.status !== "settled" && market.status !== "voided")) return null;
-  const won = market.status === "settled" && market.resolvedOutcomeId === position.outcomeId;
-  const payoutOz = market.status === "voided" ? position.stakeOz : won ? payoutForShares(position.shareCount) : 0;
-  if (payoutOz > 0) settleCoinReward({ id: `pick-payout:${position.id}`, coins: payoutOz, title: market.status === "voided" ? "PICK REFUND" : "PICK WON", subtitle: position.marketQuestion });
-  const settled: PickPosition = { ...position, status: market.status === "voided" ? "voided" : won ? "won" : "lost", payoutOz, resolvedAt: new Date().toISOString(), resultNote: market.resultNote ?? market.voidReason };
+  const settled = resolvePosition(position, market);
+  if (settled.payoutOz > 0) settleCoinReward({ id: `pick-payout:${position.id}`, coins: settled.payoutOz, title: market.status === "voided" ? "PICK REFUND" : "PICK WON", subtitle: position.marketQuestion });
   write({ ...snapshot, positions: snapshot.positions.map((item) => item.id === settled.id ? settled : item) }); return settled;
 }

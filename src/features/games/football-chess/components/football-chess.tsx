@@ -28,6 +28,12 @@ import {
 import { useMatch, useMatchRandom } from "../state/use-match";
 import type { BoardActionType, BoardCell, ChessFormation } from "../types";
 
+import {
+  GameMatchGate,
+  matchmakingFighter,
+  useMatchmakingPlayer,
+} from "../../shared/components/matchmaking";
+
 import { ChessBoard } from "./chess-board";
 import { ChessLobby } from "./chess-lobby";
 import { ChessResult } from "./chess-result";
@@ -78,25 +84,34 @@ function squadFromLoadout(loadout: {
 }
 
 export function FootballChess({ game }: FootballChessProps) {
-  const [view, setView] = useState<"lobby" | "playing">("lobby");
+  const [view, setView] = useState<"lobby" | "matchmaking" | "playing">("lobby");
   const [session, setSession] = useState(0);
+  const [setup, setSetup] = useState<MatchSetup | null>(null);
   const decks = useDecks();
   const hydrated = useIsHydrated();
   const stats = useFootballChessStats();
   const gamesHref = `/games/${sportForGame(game)}`;
   const footballLoadout = activeLoadout(decks, "football");
+  const player = useMatchmakingPlayer(`LV ${playerLevel}`);
 
   const squad = useMemo(
     () => squadFromLoadout(footballLoadout),
     [footballLoadout],
   );
 
+  /*
+   * The rival is drawn here rather than inside the session, because the queue
+   * is who the player watches arrive — the gate has to know the name and the
+   * level before the board exists. Drawn in the browser, on the press: a roll
+   * during a server render would differ from the client's.
+   */
   const play = useCallback(() => {
+    setSetup(drawOpponent());
     setSession((value) => value + 1);
-    setView("playing");
+    setView("matchmaking");
   }, []);
 
-  if (view !== "playing" || squad === null) {
+  if (view === "lobby" || squad === null || setup === null) {
     return (
       <>
         <ChessLobby
@@ -112,11 +127,31 @@ export function FootballChess({ game }: FootballChessProps) {
     );
   }
 
+  if (view === "matchmaking") {
+    return (
+      <GameMatchGate
+        goLabel="KICK OFF!"
+        config={{
+          title: "5V5 FOOTBALL CHESS",
+          queueLabel: "SCANNING GLOBAL CHESS QUEUE",
+          player,
+          opponent: matchmakingFighter(
+            setup.opponentName,
+            `LV ${setup.opponentLevel}`,
+          ),
+        }}
+        onReady={() => setView("playing")}
+        onCancel={() => setView("lobby")}
+      />
+    );
+  }
+
   return (
     <FootballChessSession
       key={session}
       squad={squad}
       formation={stats.formation}
+      setup={setup}
       backHref={gamesHref}
       onPlayAgain={play}
       onExit={() => setView("lobby")}
@@ -124,11 +159,41 @@ export function FootballChess({ game }: FootballChessProps) {
   );
 }
 
+/** The level the player fields at. Football Chess banks no XP of its own yet. */
+const playerLevel = 5;
+
+type MatchSetup = {
+  opponentName: string;
+  opponentLevel: number;
+  opponentSquad: PlayerCard[];
+};
+
+/** The rival's name, level and side — one roll, before the queue is shown. */
+function drawOpponent(): MatchSetup {
+  const opponentLevel = Math.min(
+    99,
+    Math.max(1, playerLevel + Math.floor(Math.random() * 4) - 1),
+  );
+  const opponent = generateShootoutOpponent(
+    opponentLevel,
+    footballAttackers,
+    footballDefenders,
+    footballGoalkeepers,
+  );
+  return {
+    opponentName: randomOpponentName(),
+    opponentLevel,
+    opponentSquad: opponent.shooters,
+  };
+}
+
 /* ---- One match ------------------------------------------------------------ */
 
 type SessionProps = {
   squad: PlayerCard[];
   formation: ChessFormation;
+  /** The rival the queue landed on, drawn before matchmaking was shown. */
+  setup: MatchSetup;
   backHref: string;
   onPlayAgain: () => void;
   onExit: () => void;
@@ -137,28 +202,11 @@ type SessionProps = {
 function FootballChessSession({
   squad,
   formation,
+  setup,
   onPlayAgain,
   onExit,
 }: SessionProps) {
   const sources = useMatchRandom();
-
-  // Drawn once, in the browser: the rival's name, level and squad are all rolls,
-  // and a roll during a server render would differ from the client's.
-  const [setup] = useState(() => {
-    const level = 5;
-    const opponentLevel = Math.min(99, Math.max(1, level + Math.floor(Math.random() * 4) - 1));
-    const opponent = generateShootoutOpponent(
-      opponentLevel,
-      footballAttackers,
-      footballDefenders,
-      footballGoalkeepers,
-    );
-    return {
-      opponentName: randomOpponentName(),
-      opponentLevel,
-      opponentSquad: opponent.shooters,
-    };
-  });
 
   const [award, setAward] = useState({ xp: 0, coins: 0 });
   const [resultShown, setResultShown] = useState(false);

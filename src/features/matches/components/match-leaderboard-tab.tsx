@@ -1,8 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
-import { UnderlineTabs, accentVar } from "@/design-system";
+import {
+  BoltIcon,
+  GameIcon,
+  NoDataState,
+  ScheduleIcon,
+  TrophyIcon,
+  UnderlineTabs,
+  accentVar,
+} from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
 import {
   boardPointsFor,
@@ -18,7 +26,7 @@ import { RankRow } from "@/features/leaderboard/components/rank-row";
 import { RankUserBar } from "@/features/leaderboard/components/rank-user-bar";
 import type { LeaderboardEntry } from "@/features/leaderboard/types";
 import { predictionFor, usePredictions } from "@/features/predictions";
-import { usePlayerStanding } from "@/features/profile";
+import { RivalDossierOverlay, usePlayerStanding } from "@/features/profile";
 import { matchDemoAnchor } from "@/mocks/matches";
 import { useDemoNow } from "@/shared/hooks";
 
@@ -46,6 +54,7 @@ export function MatchLeaderboardTab({
   onJoin?: () => void;
 }) {
   const [quizId, setQuizId] = useState(detail.quizzes[0]?.id ?? "");
+  const [openRival, setOpenRival] = useState<LeaderboardEntry | null>(null);
   const quiz = detail.quizzes.find((entry) => entry.id === quizId) ?? detail.quizzes[0];
   const predictions = usePredictions();
   const standing = usePlayerStanding();
@@ -66,10 +75,13 @@ export function MatchLeaderboardTab({
 
   if (!quiz) {
     return (
-      <div className={styles.emptyState}>
-        <strong>No leaderboard yet</strong>
-        <p>Prediction leaderboards appear when quiz sets open.</p>
-      </div>
+      <NoDataState
+        icon={TrophyIcon}
+        spark={ScheduleIcon}
+        accent={accentVar("gold")}
+        title="No leaderboard yet"
+        message="Prediction leaderboards appear when quiz sets open."
+      />
     );
   }
 
@@ -78,49 +90,70 @@ export function MatchLeaderboardTab({
   const podium = usePodium ? entries.slice(0, 3) : [];
   const rest = usePodium ? entries.slice(3) : entries;
   const answered = prediction ? Object.keys(prediction.answers).length : 0;
+  const canJoin = match.status === "scheduled" || prediction != null;
+
+  /** A rival opens their dossier; the player's own row is not a link. */
+  function openDossier(entry: LeaderboardEntry) {
+    if (entry.isUser) return;
+    setOpenRival(entry);
+  }
 
   return (
-    <div className={[styles.scrollPanel, styles.topsPanel].join(" ")}>
-      {detail.quizzes.length > 1 ? (
-        <UnderlineTabs
-          label="Leaderboard quiz selector"
-          className={styles.mainTabs}
-          tabs={detail.quizzes.map((entry) => ({ id: entry.id, label: entry.title.toUpperCase() }))}
-          activeIndex={detail.quizzes.findIndex((entry) => entry.id === quiz.id)}
-          onChange={(index) => setQuizId(detail.quizzes[index].id)}
-          accent={accentVar("gold")}
-        />
-      ) : null}
+    <div className={styles.topsTab}>
+      <div className={[styles.scrollPanel, styles.topsPanel].join(" ")}>
+        {detail.quizzes.length > 1 ? (
+          <UnderlineTabs
+            label="Leaderboard quiz selector"
+            className={styles.mainTabs}
+            tabs={detail.quizzes.map((entry) => ({ id: entry.id, label: entry.title.toUpperCase() }))}
+            activeIndex={detail.quizzes.findIndex((entry) => entry.id === quiz.id)}
+            onChange={(index) => setQuizId(detail.quizzes[index].id)}
+            accent={accentVar("gold")}
+          />
+        ) : null}
 
-      <div className={styles.boardMeta}>
-        {untilLock == null ? <span /> : <CountdownPill label="LOCKS IN" remaining={formatBoardCountdown(untilLock)} />}
-        <span className="flex items-center gap-4.5">
-          <MetaCell label="PREDICTIONS" value={`${answered}/${quiz.questions.length}`} color={accentVar("gold")} />
-          <MetaCell label="PLAYERS" value={String(entries.length)} color={accent} />
-        </span>
-      </div>
+        <div className={styles.boardMeta}>
+          {untilLock == null ? <span /> : <CountdownPill label="LOCKS IN" remaining={formatBoardCountdown(untilLock)} />}
+          <span className="flex items-center gap-4.5">
+            <MetaCell label="PREDICTIONS" value={`${answered}/${quiz.questions.length}`} color={accentVar("gold")} />
+            <MetaCell label="PLAYERS" value={String(entries.length)} color={accent} />
+          </span>
+        </div>
 
-      <div className={styles.boardState}>{boardModeLabel(match, prediction, quiz)}</div>
+        <div className={styles.boardState}>{boardModeLabel(match, prediction, quiz)}</div>
 
       {entries.length === 0 ? (
-        <div className={styles.emptyState}>
-          <strong>{match.status === "scheduled" || prediction ? "Be the 1st to play" : "No players yet"}</strong>
-          <p>
-            {match.status === "scheduled" || prediction
-              ? "Play this prediction quiz and set the rank to beat."
-              : "No prediction quiz results were submitted before this board closed."}
-          </p>
-        </div>
-      ) : (
-        <>
-          {usePodium ? <RankPodium entries={podium} meta={meta} accent={accent} /> : null}
-          <section className={styles.rankList} aria-label="Leaderboard standings">
-            {rest.map((entry) => (
-              <RankRow key={entry.name} entry={entry} accent={accent} meta={meta} />
-            ))}
-          </section>
-        </>
-      )}
+          canJoin ? (
+            <NoDataState
+              icon={GameIcon}
+              spark={BoltIcon}
+              title="Be the 1st to play"
+              message="Play this prediction quiz and set the rank to beat."
+            />
+          ) : (
+            <NoDataState
+              icon={TrophyIcon}
+              spark={ScheduleIcon}
+              accent={accentVar("gold")}
+              title="No players yet"
+              message="No prediction quiz results were submitted before this board closed."
+            />
+          )
+        ) : (
+          <>
+            {usePodium ? (
+              <RankPodium entries={podium} meta={meta} accent={accent} onOpen={openDossier} />
+            ) : null}
+            <section className={styles.rankList} aria-label="Leaderboard standings">
+              {rest.map((entry, index) => (
+                <StaggeredEntrance key={entry.name} index={index + podium.length}>
+                  <RankRow entry={entry} accent={accent} meta={meta} onOpen={openDossier} />
+                </StaggeredEntrance>
+              ))}
+            </section>
+          </>
+        )}
+      </div>
 
       <UserBar
         entries={entries}
@@ -130,6 +163,32 @@ export function MatchLeaderboardTab({
         name={standing.displayName}
         onJoin={onJoin}
       />
+
+      {openRival ? (
+        <RivalDossierOverlay
+          name={openRival.name}
+          rank={openRival.rank}
+          xp={openRival.xp}
+          pro={openRival.badge === "PRO"}
+          userRank={entries.find((entry) => entry.isUser)?.rank ?? openRival.rank}
+          onClose={() => setOpenRival(null)}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * The board rows arrive in sequence rather than all at once, as they do in the
+ * app. Capped so a long field does not keep the reader waiting.
+ */
+function StaggeredEntrance({ index, children }: { index: number; children: ReactNode }) {
+  return (
+    <div
+      className={styles.rankEnter}
+      style={{ animationDelay: `${Math.min(index, 10) * 70}ms` }}
+    >
+      {children}
     </div>
   );
 }

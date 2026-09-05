@@ -8,7 +8,8 @@ import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
 import { BasketballStatsView } from "./basketball-stats-view";
 import { CricketStatsView } from "./cricket-stats-view";
 import { FootballStatsView } from "./football-stats-view";
-import { CommentaryView, LineupsView, TimelineList } from "./match-report-parts";
+import { CommentaryView, TimelineList } from "./match-report-parts";
+import { MatchPitchView } from "./match-pitch-view";
 import {
   EmptyPanel,
   MatchIntelPanel,
@@ -62,7 +63,7 @@ function GenericStatsView({
           match.sport === "motorsport" ? (
             <StartingGrid scoreboard={scoreboard} />
           ) : (
-            <LineupsView match={match} scoreboard={scoreboard} heading="PLAYERS" />
+            <MatchPitchView match={match} scoreboard={scoreboard} />
           )
         ) : null}
         {tab === "COMMENTARY" ? <CommentaryView commentary={scoreboard.commentary} /> : null}

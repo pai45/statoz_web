@@ -75,23 +75,34 @@ function statFor(label: string, seed: number, index: number) {
   };
 }
 
+const lineupNames = [
+  "Mason", "Jordan", "Alex", "Riley", "Taylor", "Morgan",
+  "Casey", "Cameron", "Jamie", "Avery", "Drew",
+  "Quinn", "Reese", "Sage", "Blake", "Emery", "Rowan",
+];
+
+/** The bench roles a squad carries behind whatever it starts with. */
+const benchRoles = ["GK", "DF", "DF", "MF", "MF", "FW"];
+
 function lineupFor(
   team: string,
   config: DetailConfig["lineup"],
   seed: number,
 ): MatchDetailLineup {
-  const names = [
-    "Mason", "Jordan", "Alex", "Riley", "Taylor", "Morgan",
-    "Casey", "Cameron", "Jamie", "Avery", "Drew",
-  ];
+  const prefix = team.split(" ")[0];
+  const player = (role: string, index: number) => ({
+    name: `${prefix} ${lineupNames[index % lineupNames.length]}`,
+    number: 1 + ((seed + index * 7) % 45),
+    role,
+    captain: index === 2,
+  });
   return {
     formation: config.formation,
-    players: config.roles.map((role, index) => ({
-      name: `${team.split(" ")[0]} ${names[index]}`,
-      number: 1 + ((seed + index * 7) % 45),
-      role,
-      captain: index === 2,
-    })),
+    players: config.roles.map(player),
+    substitutes: benchRoles.map((role, index) => player(role, config.roles.length + index)),
+    // A fixture still to start is a projection; once it is under way the sheet
+    // is what the teams actually named.
+    confirmed: seed % 3 !== 0,
   };
 }
 

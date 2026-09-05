@@ -33,8 +33,17 @@ export const shape = {
   /** Denser HUD plate used by quiz objectives. */
   compactHudCut: 12,
   compactHudAccentCut: 3,
+  /** The widest HUD chamfer: the bottom sheets a decision is taken in. */
+  hudSheetCut: 18,
+  hudSheetAccentCut: 4,
   /** Octagon corner cut, as a fraction of the badge's shortest side. */
   octagonCutRatio: 0.15,
+  /**
+   * The same octagon on a plate that is wider than it is tall. A ratio would
+   * cut a long plate's ends far harder than its top, so a filled outcome badge
+   * states the cut in pixels instead.
+   */
+  plateCut: 9,
   /**
    * A collectible card wears the HUD chamfer, but scaled to its own width so
    * every card size keeps the same proportion instead of the fixed 14/4 plate.
@@ -92,12 +101,42 @@ export const fixtureClipPath = (() => {
   ].join(" ");
 })();
 
+/** The same silhouette without the notch, for a card that carries no tag. */
+export const fixtureFlatClipPath = [
+  "polygon(",
+  "0 0,",
+  "100% 0,",
+  `100% calc(100% - ${shape.fixtureCut}px),`,
+  `calc(100% - ${shape.fixtureCut}px) 100%,`,
+  `${shape.fixtureCut}px 100%,`,
+  `0 calc(100% - ${shape.fixtureCut}px)`,
+  ")",
+].join(" ");
+
 /** Regular octagon used for team badges and avatars. */
 export const octagonClipPath = (() => {
   const cut = `${shape.octagonCutRatio * 100}%`;
   const rest = `${100 - shape.octagonCutRatio * 100}%`;
   return `polygon(${cut} 0, ${rest} 0, 100% ${cut}, 100% ${rest}, ${rest} 100%, ${cut} 100%, 0 ${rest}, 0 ${cut})`;
 })();
+
+/**
+ * The octagon for a plate rather than a badge: a fixed cut on all four corners,
+ * so a wide plate keeps the same corner as a square one. The cut reads from
+ * `--ds-plate-cut`, which a caller can override for a taller plate.
+ */
+export const plateOctagonClipPath = [
+  "polygon(",
+  "var(--ds-plate-cut) 0,",
+  "calc(100% - var(--ds-plate-cut)) 0,",
+  "100% var(--ds-plate-cut),",
+  "100% calc(100% - var(--ds-plate-cut)),",
+  "calc(100% - var(--ds-plate-cut)) 100%,",
+  "var(--ds-plate-cut) 100%,",
+  "0 calc(100% - var(--ds-plate-cut)),",
+  "0 var(--ds-plate-cut)",
+  ")",
+].join(" ");
 
 /** Fields and buttons: the same small cut on all four corners. */
 export const fieldClipPath = (() => {
@@ -139,6 +178,12 @@ export function hudChamferPath(bigCut: number, smallCut: number): string {
 }
 
 export const hudClipPath = hudChamferPath(shape.hudCut, shape.hudAccentCut);
+
+/** The bottom sheet's silhouette, one step wider than a HUD plate. */
+export const hudSheetClipPath = hudChamferPath(
+  shape.hudSheetCut,
+  shape.hudSheetAccentCut,
+);
 
 /** The slightly tighter HUD silhouette used by quiz-set objective cards. */
 export const compactHudClipPath = (() => {

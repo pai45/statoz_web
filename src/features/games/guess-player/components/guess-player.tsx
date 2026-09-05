@@ -291,6 +291,7 @@ export function GuessPlayer({ game }: GuessPlayerProps) {
   return (
     <>
       <GuessHome
+        sport={deck.sport}
         archive={archive}
         todayRecord={todayRecord}
         currentDayKey={todayKey}

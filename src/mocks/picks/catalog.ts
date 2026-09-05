@@ -4,6 +4,19 @@ import { matchById, trendingMarkets } from "@/mocks/matches";
 
 export const picksDemoAnchor = "2026-08-25T12:00:00.000Z";
 
+/**
+ * An outcome wears the side it backs. A market on a fixture takes that
+ * fixture's own team colours, so recolouring a club carries through to its
+ * markets; a draw or a catch-all takes slate, and a yes/no pair reads green
+ * against red.
+ */
+const drawColor = "#64748b";
+const yesColor = "#36b86a";
+const noColor = "#ff332e";
+function sideColor(matchId: string, side: "home" | "away"): string {
+  return matchById(matchId)?.[side].color ?? drawColor;
+}
+
 type MarketInput = {
   id: string; sport: Sport; leagueId: string; leagueLabel: string; question: string;
   type: PickMarketType; status?: PickMarketStatus; outcomes: PickOutcome[]; volumeOz: number;
@@ -42,7 +55,10 @@ function normalizedTrending(market: PickMarket, index: number): PickMarket {
     leagueLabel: market.leagueLabel, question: market.question, type, status: settled ? "settled" : market.id === "ipl_sixes_over_12_5" ? "live" : "upcoming",
     outcomes: market.outcomes, volumeOz: market.volumeOz, closesAt, matchId: match?.id,
     contextTitle: match ? `${match.home.name} vs ${match.away.name}` : undefined,
-    homeLabel: match?.home.shortName, awayLabel: match?.away.shortName,
+    // A match market carries the fixture in its question, so it takes the
+    // context line rather than the split team labels an in-play market wants.
+    homeLabel: type === "match" ? undefined : match?.home.shortName,
+    awayLabel: type === "match" ? undefined : match?.away.shortName,
     homeScore: match?.homeScore === undefined ? undefined : String(match.homeScore), awayScore: match?.awayScore === undefined ? undefined : String(match.awayScore),
     liveLabel: match?.status === "live" ? "LIVE" : undefined, resolvedOutcomeId: settled ? (market.id === "epl_mu_over_1_5" ? "over" : "ver") : undefined,
     resultNote: settled ? "Verstappen won from pole" : undefined,
@@ -50,15 +66,25 @@ function normalizedTrending(market: PickMarket, index: number): PickMarket {
 }
 
 const authoredMarkets: PickMarket[] = [
-  defineMarket({ id: "epl_cfc_new_result", sport: "football", leagueId: "epl", leagueLabel: "EPL", question: "Chelsea vs Newcastle — full-time result?", type: "match", status: "live", outcomes: [{ id: "cfc", label: "Chelsea", probabilityPercent: 57, delta: 8 }, { id: "draw", label: "Draw", probabilityPercent: 19, delta: -3 }, { id: "new", label: "Newcastle", probabilityPercent: 24, delta: -5 }], volumeOz: 28200, closesAt: "2026-08-25T19:00:00.000Z", matchId: "epl_cfc_new", contextTitle: "Chelsea vs Newcastle United", contextSubtitle: "67 minutes", homeLabel: "CHE", awayLabel: "NEW", homeScore: "2", awayScore: "1", liveLabel: "67'" }),
-  defineMarket({ id: "epl_cfc_new_next_goal", sport: "football", leagueId: "epl", leagueLabel: "EPL", question: "Which side scores the next goal?", type: "event", status: "live", outcomes: [{ id: "cfc", label: "Chelsea", probabilityPercent: 61, delta: 4 }, { id: "new", label: "Newcastle", probabilityPercent: 39, delta: -4 }], volumeOz: 20000, closesAt: "2026-08-25T19:00:00.000Z", matchId: "epl_cfc_new", contextTitle: "Chelsea 2 — 1 Newcastle", contextSubtitle: "Live at 67 minutes", homeLabel: "CHE", awayLabel: "NEW", homeScore: "2", awayScore: "1", liveLabel: "67'" }),
-  defineMarket({ id: "ipl_pjk_rcb_winner", sport: "cricket", leagueId: "ipl", leagueLabel: "IPL", question: "Punjab Kings vs RCB — who wins?", type: "match", status: "live", outcomes: [{ id: "pbks", label: "Punjab", probabilityPercent: 44, delta: -3, color: "#ef3340" }, { id: "rcb", label: "Bengaluru", probabilityPercent: 56, delta: 3, color: "#d71920" }], volumeOz: 67900, closesAt: "2026-08-25T16:30:00.000Z", matchId: "1496576", contextTitle: "Mumbai vs Chennai", contextSubtitle: "17.2 overs", homeLabel: "MI", awayLabel: "CSK", homeScore: "164/6", awayScore: "148/8", liveLabel: "LIVE" }),
-  defineMarket({ id: "ipl_opener_50", sport: "cricket", leagueId: "ipl", leagueLabel: "IPL", question: "Will the opener score 50+?", type: "event", status: "unresolved", outcomes: [{ id: "yes", label: "Yes", probabilityPercent: 62, delta: 5 }, { id: "no", label: "No", probabilityPercent: 38, delta: -5 }], volumeOz: 18400, closesAt: "2026-08-24T16:00:00.000Z", matchId: "t20i_ind_pak", contextTitle: "India vs Pakistan", resultNote: "Awaiting official scorer confirmation" }),
-  defineMarket({ id: "epl_avl_bha_double_chance", sport: "football", leagueId: "epl", leagueLabel: "EPL", question: "Villa or draw — double chance?", type: "event", status: "settled", outcomes: [{ id: "villa_draw", label: "Villa / Draw", probabilityPercent: 68 }, { id: "bha", label: "Brighton", probabilityPercent: 32 }], volumeOz: 23100, closesAt: "2026-08-23T18:00:00.000Z", resolvedOutcomeId: "villa_draw", resultNote: "Aston Villa 2–1 Brighton" }),
-  defineMarket({ id: "ipl_rain_delay", sport: "cricket", leagueId: "ipl", leagueLabel: "IPL", question: "Will rain delay play?", type: "event", status: "voided", outcomes: [{ id: "yes", label: "Yes", probabilityPercent: 35 }, { id: "no", label: "No", probabilityPercent: 65 }], volumeOz: 9700, closesAt: "2026-08-23T14:00:00.000Z", voidReason: "Market voided before the toss", resultNote: "All stakes refunded" }),
-  defineMarket({ id: "nba_lal_gsw_winner", sport: "basketball", leagueId: "nba", leagueLabel: "NBA", question: "Lakers vs Warriors — who wins?", type: "match", outcomes: [{ id: "lal", label: "Lakers", probabilityPercent: 48, delta: -2 }, { id: "gsw", label: "Warriors", probabilityPercent: 52, delta: 2 }], volumeOz: 83400, closesAt: "2026-08-25T23:30:00.000Z", matchId: "nba_lal_gsw", contextTitle: "Lakers vs Warriors" }),
-  defineMarket({ id: "laliga_title_2027", sport: "football", leagueId: "laliga", leagueLabel: "LALIGA", question: "Who wins LaLiga 2026/27?", type: "future", outcomes: [{ id: "rma", label: "Real Madrid", probabilityPercent: 42 }, { id: "bar", label: "Barcelona", probabilityPercent: 39 }, { id: "atm", label: "Atletico", probabilityPercent: 12 }], volumeOz: 192000, closesAt: "2027-05-30T18:00:00.000Z" }),
-  defineMarket({ id: "seriea_title_2027", sport: "football", leagueId: "serie-a", leagueLabel: "SERIE A", question: "Who takes the Serie A title?", type: "future", outcomes: [{ id: "int", label: "Inter", probabilityPercent: 38 }, { id: "juv", label: "Juventus", probabilityPercent: 31 }, { id: "mil", label: "Milan", probabilityPercent: 19 }], volumeOz: 116000, closesAt: "2027-05-23T18:00:00.000Z" }),
+  defineMarket({ id: "epl_cfc_new_result", sport: "football", leagueId: "epl", leagueLabel: "EPL", question: "Chelsea vs Newcastle result", type: "match", status: "live", outcomes: [{ id: "cfc", label: "Chelsea", probabilityPercent: 57, delta: 8, color: sideColor("epl_cfc_new", "home") }, { id: "draw", label: "Draw", probabilityPercent: 19, delta: -3, color: drawColor }, { id: "new", label: "Newcastle", probabilityPercent: 24, delta: -5, color: sideColor("epl_cfc_new", "away") }], volumeOz: 28200, closesAt: "2026-08-25T19:00:00.000Z", matchId: "epl_cfc_new", contextTitle: "Chelsea vs Newcastle", liveLabel: "67'" }),
+  defineMarket({ id: "epl_cfc_new_next_goal", sport: "football", leagueId: "epl", leagueLabel: "EPL", question: "Which side scores the next goal?", type: "event", status: "live", outcomes: [{ id: "cfc", label: "Chelsea", probabilityPercent: 61, delta: 4, color: sideColor("epl_cfc_new", "home") }, { id: "new", label: "Newcastle", probabilityPercent: 39, delta: -4, color: sideColor("epl_cfc_new", "away") }], volumeOz: 20000, closesAt: "2026-08-25T19:00:00.000Z", matchId: "epl_cfc_new", contextTitle: "Chelsea 2 — 1 Newcastle", contextSubtitle: "Live at 67 minutes", homeLabel: "CHE", awayLabel: "NEW", homeScore: "2", awayScore: "1", liveLabel: "67'" }),
+  defineMarket({ id: "ipl_pjk_rcb_winner", sport: "cricket", leagueId: "ipl", leagueLabel: "IPL", question: "Punjab Kings vs RCB result", type: "match", status: "live", outcomes: [{ id: "pbks", label: "Punjab", probabilityPercent: 44, delta: -3, color: "#ef3340" }, { id: "rcb", label: "Bengaluru", probabilityPercent: 56, delta: 3, color: "#d71920" }], volumeOz: 67900, closesAt: "2026-08-25T16:30:00.000Z", matchId: "1496576", contextTitle: "Punjab Kings vs RCB", liveLabel: "LIVE" }),
+  defineMarket({ id: "ipl_opener_50", sport: "cricket", leagueId: "ipl", leagueLabel: "IPL", question: "Will the opener score 50+?", type: "event", status: "unresolved", outcomes: [{ id: "yes", label: "Yes", probabilityPercent: 62, delta: 5, color: yesColor }, { id: "no", label: "No", probabilityPercent: 38, delta: -5, color: noColor }], volumeOz: 18400, closesAt: "2026-08-24T16:00:00.000Z", matchId: "t20i_ind_pak", contextTitle: "India vs Pakistan", resultNote: "Awaiting official scorer confirmation" }),
+  defineMarket({ id: "epl_avl_bha_double_chance", sport: "football", leagueId: "epl", leagueLabel: "EPL", question: "Villa or draw — double chance?", type: "event", status: "settled", outcomes: [{ id: "villa_draw", label: "Villa / Draw", probabilityPercent: 68, color: "#670e36" }, { id: "bha", label: "Brighton", probabilityPercent: 32, color: "#0057b8" }], volumeOz: 23100, closesAt: "2026-08-23T18:00:00.000Z", resolvedOutcomeId: "villa_draw", resultNote: "Aston Villa 2–1 Brighton" }),
+  defineMarket({ id: "ipl_rain_delay", sport: "cricket", leagueId: "ipl", leagueLabel: "IPL", question: "Will rain delay play?", type: "event", status: "voided", outcomes: [{ id: "yes", label: "Yes", probabilityPercent: 35, color: yesColor }, { id: "no", label: "No", probabilityPercent: 65, color: noColor }], volumeOz: 9700, closesAt: "2026-08-23T14:00:00.000Z", voidReason: "Market voided before the toss", resultNote: "All stakes refunded" }),
+  defineMarket({ id: "nba_lal_gsw_winner", sport: "basketball", leagueId: "nba", leagueLabel: "NBA", question: "Lakers vs Warriors result", type: "match", outcomes: [{ id: "lal", label: "Lakers", probabilityPercent: 48, delta: -2, color: sideColor("nba_lal_gsw", "home") }, { id: "gsw", label: "Warriors", probabilityPercent: 52, delta: 2, color: sideColor("nba_lal_gsw", "away") }], volumeOz: 83400, closesAt: "2026-08-25T23:30:00.000Z", matchId: "nba_lal_gsw", contextTitle: "Lakers vs Warriors" }),
+  defineMarket({ id: "laliga_title_2027", sport: "football", leagueId: "laliga", leagueLabel: "LALIGA", question: "Who wins LaLiga 2026/27?", type: "future", outcomes: [{ id: "rma", label: "Real Madrid", probabilityPercent: 42, color: "#febe10" }, { id: "bar", label: "Barcelona", probabilityPercent: 39, color: "#a50044" }, { id: "atm", label: "Atletico", probabilityPercent: 12, color: "#cb3524" }], volumeOz: 192000, closesAt: "2027-05-30T18:00:00.000Z" }),
+  defineMarket({ id: "seriea_title_2027", sport: "football", leagueId: "serie-a", leagueLabel: "SERIE A", question: "Who takes the Serie A title?", type: "future", outcomes: [{ id: "int", label: "Inter", probabilityPercent: 38, color: "#0068a8" }, { id: "juv", label: "Juventus", probabilityPercent: 31, color: "#2b2b2b" }, { id: "mil", label: "Milan", probabilityPercent: 19, color: "#fb090b" }], volumeOz: 116000, closesAt: "2027-05-23T18:00:00.000Z" }),
+  defineMarket({ id: "mls_phi_rbny_result", sport: "football", leagueId: "mls", leagueLabel: "MLS", question: "Philadelphia Union vs Red Bull New York result", type: "match", outcomes: [{ id: "phi", label: "Philadelphia Union", probabilityPercent: 56, delta: 4, color: "#eee1b3" }, { id: "draw", label: "Draw", probabilityPercent: 22, color: drawColor }, { id: "rbny", label: "Red Bull New York", probabilityPercent: 22, delta: -2, color: "#d50032" }], volumeOz: 2900, closesAt: "2026-08-25T18:00:00.000Z", matchId: "mls_phi_rbny", contextTitle: "Philadelphia Union vs Red Bull New York" }),
+  defineMarket({ id: "mls_ne_tor_result", sport: "football", leagueId: "mls", leagueLabel: "MLS", question: "New England Revolution vs Toronto FC result", type: "match", outcomes: [{ id: "ne", label: "New England Revolution", probabilityPercent: 57, delta: 3, color: "#d50032" }, { id: "draw", label: "Draw", probabilityPercent: 23, color: drawColor }, { id: "tor", label: "Toronto FC", probabilityPercent: 20, delta: -2, color: "#a71930" }], volumeOz: 2900, closesAt: "2026-08-25T18:30:00.000Z", matchId: "mls_ne_tor", contextTitle: "New England Revolution vs Toronto FC" }),
+  defineMarket({ id: "mls_mia_chi_result", sport: "football", leagueId: "mls", leagueLabel: "MLS", question: "Inter Miami CF vs Chicago Fire FC result", type: "match", outcomes: [{ id: "mia", label: "Inter Miami CF", probabilityPercent: 51, delta: 2, color: "#f7b5cd" }, { id: "draw", label: "Draw", probabilityPercent: 25, color: drawColor }, { id: "chi", label: "Chicago Fire FC", probabilityPercent: 24, delta: -2, color: "#8fd3f4" }], volumeOz: 3100, closesAt: "2026-08-25T19:00:00.000Z", matchId: "mls_mia_chi", contextTitle: "Inter Miami CF vs Chicago Fire FC" }),
+  defineMarket({ id: "mls_clb_nyc_result", sport: "football", leagueId: "mls", leagueLabel: "MLS", question: "Columbus Crew vs New York City FC result", type: "match", outcomes: [{ id: "clb", label: "Columbus Crew", probabilityPercent: 48, delta: -1, color: "#fef200" }, { id: "draw", label: "Draw", probabilityPercent: 27, color: drawColor }, { id: "nyc", label: "New York City FC", probabilityPercent: 25, delta: 2, color: "#9bc9eb" }], volumeOz: 2700, closesAt: "2026-08-25T19:30:00.000Z", matchId: "mls_clb_nyc", contextTitle: "Columbus Crew vs New York City FC" }),
+  defineMarket({ id: "t20i_ind_pak_toss", sport: "cricket", leagueId: "t20i", leagueLabel: "T20I", question: "Who wins the next India vs Pakistan T20?", type: "match", outcomes: [{ id: "india", label: "India", probabilityPercent: 61, color: "#1c4ea0" }, { id: "pakistan", label: "Pakistan", probabilityPercent: 39, color: "#01411c" }], volumeOz: 35400, closesAt: "2026-09-08T13:30:00.000Z", matchId: "t20i_ind_pak", contextTitle: "India vs Pakistan" }),
+  defineMarket({ id: "wnba_nyl_lva_winner", sport: "basketball", leagueId: "wnba", leagueLabel: "WNBA", question: "New York Liberty vs Las Vegas Aces result", type: "match", outcomes: [{ id: "liberty", label: "New York Liberty", probabilityPercent: 54, color: "#6eceb2" }, { id: "aces", label: "Las Vegas Aces", probabilityPercent: 46, color: "#c8102e" }], volumeOz: 36700, closesAt: "2026-08-25T20:00:00.000Z", matchId: "wnba_nyl_lva", contextTitle: "New York Liberty vs Las Vegas Aces" }),
+  defineMarket({ id: "wimbledon_2026_winner", sport: "tennis", leagueId: "wimbledon", leagueLabel: "WIMBLEDON", question: "Who wins the Wimbledon men’s final?", type: "match", outcomes: [{ id: "alcaraz", label: "Carlos Alcaraz", probabilityPercent: 52, color: "#f1bf00" }, { id: "sinner", label: "Jannik Sinner", probabilityPercent: 48, color: "#009246" }], volumeOz: 88300, closesAt: "2026-08-27T13:00:00.000Z", matchId: "wimbledon_mens_final_26", contextTitle: "Carlos Alcaraz vs Jannik Sinner" }),
+  defineMarket({ id: "atp_alc_sin_winner", sport: "tennis", leagueId: "atp", leagueLabel: "ATP", question: "Carlos Alcaraz vs Jannik Sinner result", type: "match", outcomes: [{ id: "alcaraz", label: "Carlos Alcaraz", probabilityPercent: 55, color: "#f1bf00" }, { id: "sinner", label: "Jannik Sinner", probabilityPercent: 45, color: "#009246" }], volumeOz: 75200, closesAt: "2026-08-25T13:00:00.000Z", matchId: "atp_alc_sin", contextTitle: "Carlos Alcaraz vs Jannik Sinner" }),
+  defineMarket({ id: "wta_swi_gau_winner", sport: "tennis", leagueId: "wta", leagueLabel: "WTA", question: "Iga Swiatek vs Coco Gauff result", type: "match", status: "live", outcomes: [{ id: "swiatek", label: "Iga Swiatek", probabilityPercent: 58, color: "#ffffff" }, { id: "gauff", label: "Coco Gauff", probabilityPercent: 42, color: "#3c3b6e" }], volumeOz: 44100, closesAt: "2026-08-25T16:00:00.000Z", matchId: "wta_swi_gau", contextTitle: "Iga Swiatek vs Coco Gauff", liveLabel: "SET 3" }),
+  defineMarket({ id: "indy_gateway_winner", sport: "motorsport", leagueId: "indy", leagueLabel: "INDY", question: "Who wins the Gateway 500?", type: "match", outcomes: [{ id: "palou", label: "Alex Palou", probabilityPercent: 41, color: "#0033a0" }, { id: "oward", label: "Pato O’Ward", probabilityPercent: 34, color: "#ff8700" }, { id: "newgarden", label: "Josef Newgarden", probabilityPercent: 25, color: "#d71920" }], volumeOz: 82400, closesAt: "2026-08-30T18:00:00.000Z", matchId: "indy_gateway_500", contextTitle: "Gateway 500" }),
 ];
 
 export const pickMarkets: PickMarket[] = [...trendingMarkets.map(normalizedTrending), ...authoredMarkets];
@@ -85,4 +111,23 @@ export function pickMarketsForMatch(matchId: string): PickMarket[] {
     .filter((market) => market.matchId === matchId)
     .toSorted((a, b) => rank(a) - rank(b) || Date.parse(a.closesAt ?? "9999-12-31") - Date.parse(b.closesAt ?? "9999-12-31"));
 }
+export function pickMarketsForLeague(leagueId: string): PickMarket[] { return pickMarkets.filter((market) => market.leagueId === leagueId); }
 export function hasLinkedFixture(market: PickMarket): boolean { return Boolean(market.matchId && matchById(market.matchId)); }
+
+/**
+ * A league's brand colour, worn by the mark on its market cards. Brand colour
+ * is fixture data rather than a palette decision, so it lives with the
+ * fixtures.
+ */
+export function pickLeagueColor(leagueId?: string): string {
+  switch ((leagueId ?? "").toLowerCase()) {
+    case "ipl":
+      return "var(--ds-color-accent-cyan)";
+    case "epl":
+      return "#a855f7";
+    case "fifa":
+      return "#2856ff";
+    default:
+      return "var(--ds-color-accent-cyan)";
+  }
+}

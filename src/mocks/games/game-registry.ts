@@ -1,4 +1,5 @@
 import type { AccentName } from "@/design-system";
+import { sportModuleFor } from "@/domain/sports";
 
 import type { GameId, GameSceneId, GameTileKind } from "@/features/games/types";
 
@@ -61,7 +62,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "SUDDEN-DEATH SPOT KICKS",
     badgeLabel: "SUDDEN DEATH",
     ctaLabel: "TAKE THE SHOT",
-    accent: "lime",
+    accent: sportModuleFor("football").accent,
     scene: "penalty-shootout",
     href: "/play/penalty-shootout",
     requiresDeck: true,
@@ -73,7 +74,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "TACTICAL SQUAD DUEL",
     badgeLabel: "FEATURED // 5V5",
     ctaLabel: "MAKE YOUR MOVE",
-    accent: "gold",
+    accent: sportModuleFor("football").accent,
     scene: "football-chess",
     href: "/play/football-chess",
     requiresDeck: true,
@@ -117,7 +118,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "THREE-OVER CHASE",
     badgeLabel: "FEATURED // THREE OVERS",
     ctaLabel: "START THE CHASE",
-    accent: "cyan",
+    accent: sportModuleFor("cricket").accent,
     scene: "final-over",
     href: "/play/final-over",
     requiresDeck: true,

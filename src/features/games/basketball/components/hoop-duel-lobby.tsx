@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
@@ -314,6 +316,7 @@ export function HoopDuelLobby({
             BACK TO BASKETBALL GAMES
           </Link>
         </div>
+        <DailyDrop sport="basketball" />
       </div>
     </div>
   );

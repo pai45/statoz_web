@@ -75,6 +75,26 @@ export type BoxScore = {
   rows: Array<{ name: string; side: "home" | "away"; values: string[] }>;
 };
 
+/** One batter's line in an innings. */
+export type BattingLine = {
+  name: string;
+  /** How they were out. Absent while they are still in. */
+  dismissal?: string;
+  runs: number;
+  balls: number;
+  fours: number;
+  sixes: number;
+};
+
+/** One bowler's figures in an innings. */
+export type BowlingLine = {
+  name: string;
+  overs: string;
+  maidens: number;
+  runs: number;
+  wickets: number;
+};
+
 export type InningsLine = {
   team: string;
   side: "home" | "away";
@@ -83,6 +103,11 @@ export type InningsLine = {
   runRate: string;
   topBat: string;
   topBowl: string;
+  /** The card behind the summary: who batted, and who bowled at them. */
+  batting: BattingLine[];
+  bowling: BowlingLine[];
+  /** Named when this innings is a chase. */
+  target?: number;
 };
 
 export type FeedEvent = {

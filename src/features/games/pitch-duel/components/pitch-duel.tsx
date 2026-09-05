@@ -37,7 +37,6 @@ import { playerDisplayName, useProfileIdentity } from "@/features/profile";
 
 import type { GameEntry } from "@/mocks/games";
 import { opponentNames } from "../../shared/data/opponent-names";
-import { GameLandingAd } from "../../shared/components/game-landing-ad";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import type { GameId } from "../../types";
 import {
@@ -65,7 +64,10 @@ import type {
 import styles from "./pitch-duel.module.css";
 import { PitchDuelHowTo } from "./pitch-duel-how-to";
 import { PitchDuelLobby } from "./pitch-duel-lobby";
-import { PitchDuelMatchmaking } from "./pitch-duel-matchmaking";
+import {
+  GameMatchGate,
+  matchmakingFighter,
+} from "../../shared/components/matchmaking";
 
 export type PitchDuelProps = { game: GameId; entry: GameEntry };
 
@@ -304,16 +306,13 @@ function PitchDuelSession({
 
   if (view === "lobby") {
     return (
-      <>
-        <PitchDuelLobby
-          progress={progress}
-          onPlay={() => setView("matchmaking")}
-          onHowToPlay={() => setView("howToPlay")}
-          onReplayTutorial={resetPitchDuelTutorials}
-          onExit={onExit}
-        />
-        <GameLandingAd />
-      </>
+      <PitchDuelLobby
+        progress={progress}
+        onPlay={() => setView("matchmaking")}
+        onHowToPlay={() => setView("howToPlay")}
+        onReplayTutorial={resetPitchDuelTutorials}
+        onExit={onExit}
+      />
     );
   }
 
@@ -323,11 +322,18 @@ function PitchDuelSession({
 
   if (view === "matchmaking") {
     return (
-      <PitchDuelMatchmaking
-        playerName={playerName}
-        playerAvatar={playerAvatar}
-        opponentName={state.opponentName}
-        cpuLevel={cpuLevel}
+      <GameMatchGate
+        goLabel="KICK OFF!"
+        config={{
+          title: "PITCH DUEL",
+          queueLabel: "SCANNING GLOBAL PITCH QUEUE",
+          player: {
+            name: playerName,
+            avatar: playerAvatar,
+            badge: `LV ${cpuLevel}`,
+          },
+          opponent: matchmakingFighter(state.opponentName, `LV ${cpuLevel}`),
+        }}
         onReady={startMatch}
         onCancel={() => setView("lobby")}
       />

@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
@@ -153,6 +155,7 @@ export function TennisLobby({
             Back to Tennis games
           </Link>
         </div>
+        <DailyDrop sport="tennis" />
       </div>
     </div>
   );

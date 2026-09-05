@@ -36,10 +36,6 @@ type CollectionItem =
   | { kind: "player"; card: PlayerCardData }
   | { kind: "action"; card: ActionCardData };
 
-const sportAccents: Record<Sport, string> = {
-  football: accentVar("cyan"), cricket: accentVar("lime"), basketball: accentVar("gold"), tennis: accentVar("cyan"), motorsport: accentVar("racing"),
-};
-
 const roleAccents: Record<PlayerRole, string> = {
   attacker: accentVar("cyan"), defender: accentVar("violet"), goalkeeper: accentVar("gold"), batsman: accentVar("cyan"), bowler: accentVar("violet"), basketballGuard: accentVar("gold"), basketballWing: accentVar("cyan"), basketballBig: accentVar("violet"), tennisSingles: accentVar("lime"), f1Driver: accentVar("racing"), f2Driver: accentVar("racing"), nascarDriver: accentVar("racing"), indycarDriver: accentVar("racing"),
 };
@@ -75,7 +71,7 @@ function Collection() {
   const [sport, setSport] = useState<Sport>("football");
   const [filter, setFilter] = useState<Filter>("ALL");
   const [selected, setSelected] = useState<CollectionItem | null>(null);
-  const accent = sportAccents[sport];
+  const accent = accentVar(sportModuleFor(sport).accent);
   const filters = filtersBySport[sport];
   const items = useMemo(() => {
     const players = economy.owned.playerCardIds.map(playerCardForId).filter((card): card is PlayerCardData => Boolean(card)).filter((card) => playerRoleSports[card.role] === sport).filter((card) => filter !== "ACT" && cardMatches(card, filter)).sort((a, b) => b.rating - a.rating).map((card): CollectionItem => ({ kind: "player", card }));
@@ -88,7 +84,7 @@ function Collection() {
       <button type="button" onClick={() => router.back()} aria-label="Back to profile" className="grid size-11 cursor-pointer place-items-center text-muted transition-colors hover:text-foreground"><ArrowLeftIcon size={22} /></button>
       <div><h1 className="font-display text-lg font-black leading-none tracking-wide">ALL CARDS</h1><p className="mt-1 font-display text-2xs font-black tracking-ultra text-muted">{"// YOUR COLLECTION"}</p></div>
     </header>
-    <UnderlineTabs tabs={sportOrder.map((entry) => ({ id: entry, label: sportModuleFor(entry).label.toUpperCase(), icon: <SportTab sport={entry} /> }))} activeIndex={sportOrder.indexOf(sport)} onChange={(index) => { setSport(sportOrder[index]); setFilter("ALL"); }} accent={accent} label="Collection sports" minTabWidth={94} />
+    <UnderlineTabs tabs={sportOrder.map((entry) => ({ id: entry, label: sportModuleFor(entry).label.toUpperCase(), icon: <SportTab sport={entry} />, showLabel: true }))} activeIndex={sportOrder.indexOf(sport)} onChange={(index) => { setSport(sportOrder[index]); setFilter("ALL"); }} accent={accent} iconColors={sportOrder.map((entry) => accentVar(sportModuleFor(entry).accent))} label="Collection sports" minTabWidth={94} />
     <div className="flex shrink-0 items-center gap-1.5 overflow-x-auto border-b border-line-muted px-4 py-2.5 sm:px-6">
       {filters.map((entry) => <FilterChip key={entry} filter={entry} selected={filter === entry} onClick={() => setFilter(entry)} />)}
       <span className="ml-auto shrink-0 pl-3 font-display text-2xs font-bold tracking-wide text-muted">{items.length} CARDS</span>
@@ -100,7 +96,7 @@ function Collection() {
 
 function SportTab({ sport }: { sport: Sport }) {
   const icon = { football: "sports_soccer", cricket: "sports_cricket", basketball: "sports_basketball", tennis: "sports_tennis", motorsport: "sports_motorsports" } as const;
-  return <span className="flex items-center gap-2 px-3"><Glyph name={icon[sport]} size={17} /><span className="font-display text-2xs font-black tracking-wide">{sport === "motorsport" ? "MOTORSPORT" : sportModuleFor(sport).label.toUpperCase()}</span></span>;
+  return <Glyph name={icon[sport]} size={17} />;
 }
 
 function FilterChip({ filter, selected, onClick }: { filter: Filter; selected: boolean; onClick: () => void }) {

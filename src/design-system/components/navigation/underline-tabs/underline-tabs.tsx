@@ -7,6 +7,8 @@ export type UnderlineTab = {
   id: string;
   label: string;
   icon?: ReactNode;
+  /** Prints the label beside an icon; icon-only tabs remain compact by default. */
+  showLabel?: boolean;
   /** Runs a callback instead of selecting — for trailing actions like "more". */
   action?: () => void;
 };
@@ -18,6 +20,8 @@ export type UnderlineTabsProps = {
   onChange: (index: number) => void;
   /** Drives the wash, the underline, and the strip's bottom hairline. */
   accent: string;
+  /** Optional identity color for each tab icon, in the same order as `tabs`. */
+  iconColors?: string[];
   label: string;
   /** Trailing cell pinned to the end of the strip, outside the scroll area. */
   trailing?: ReactNode;
@@ -36,11 +40,16 @@ export function UnderlineTabs({
   activeIndex,
   onChange,
   accent,
+  iconColors,
   label,
   trailing,
   minTabWidth,
   className,
 }: UnderlineTabsProps) {
+  if (iconColors && iconColors.length !== tabs.length) {
+    throw new Error("UnderlineTabs iconColors must match the tabs length.");
+  }
+
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   function move(from: number, delta: number) {
@@ -99,6 +108,15 @@ export function UnderlineTabs({
                 } else if (event.key === "ArrowLeft") {
                   event.preventDefault();
                   move(index, -1);
+                } else if (event.key === "Home") {
+                  event.preventDefault();
+                  tabRefs.current[0]?.focus();
+                  if (!tabs[0]?.action) onChange(0);
+                } else if (event.key === "End") {
+                  event.preventDefault();
+                  const last = tabs.length - 1;
+                  tabRefs.current[last]?.focus();
+                  if (!tabs[last]?.action) onChange(last);
                 }
               }}
               className="flex min-h-10 flex-1 items-center justify-center transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
@@ -110,7 +128,30 @@ export function UnderlineTabs({
                   : undefined,
               }}
             >
-              {tab.icon ?? (
+              {tab.icon ? (
+                <span className="flex min-w-0 items-center justify-center gap-2 px-2">
+                  <span
+                    aria-hidden
+                    className="grid shrink-0 place-items-center transition-colors duration-200"
+                    style={
+                      iconColors?.[index]
+                        ? {
+                            color: active
+                              ? iconColors[index]
+                              : `color-mix(in srgb, ${iconColors[index]} 58%, transparent)`,
+                          }
+                        : undefined
+                    }
+                  >
+                    {tab.icon}
+                  </span>
+                  {tab.showLabel ? (
+                    <span className="truncate font-display text-2xs font-black tracking-wide">
+                      {tab.label}
+                    </span>
+                  ) : null}
+                </span>
+              ) : (
                 <span className="truncate px-1 font-display text-2xs font-black tracking-ultra">
                   {tab.label}
                 </span>

@@ -1,4 +1,5 @@
 export { CardUnpack } from "./components/card-unpack";
+export { DailyDrop } from "./components/daily-drop";
 export type { CardUnpackProps } from "./components/card-unpack";
 export {
   PackRevealSequence,

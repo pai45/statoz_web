@@ -3,6 +3,7 @@ export {
   type SportSelectorCount,
 } from "./components/all-sports-selector";
 export { SportFixtureCard } from "./components/sport-fixture-card";
+export { MatchSearchScreen } from "./components/match-search-screen";
 export { SportMatchFeed } from "./components/sport-match-feed";
 export { SportHubTabs, type SportHubSelection } from "./components/sport-hub-tabs";
 export { SportIcon } from "./components/sport-icon";

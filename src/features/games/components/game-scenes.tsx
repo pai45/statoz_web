@@ -78,8 +78,8 @@ export const gameSceneAssets: Record<GameSceneId, { src: string; alt: string }> 
 /** Where each scene's wash lands at the right edge, before the fade. */
 const wash: Record<GameSceneId, string> = {
   "pitch-duel": "#0a2a34",
-  "penalty-shootout": "#0c3021",
-  "football-chess": "#2f290b",
+  "penalty-shootout": "#0b2b39",
+  "football-chess": "#0b2b39",
   "final-over": "#0b2b39",
   "hoop-duel": "#2c260d",
   "grand-prix-dash": "#361321",

@@ -8,7 +8,7 @@ import {
   UnderlineTabs,
   type UnderlineTab,
 } from "@/design-system";
-import { sportModuleFor, sportOrder, type Sport } from "@/domain/sports";
+import { sportModuleFor, sportOrder, sportTabColors, type Sport } from "@/domain/sports";
 
 import { SportIcon } from "./sport-icon";
 
@@ -50,6 +50,7 @@ export function SportHubTabs({
   const shortcutIndex = selected === null ? -1 : shortcuts.indexOf(selected);
   const activeIndex = selected === null ? 0 : shortcutIndex >= 0 ? shortcutIndex + 1 : -1;
   const accent = accentVar(selected ? sportModuleFor(selected).accent : "cyan");
+  const shortcutColors = sportTabColors.slice(0, shortcuts.length).map(accentVar);
 
   return (
     <UnderlineTabs
@@ -57,6 +58,11 @@ export function SportHubTabs({
       tabs={tabs}
       activeIndex={activeIndex}
       accent={accent}
+      iconColors={[
+        accentVar("cyan"),
+        ...shortcutColors,
+        accentVar("cyan"),
+      ]}
       onChange={(index) => onSelect(index === 0 ? null : shortcuts[index - 1])}
       trailing={
         onSearch ? (

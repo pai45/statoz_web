@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import type { CSSProperties } from "react";
 
 import { accentVar, Button, Glyph, withAlpha } from "@/design-system";
@@ -186,6 +188,7 @@ export function ChessLobby({
             DECK BUILDER
           </Button>
         </div>
+        <DailyDrop sport="football" />
       </div>
     </div>
   );

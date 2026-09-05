@@ -1,4 +1,5 @@
 import {
+  accentVar,
   Badge,
   BentoGrid,
   BentoTile,
@@ -46,15 +47,15 @@ function TrendingTile({ config }: { config: TrendingTileConfig }) {
   );
 }
 
-const MUTED = "var(--ds-color-text-muted)";
+const CHROME = accentVar("cyan");
 
 function Unavailable({ kind }: { kind: TrendingTileConfig["kind"] }) {
   return (
     <SignalPanel
-      accent={MUTED}
+      accent={CHROME}
       lifted={false}
       pad={false}
-      tag={<Badge accent={MUTED}>{kind.toUpperCase()}</Badge>}
+      tag={<Badge accent={CHROME}>{kind.toUpperCase()}</Badge>}
       footer={<span className="font-display text-2xs font-extrabold tracking-wide text-muted">NO DATA</span>}
     >
       <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3.5 text-muted">

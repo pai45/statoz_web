@@ -1,8 +1,8 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { ComponentType, CSSProperties, ReactNode } from "react";
 
-import { accentVar } from "@/design-system";
+import { NoDataState, SignalOffIcon, accentVar, type IconProps } from "@/design-system";
 import type { MatchDetailStat, MatchIntel, MatchPulse, SportMatch } from "@/domain/matches";
 
 import styles from "./match-stats.module.css";
@@ -43,7 +43,7 @@ export function MatchPulseHeader({
   return (
     <header className={styles.pulse}>
       <div className={styles.pulseTop}>
-        <StatPill label={match.sport.toUpperCase()} color={accentVar("pink")} />
+        <StatPill label={match.sport.toUpperCase()} color={accentVar("violet")} />
         <StatPill label={pulse.statusLabel} color={statusColor} />
         <span className={styles.pulseLeague}>{match.leagueId.toUpperCase()}</span>
       </div>
@@ -130,8 +130,11 @@ export function StatsRow({
   className?: string;
   children: ReactNode;
 }) {
+  // An untinted row keeps the neutral edge at full strength; a tinted one
+  // shows its accent at 40%, as the app's shell does.
   const style = {
     "--row-accent": accent ?? "var(--ds-color-border-default)",
+    "--row-edge": accent ? undefined : "var(--ds-color-border-default)",
   } as CSSProperties;
   const classes = [styles.statsRow, selected ? styles.statsRowSelected : "", className]
     .filter(Boolean)
@@ -252,11 +255,22 @@ export function MatchIntelPanel({ match, intel }: { match: SportMatch; intel: Ma
   );
 }
 
-export function EmptyPanel({ title, message }: { title: string; message: string }) {
-  return (
-    <div className={styles.emptyPanel}>
-      <strong>{title}</strong>
-      <p>{message}</p>
-    </div>
-  );
+/**
+ * A section with nothing in it yet. The same empty state the rest of the
+ * platform uses, so a report waiting on a feed reads like every other absence.
+ */
+export function EmptyPanel({
+  title,
+  message,
+  icon = SignalOffIcon,
+  spark,
+  accent,
+}: {
+  title: string;
+  message: string;
+  icon?: ComponentType<IconProps>;
+  spark?: ComponentType<IconProps>;
+  accent?: string;
+}) {
+  return <NoDataState icon={icon} spark={spark} title={title} message={message} accent={accent} />;
 }

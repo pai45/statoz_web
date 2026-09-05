@@ -106,17 +106,6 @@ export const gestureDeadZone = 18;
 export const gestureMinorRise = 16;
 export const gestureMajorRise = 46;
 
-/* ---- Matchmaking --------------------------------------------------------- */
-
-/** Queue scan, the rival landing, and the beat before the countdown. */
-export const matchmakingSearchMs = 2600;
-export const matchmakingLockMs = 360;
-export const matchmakingHoldMs = 700;
-
-/** The 3·2·1, then the stamp. */
-export const countdownTickMs = 1000;
-export const countdownStampMs = 780;
-
 /* ---- Lobby --------------------------------------------------------------- */
 
 /** The lobby deals itself in: status strip, hero, stats, CTA, brief. */

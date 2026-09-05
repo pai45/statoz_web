@@ -59,9 +59,20 @@ export type MatchDetailCommentary = {
   text: string;
 };
 
+export type MatchDetailPlayer = {
+  name: string;
+  number: number;
+  role: string;
+  captain?: boolean;
+};
+
 export type MatchDetailLineup = {
   formation: string;
-  players: Array<{ name: string; number: number; role: string; captain?: boolean }>;
+  players: MatchDetailPlayer[];
+  /** The bench, in the order a manager would use it. */
+  substitutes: MatchDetailPlayer[];
+  /** A team sheet the competition has confirmed, rather than a projection. */
+  confirmed: boolean;
 };
 
 export type MatchDetailScoreboard = {

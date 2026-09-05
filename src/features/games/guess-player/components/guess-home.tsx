@@ -1,5 +1,8 @@
 "use client";
 
+import type { Sport } from "@/domain/sports";
+import { DailyDrop } from "@/features/packs";
+
 import { accentVar, Button, Glyph, withAlpha } from "@/design-system";
 
 import {
@@ -44,6 +47,7 @@ export type GuessHomeProps = {
   backHref: string;
   /** What the mode is called for this sport, e.g. `DAILY FOOTBALL MYSTERY`. */
   sportLabel: string;
+  sport: Sport;
 };
 
 export function GuessHome({
@@ -55,6 +59,7 @@ export function GuessHome({
   onOpenLogs,
   backHref,
   sportLabel,
+  sport,
 }: GuessHomeProps) {
   const pink = accentVar("pink");
   const streak = solveStreak(archive, currentDayKey);
@@ -169,6 +174,7 @@ export function GuessHome({
           </button>
         </div>
       </div>
+        <DailyDrop sport={sport} />
     </div>
   );
 }

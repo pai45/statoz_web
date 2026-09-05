@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 
-import { FilterChips, accentVar } from "@/design-system";
+import {
+  FilterChips,
+  GridOnIcon,
+  InsightsIcon,
+  MicIcon,
+  ShowChartIcon,
+  TimerIcon,
+  accentVar,
+} from "@/design-system";
 import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
 
 import { LineupsView } from "./match-report-parts";
@@ -43,14 +51,18 @@ export function CricketStatsView({
           scoreboard.trace ? (
             <div className={styles.stack}>
               <div className="spanFull">
-                <MatchTraceChart match={match} trace={scoreboard.trace} />
+                <MatchTraceChart match={match} trace={scoreboard.trace} showInningsModes />
               </div>
               <div className="spanFull">
                 <InningsList match={match} scoreboard={scoreboard} heading="INNINGS" />
               </div>
             </div>
           ) : (
-            <EmptyPanel title="Race pending" message="Both innings plot here once the first ball is bowled." />
+            <EmptyPanel
+              icon={ShowChartIcon}
+              title="Race data unavailable"
+              message="Both innings need published scoring samples for this race."
+            />
           )
         ) : null}
         {tab === "CHASE" ? (
@@ -75,7 +87,11 @@ export function CricketStatsView({
               </section>
             </div>
           ) : (
-            <EmptyPanel title="No chase yet" message="The required rate appears once a target is set." />
+            <EmptyPanel
+              icon={TimerIcon}
+              title="Chase feed unavailable"
+              message="Ball-level run-rate samples have not been published."
+            />
           )
         ) : null}
         {tab === "SCORECARD" ? <Scorecard match={match} scoreboard={scoreboard} /> : null}
@@ -150,7 +166,11 @@ function InningsList({
     <section className={styles.tight}>
       <SectionHeading label={heading} />
       {innings.length === 0 ? (
-        <EmptyPanel title="No innings yet" message="Innings totals appear once play begins." />
+        <EmptyPanel
+          icon={GridOnIcon}
+          title="Scorecard unavailable"
+          message="Batting and bowling figures have not been published."
+        />
       ) : (
         innings.map((line) => (
           <StatsRow key={line.team} accent={line.side === "home" ? match.home.color : match.away.color}>
@@ -180,9 +200,123 @@ function InningsList({
   );
 }
 
+/**
+ * The card behind the score: one innings at a time, who batted and what they
+ * made, then who bowled at them. The phase comparison stays underneath, since
+ * it is the only place the two innings are read against each other.
+ */
 function Scorecard({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
+  const innings = scoreboard.innings ?? [];
+  const [selected, setSelected] = useState(0);
+
+  if (innings.length === 0) {
+    return (
+      <EmptyPanel
+        icon={GridOnIcon}
+        title="Scorecard unavailable"
+        message="Batting and bowling figures have not been published."
+      />
+    );
+  }
+
+  const card = innings[Math.min(selected, innings.length - 1)];
+  const accent = card.side === "home" ? match.home.color : match.away.color;
+
   return (
     <div className={styles.stack}>
+      {innings.length > 1 ? (
+        <div className={`${styles.inningsTabs} spanFull`}>
+          {innings.map((entry, index) => (
+            <button
+              key={entry.team}
+              type="button"
+              className={`${styles.inningsTab} ${index === selected ? styles.inningsTabActive : ""}`}
+              aria-pressed={index === selected}
+              onClick={() => setSelected(index)}
+            >
+              {entry.team}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      <section className={`${styles.tight} spanFull`}>
+        <StatsRow accent={accent}>
+          <span className={styles.inningsHead}>
+            <span>
+              <strong>{card.team} Innings</strong>
+              <small>
+                RR {card.runRate}
+                {card.target == null ? "" : ` // TARGET ${card.target}`}
+              </small>
+            </span>
+            <span className={styles.inningsScore}>
+              <b style={{ color: accent }}>{card.score}</b>
+              <small>{card.overs.toUpperCase()}</small>
+            </span>
+          </span>
+        </StatsRow>
+      </section>
+
+      <section className={`${styles.tight} spanFull`}>
+        <SectionHeading label="BATTING" />
+        <table className={styles.card}>
+          <thead>
+            <tr>
+              <th>BATTER</th>
+              <th>R</th>
+              <th>B</th>
+              <th>4s</th>
+              <th>6s</th>
+              <th>SR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {card.batting.map((line) => (
+              <tr key={line.name}>
+                <td>
+                  <strong style={line.dismissal ? undefined : { color: accent }}>{line.name}</strong>
+                  <small>{line.dismissal ?? "not out"}</small>
+                </td>
+                <td><b>{line.runs}</b></td>
+                <td>{line.balls}</td>
+                <td>{line.fours}</td>
+                <td>{line.sixes}</td>
+                <td>{strikeRate(line.runs, line.balls)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section className={`${styles.tight} spanFull`}>
+        <SectionHeading label="BOWLING" />
+        <table className={styles.card}>
+          <thead>
+            <tr>
+              <th>BOWLER</th>
+              <th>O</th>
+              <th>M</th>
+              <th>R</th>
+              <th>W</th>
+              <th>ECON</th>
+            </tr>
+          </thead>
+          <tbody>
+            {card.bowling.map((line) => (
+              <tr key={line.name}>
+                <td><strong>{line.name}</strong></td>
+                <td>{line.overs}</td>
+                <td>{line.maidens}</td>
+                <td>{line.runs}</td>
+                <td><b>{line.wickets}</b></td>
+                <td>{economy(line.runs, line.overs)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
       <section className={styles.tight}>
         <SectionHeading label="PHASES" />
         {scoreboard.scoreRows.map((row) => (
@@ -195,26 +329,33 @@ function Scorecard({ match, scoreboard }: { match: SportMatch; scoreboard: Match
           </StatsRow>
         ))}
       </section>
-      <section className={styles.tight}>
-        <SectionHeading label="INNINGS" />
-        {(scoreboard.innings ?? []).map((innings) => (
-          <StatsRow key={innings.team} accent={innings.side === "home" ? match.home.color : match.away.color}>
-            <span className={styles.comparisonHead}>
-              <b className="ds-tabular">{innings.score}</b>
-              <small>{innings.team.toUpperCase()}</small>
-              <b className="ds-tabular">{innings.overs}</b>
-            </span>
-          </StatsRow>
-        ))}
-      </section>
     </div>
   );
+}
+
+/** Runs per hundred balls, the way a card prints it. */
+function strikeRate(runs: number, balls: number): string {
+  return balls === 0 ? "0.00" : ((runs / balls) * 100).toFixed(2);
+}
+
+/** Runs per over, from an overs figure written as `3.4`. */
+function economy(runs: number, overs: string): string {
+  const [whole, balls = "0"] = overs.split(".");
+  const bowled = Number(whole) + Number(balls) / 6;
+  return bowled === 0 ? "0.00" : (runs / bowled).toFixed(2);
 }
 
 function Feed({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
   const feed = scoreboard.feed ?? [];
   if (feed.length === 0) {
-    return <EmptyPanel title="Feed pending" message="Ball-by-ball arrives once the innings is under way." />;
+    return (
+      <EmptyPanel
+        icon={MicIcon}
+        spark={InsightsIcon}
+        title="Ball feed unavailable"
+        message="Ball-by-ball arrives once the provider publishes it."
+      />
+    );
   }
   const accentFor = (kind: string) =>
     kind === "wicket"

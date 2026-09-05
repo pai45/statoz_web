@@ -328,6 +328,12 @@
   gap: var(--ds-space-16);
 }
 
+.recordsSingle {
+  width: min(100%, 32rem);
+  grid-template-columns: minmax(0, 1fr);
+  margin-inline: auto;
+}
+
 .adSlot {
   margin: 0 0 var(--ds-space-16);
 }
@@ -526,6 +532,127 @@
   gap: var(--ds-space-8);
   background: var(--ds-color-fixture-strip);
   padding: 0 var(--ds-space-16);
+}
+
+/* Match history uses the compact result-card treatment from the mobile app.
+   The status lives in the frame's top cutout, while the result owns one
+   uninterrupted footer rail. */
+.predictionCard .cardLift {
+  background: var(--ds-color-fixture-shadow);
+}
+
+.predictionCard .cardFrame {
+  background: var(--ds-color-border-default);
+}
+
+.predictionCard .cardBody,
+.predictionCard .cardStrip {
+  clip-path: none;
+}
+
+.predictionCard .cardBody {
+  min-height: 8.15rem;
+  padding: var(--ds-space-28) var(--ds-space-14) var(--ds-space-12);
+}
+
+.predictionStatus {
+  z-index: 4;
+  width: 6rem;
+  min-width: 0;
+  min-height: 1.75rem;
+  clip-path: none;
+  background: transparent;
+  color: var(--state-color);
+  pointer-events: none;
+}
+
+.predictionCard .cardMeta {
+  justify-content: flex-start;
+}
+
+.predictionCard .matchup {
+  align-items: start;
+  margin-top: var(--ds-space-10);
+}
+
+.predictionCard .teamBadge {
+  width: 2.625rem;
+  height: 2.625rem;
+  font-size: var(--ds-text-xs);
+}
+
+.predictionCard .teamName {
+  font-size: var(--ds-text-base);
+}
+
+.predictionCard .scoreCenter {
+  min-width: 5rem;
+  padding-top: var(--ds-space-4);
+}
+
+.predictionCard .score {
+  font-size: var(--ds-text-xl);
+}
+
+.predictionCard .liveCopy {
+  margin-top: var(--ds-space-4);
+}
+
+.predictionStrip {
+  min-height: 2.125rem;
+  border-top: 1px solid color-mix(in srgb, var(--state-color) 40%, var(--ds-color-border-default));
+  background: var(--ds-color-fixture-strip);
+  padding-inline: var(--ds-space-14);
+}
+
+.reviewStrip {
+  justify-content: flex-start;
+  border-top-color: var(--ds-color-warning);
+  background: color-mix(in srgb, var(--ds-color-warning) 25%, var(--ds-color-background-muted));
+}
+
+.reviewAction,
+.predictionReward {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--ds-space-6);
+  overflow: hidden;
+  color: var(--state-color);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-2xs);
+  font-weight: 900;
+  letter-spacing: var(--ds-tracking-wide);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reviewAction {
+  color: var(--ds-color-warning);
+}
+
+.quizMarks {
+  display: inline-flex;
+  flex: none;
+  gap: var(--ds-space-4);
+}
+
+.quizMarks i {
+  display: grid;
+  width: 0.875rem;
+  height: 0.875rem;
+  place-items: center;
+  border: 1px solid var(--ds-color-border-strong);
+  color: var(--ds-color-text-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-nano);
+  font-style: normal;
+  line-height: var(--ds-leading-compact);
+}
+
+.quizMarks i[data-correct="true"] {
+  border-color: color-mix(in srgb, var(--state-color) 65%, var(--ds-color-border-strong));
+  color: var(--state-color);
 }
 
 .stripText,
@@ -973,6 +1100,10 @@
   .recordsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
+  }
+
+  .recordsGrid.recordsSingle {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

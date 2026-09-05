@@ -32,7 +32,6 @@ export function AdSlot({ placement, className }: AdSlotProps) {
 
   return (
     <aside className={slotClass} aria-label="Advertisement" data-ad-placement={placement}>
-      <span className={styles.label}>ADVERTISEMENT</span>
       <div className={frameClass} aria-hidden="true">
         {config.creative === "campaign" ? <CampaignCreative format={config.format} /> : <WireframeCreative format={config.format} />}
       </div>

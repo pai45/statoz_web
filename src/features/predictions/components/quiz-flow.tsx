@@ -129,10 +129,15 @@ export function QuestionStage({
   const questionVisible = session.revealPhase !== "numberIntro";
 
   return (
-    <div className={styles.questionStage} key={question.id}>
+    <div
+      className={[styles.questionStage, question.backgroundAsset ? styles.hasBackdrop : ""]
+        .filter(Boolean)
+        .join(" ")}
+      key={question.id}
+    >
+      <div className={styles.stageInner}>
+      <span className={[styles.questionIndex, styles.tabular].join(" ")}>{index + 1}</span>
       <div className={styles.questionPanel}>
-        <span className={[styles.questionIndex, styles.tabular].join(" ")}>{index + 1}</span>
-
         <h2 className={styles.questionText}>
           {questionVisible
             ? question.text.split(/\s+/).filter(Boolean).map((word, wordIndex) => (
@@ -179,6 +184,7 @@ export function QuestionStage({
           enabled={session.editable && !session.revealing && session.questionAnswered(question.id)}
         />
         <XpPill reward={reward} multiplier={multiplier} />
+      </div>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 "use client";
 
+import { DailyDrop } from "@/features/packs";
+
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
@@ -382,6 +384,7 @@ export function GrandPrixLobby({
           <span aria-hidden className="size-0.75 rounded-full bg-border" />
           <LobbyLink href={backHref}>ALL RACING GAMES</LobbyLink>
         </div>
+        <DailyDrop sport="motorsport" />
       </div>
     </div>
   );

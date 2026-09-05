@@ -5,6 +5,7 @@
  * sealed cards, and what those cards settled for.
  */
 export { MatchPredictTab } from "./components/match-predict-tab";
+export { MatchPredictionScreen } from "./components/match-prediction-screen";
 
 export {
   chargeContestEntry,

@@ -11,7 +11,7 @@ import {
 } from "@/domain/predictions";
 
 import { matchDetailRivals } from "../detail-rivals";
-import { buildFootballQuiz, quizSeed } from "./football-bank";
+import { buildFootballQuiz, questionBackground, quizSeed } from "./football-bank";
 
 /**
  * The prediction quiz sets behind every fixture's PREDICT tab.
@@ -50,7 +50,7 @@ function withMeta(
 }
 
 function mcq(id: string, text: string, options: string[], reward: number): QuizQuestion {
-  return { id, text, options, type: "multipleChoice", reward };
+  return { id, text, options, type: "multipleChoice", reward, backgroundAsset: questionBackground(id) };
 }
 
 function footballQuizzes(match: SportMatch): PredictionQuiz[] {

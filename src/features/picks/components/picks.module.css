@@ -5,27 +5,147 @@
 .iconButton,.filter,.range,.preset,.stepper,.primary,.secondary { min-height:44px; border:1px solid var(--ds-color-border-default); background:var(--ds-color-background-elevated); color:inherit; font-family:var(--ds-font-display); font-weight:900; letter-spacing:.06em; }
 .iconButton { min-width:44px; clip-path:var(--ds-clip-octagon); color:var(--ds-color-accent-cyan); font-size:1.2rem; }
 .filters { display:flex; gap:7px; overflow-x:auto; padding:2px 0 12px; scrollbar-width:none; }
-.filter { flex:0 0 auto; min-height:32px; padding:0 14px; font-size:.7rem; clip-path:var(--ds-clip-field); }
-.filterActive { border-color:var(--ds-color-accent-cyan); background:color-mix(in srgb,var(--ds-color-accent-cyan) 17%,var(--ds-color-background-muted)); color:var(--ds-color-accent-cyan); }
-.grid { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; }
-.card { min-height:272px; padding-top:22px; animation:enter .35s both; }
+.filter { flex:0 0 auto; min-height:32px; padding:0 11px; border-color:color-mix(in srgb,var(--ds-color-border-strong) 28%,transparent); background:transparent; color:var(--ds-color-text-muted); font-size:11px; letter-spacing:.07em; clip-path:var(--ds-clip-chip); }
+.filterActive { border-color:color-mix(in srgb,var(--ds-color-accent-cyan) 72%,transparent); background:color-mix(in srgb,var(--ds-color-accent-cyan) 14%,transparent); color:var(--ds-color-accent-cyan); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); align-items:start; gap:14px; }
 .grid > :nth-child(2) { animation-delay:70ms; }.grid > :nth-child(3) { animation-delay:140ms; }.grid > :nth-child(n+4) { animation-delay:180ms; }
-.cardTop { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 14px 7px; }
+/* ---- Hub chrome ------------------------------------------------------------ */
+
+.settingsButton {
+  display:grid; width:32px; height:32px; min-width:32px; min-height:32px; place-items:center;
+  border:1px solid var(--ds-color-border-default); background:var(--ds-color-fixture-strip);
+  color:var(--ds-color-text-muted); cursor:pointer;
+}
+.settingsButton:hover { border-color:var(--ds-color-accent-cyan); color:var(--ds-color-accent-cyan); }
+.settingsButton:focus-visible { outline:2px solid var(--ds-color-accent-cyan); outline-offset:2px; }
+
+.clearAction {
+  display:inline-flex; align-items:center; gap:7px; min-height:44px; padding:0 8px;
+  border:0; background:none; color:var(--ds-color-accent-cyan);
+  font-family:var(--ds-font-display); font-size:9px; font-weight:900; letter-spacing:.12em; cursor:pointer;
+}
+.clearAction:hover { filter:brightness(1.15); }
+.clearAction:focus-visible { outline:2px solid var(--ds-color-accent-cyan); outline-offset:2px; }
+
+/* Markets arrive in sequence on first load, as they do in the app. */
+.cardEnter { animation:enter .32s both; }
+
+.skeleton { display:grid; gap:16px; animation:skeletonPulse 900ms ease-in-out infinite alternate; }
+.skeletonPlate { display:block; border:1px solid var(--ds-color-border-muted); background:var(--ds-color-fixture-strip); clip-path:var(--ds-clip-compact-hud); }
+@keyframes skeletonPulse { from { opacity:.55; } to { opacity:1; } }
+
+/* ---- Filters sheet --------------------------------------------------------- */
+
+.settingsBody { display:grid; gap:16px; padding:16px 16px 18px; }
+.settingsTitle { color:var(--ds-color-accent-cyan); font-family:var(--ds-font-display); font-size:12px; font-weight:900; letter-spacing:.15em; }
+.settingsGroup { display:grid; gap:8px; }
+.settingsLabel { margin:0; color:var(--ds-color-text-muted); font-family:var(--ds-font-display); font-size:8px; font-weight:900; letter-spacing:.17em; }
+.chipWrap { display:flex; flex-wrap:wrap; gap:7px; }
+
+/* ---- Market card ----------------------------------------------------------- */
+
+.card { animation:enter .35s both; }
+.cardBody { padding-top:16px; }
+
+.cardTop { display:flex; align-items:flex-start; gap:8px; }
+
+/* The league's own mark: a cut plate in its brand colour, with a hard drop. */
+.leagueMark {
+  display:inline-flex; height:28px; align-items:center; padding:0 11px;
+  clip-path:polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  background:var(--league-color);
+  box-shadow:0 3px 0 color-mix(in srgb,var(--league-color) 42%,black);
+  color:var(--ds-color-text-inverse);
+  font-family:var(--ds-font-display); font-size:12px; font-weight:900; letter-spacing:.05em; line-height:1;
+  text-shadow:0 0 6px rgb(0 0 0 / 22%);
+}
+
+.typePill {
+  display:inline-flex; height:24px; align-items:center; margin-left:auto; padding:0 9px;
+  border:1px solid color-mix(in srgb,var(--ds-color-border-default) 78%,transparent);
+  background:var(--ds-color-fixture-strip);
+  color:color-mix(in srgb,var(--ds-color-text-muted) 90%,transparent);
+  font-family:var(--ds-font-display); font-size:8.5px; font-weight:900; letter-spacing:.13em;
+}
+
+/* The tag inside the top notch reads against the page, not the card. */
+.statusTag { color:var(--status-color); font-size:11px; font-weight:700; letter-spacing:.06em; }
+.statusCloses { max-width:100%; overflow:hidden; color:var(--ds-color-fixture-kickoff); font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.09em; text-overflow:clip; }
+/* A season-away future counts in hundreds of days; it fits by shrinking. */
+.statusClosesLong { font-size:10px; letter-spacing:.03em; }
+.statusLive { display:inline-flex; align-items:center; gap:7px; color:var(--ds-color-danger); font-size:12.5px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.07em; }
+.liveDot { width:7px; height:7px; border-radius:50%; background:var(--ds-color-danger); box-shadow:0 0 7px color-mix(in srgb,var(--ds-color-danger) 65%,transparent); animation:marketPulse 1.1s ease-in-out infinite; }
+
+/* A match market names its two sides instead of asking the question. */
+.teamsLine { display:flex; gap:16px; margin-top:8px; color:var(--ds-color-text-default); text-decoration:none; }
+.teamsLine span { min-width:0; flex:1; overflow:hidden; font-size:18px; font-weight:700; line-height:1.12; text-overflow:ellipsis; white-space:nowrap; }
+.teamsLine span:last-child { text-align:right; }
+.teamsLine:focus-visible { outline:2px solid var(--ds-color-accent-cyan); outline-offset:2px; }
+
+.questionLink {
+  display:block; margin-top:8px; overflow:hidden; color:var(--ds-color-text-default);
+  font-size:18px; font-weight:700; line-height:1.12; text-decoration:none;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+}
+.questionLink:focus-visible { outline:2px solid var(--ds-color-accent-cyan); outline-offset:2px; }
+.contextLine { margin:4px 0 0; overflow:hidden; color:var(--ds-color-fixture-score); font-size:11px; font-weight:600; font-variant-numeric:tabular-nums; text-overflow:ellipsis; white-space:nowrap; }
+
+.outcomes { display:flex; gap:var(--ds-space-8); margin-top:20px; }
+
+/* A future has more candidates than fit: three and a half show, the rest
+   scroll, exactly as the app sizes its rail. */
+.outcomeRail { overflow-x:auto; scrollbar-width:none; }
+.outcomeRail::-webkit-scrollbar { display:none; }
+.outcomeRail .outcome { flex:0 0 calc((100% - 24px) / 3.5); }
+
+/* A filled team-badge button: the octagon face over a hard darker base. */
+.outcome {
+  position:relative; min-width:0; height:72px; flex:1; border:0; background:none; padding:0; cursor:pointer;
+  clip-path:var(--ds-clip-octagon-plate);
+  container-type:inline-size;
+}
+.outcome:disabled { cursor:default; }
+.outcomeBase, .outcomeFace {
+  position:absolute; inset:0 0 5px 0; clip-path:var(--ds-clip-octagon-plate);
+}
+.outcomeBase { transform:translateY(5px); background:color-mix(in srgb,var(--outcome-color) 42%,black); }
+.outcomeFace {
+  display:grid; align-content:center; justify-items:center; gap:var(--ds-space-4);
+  background:var(--outcome-color);
+  box-shadow:inset 0 0 0 1px rgb(255 255 255 / 16%);
+  color:var(--outcome-ink);
+}
+.outcomeHeld .outcomeFace { box-shadow:inset 0 0 0 2px rgb(255 255 255 / 45%); }
+.outcome:hover:not(:disabled) .outcomeFace { filter:brightness(1.08); }
+.outcome:active:not(:disabled) { transform:scale(.98); }
+.outcome:focus-visible { outline:2px solid var(--ds-color-text-default); outline-offset:2px; }
+.outcomeCode { max-width:100%; overflow:hidden; font-family:var(--ds-font-display); font-size:var(--ds-text-badge); font-weight:900; letter-spacing:.03em; line-height:1; text-overflow:ellipsis; white-space:nowrap; }
+.outcomePrice { display:inline-flex; align-items:center; gap:var(--ds-space-4); font-family:var(--ds-font-display); font-size:var(--ds-text-badge); font-weight:900; font-variant-numeric:tabular-nums; line-height:1; }
+.outcomeDelta { font-size:8px; font-style:normal; opacity:.9; }
+@container (width < 72px) {
+  .outcomeFace { gap:var(--ds-space-2); }
+  .outcomeCode { font-size:var(--ds-text-base); }
+  .outcomePrice { font-size:var(--ds-text-lg); }
+  .outcomeDelta { font-size:7px; }
+}
+
+/* The outcomes' shares, as one hairline across the card's foot. */
+.shareBar { display:flex; gap:7px; height:3px; flex:none; }
+.shareBar i { display:block; }
+
+.stripClaim { color:var(--ds-color-accent-gold); font-family:var(--ds-font-display); font-size:9px; font-weight:900; letter-spacing:.11em; }
+.stripHeld { min-width:0; overflow:hidden; color:var(--ds-color-accent-cyan); font-family:var(--ds-font-display); font-size:8.5px; font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:.09em; text-overflow:ellipsis; white-space:nowrap; }
+.stripVolume { margin-left:auto; color:color-mix(in srgb,var(--ds-color-text-muted) 70%,transparent); font-family:var(--ds-font-display); font-size:8px; font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:.09em; white-space:nowrap; }
+
+/* ---- Market detail --------------------------------------------------------- */
+
 .plate,.tag { display:inline-flex; align-items:center; min-height:24px; padding:3px 9px; font-family:var(--ds-font-display); font-size:.63rem; font-weight:950; letter-spacing:.1em; clip-path:var(--ds-clip-field); }
-.plate { color:var(--ds-color-text-inverse); background:var(--fixture-accent); }
+.plate { color:var(--ds-color-text-inverse); background:var(--ds-color-accent-cyan); }
 .tag { color:var(--ds-color-accent-orange); border:1px solid currentColor; background:var(--ds-color-background-muted); }
-.questionLink { display:block; padding:3px 14px 10px; color:inherit; font-size:1rem; font-weight:850; line-height:1.28; text-decoration:none; }
-.outcomes { position:relative; z-index:2; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:0 12px 10px; }
-.outcome { min-height:58px; padding:7px 9px; border:1px solid var(--ds-color-border-strong); background:color-mix(in srgb,var(--ds-color-background-elevated) 74%,transparent); color:inherit; clip-path:var(--ds-clip-octagon); text-align:left; }
-.outcome strong,.outcome span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.outcome strong { color:var(--ds-color-accent-cyan); font-family:var(--ds-font-display); font-size:1.02rem; }
-.outcome span { font-size:.72rem; color:var(--ds-color-text-subtle); }
-.probability { display:flex; height:6px; margin:0 13px 10px; overflow:hidden; background:var(--ds-color-border-subtle); clip-path:var(--ds-clip-field); }
-.probability span { height:100%; }
-.meta { display:flex; justify-content:space-between; gap:10px; padding:8px 14px 11px; border-top:1px solid var(--ds-color-border-subtle); color:var(--ds-color-text-muted); font-family:var(--ds-font-display); font-size:.65rem; font-weight:800; letter-spacing:.05em; }
 .tickets { display:flex; flex-direction:column; gap:7px; padding:0 12px 12px; }
 .ticket { display:grid; grid-template-columns:1fr auto; gap:4px 10px; padding:9px 11px; border-left:3px solid var(--ds-color-accent-violet); background:var(--ds-color-background-muted); font-size:.74rem; }
 .ticket strong { color:var(--ds-color-accent-violet); }.ticket small { color:var(--ds-color-text-muted); }
+
 .empty { min-height:300px; display:grid; place-items:center; padding:40px 20px; border:1px dashed var(--ds-color-border-default); color:var(--ds-color-text-muted); text-align:center; clip-path:var(--ds-clip-panel); }
 .drawerBody { display:flex; flex-direction:column; gap:18px; padding:18px 16px 32px; }
 .group { display:flex; flex-direction:column; gap:8px; }.groupTitle { color:var(--ds-color-text-muted); font-family:var(--ds-font-display); font-size:.69rem; font-weight:900; letter-spacing:.12em; }
@@ -48,18 +168,20 @@
 .claim { min-height:44px; padding:0 12px; border:1px solid var(--ds-color-accent-gold); background:color-mix(in srgb,var(--ds-color-accent-gold) 15%,transparent); color:var(--ds-color-accent-gold); font-family:var(--ds-font-display); font-weight:950; clip-path:var(--ds-clip-field); }
 .cinematic { min-height:360px; display:grid; place-items:center; padding:30px; text-align:center; }.cinematic strong { display:block; font-family:var(--ds-font-display); font-size:2rem; letter-spacing:.1em; }.cinematic b { display:block; margin:12px; color:var(--ds-color-accent-lime); font-size:2.4rem; }
 .chartDialog { width:100vw; height:100dvh; max-width:none; max-height:none; margin:0; border:1px solid var(--ds-color-border-strong); background:var(--ds-color-background-primary); color:white; padding:18px; clip-path:var(--ds-clip-panel); }.chartDialog::backdrop { background:var(--ds-color-overlay-scrim); }
-.matchPanel { height:100%; min-height:0; overflow-y:auto; overscroll-behavior-y:contain; display:flex; flex-direction:column; gap:14px; padding:14px 12px 108px; scrollbar-color:var(--ds-color-border-strong) transparent; }
-.matchHeader { display:grid; min-height:64px; grid-template-columns:34px minmax(0,1fr) 24px; align-items:center; gap:10px; padding:7px 8px; color:var(--ds-color-text-default); text-decoration:none; clip-path:var(--ds-clip-signal); background:linear-gradient(115deg,color-mix(in srgb,var(--ds-color-accent-lime) 10%,var(--ds-color-background-secondary)),var(--ds-color-background-secondary)); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ds-color-accent-lime) 28%,transparent); }
-.matchHeaderIcon { display:grid; width:32px; height:32px; place-items:center; color:var(--ds-color-accent-lime); font-family:var(--ds-font-display); font-size:1.15rem; }
-.matchHeader strong,.matchHeader small { display:block; }
-.matchHeader strong { font-family:var(--ds-font-display); font-size:.77rem; font-weight:950; letter-spacing:.07em; }
-.matchHeader small { margin-top:3px; color:var(--ds-color-text-muted); font-size:.69rem; }
-.matchHeader b { color:var(--ds-color-accent-lime); font-family:var(--ds-font-display); font-size:1.45rem; }
+.matchPanel { height:100%; min-height:0; overflow-y:auto; overscroll-behavior-y:contain; display:flex; flex-direction:column; gap:14px; padding:14px 12px 28px; scrollbar-color:var(--ds-color-border-strong) transparent; }
+/* A plain row, not a panel: the markets below are the surfaces here. */
+.matchHeader { display:flex; align-items:center; gap:10px; padding:7px 4px; color:var(--ds-color-accent-lime); text-decoration:none; }
+.matchHeader > span { display:grid; min-width:0; flex:1; }
+.matchHeader strong { color:var(--ds-color-text-default); font-family:var(--ds-font-display); font-size:13px; font-weight:900; letter-spacing:.07em; }
+.matchHeader small { margin-top:2px; color:var(--ds-color-text-muted); font-size:11px; }
+.matchHeader:hover strong { color:var(--ds-color-accent-lime); }
+.matchHeader:focus-visible { outline:2px solid var(--ds-color-accent-lime); outline-offset:2px; }
 .matchPanel .grid { grid-template-columns:minmax(0,1fr); }
-.matchPanel .card { min-height:278px; }
+
 @keyframes enter { from { opacity:0; transform:translateY(12px); } }
-@media (min-width:768px) { .page,.detail { padding-inline:24px; }.grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.card { min-height:290px; }.chartDialog { width:min(92vw,900px); height:auto; max-height:88dvh; margin:auto; padding:28px; } }
-@media (min-width:1024px) { .detailGrid { grid-template-columns:minmax(0,1.55fr) minmax(340px,.8fr); align-items:start; }.detailSide { position:sticky; top:88px; }.matchPanel { height:auto; min-height:590px; overflow:visible; padding:18px 18px 24px; }.matchPanel .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }.matchPanel .card { min-height:290px; } }
-@media (min-width:1280px) { .grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
-@media (hover:hover) { .filter:hover,.outcome:hover,.range:hover,.preset:hover,.stepper:hover,.secondary:hover { border-color:var(--ds-color-accent-cyan); transform:translateY(-1px); }.primary:hover { filter:brightness(1.08); }.questionLink:hover { color:var(--ds-color-accent-cyan); } }
-@media (prefers-reduced-motion:reduce) { .card { animation:none; } .page *, .detail * { scroll-behavior:auto!important; } }
+/* A live market's tag breathes; nothing else on the card moves. */
+@keyframes marketPulse { 50% { opacity:.45; } }
+@media (min-width:768px) { .page,.detail { padding-inline:24px; }.chartDialog { width:min(92vw,900px); height:auto; max-height:88dvh; margin:auto; padding:28px; } }
+@media (min-width:1024px) { .detailGrid { grid-template-columns:minmax(0,1.55fr) minmax(340px,.8fr); align-items:start; }.detailSide { position:sticky; top:88px; }.matchPanel { height:auto; min-height:590px; overflow:visible; padding:18px 18px 24px; }.matchPanel .grid { gap:18px; } }
+@media (hover:hover) { .filter:hover,.range:hover,.preset:hover,.stepper:hover,.secondary:hover { border-color:var(--ds-color-accent-cyan); transform:translateY(-1px); }.primary:hover { filter:brightness(1.08); }.questionLink:hover { color:var(--ds-color-accent-cyan); } }
+@media (prefers-reduced-motion:reduce) { .card,.liveDot,.cardEnter,.skeleton { animation:none; } .page *, .detail * { scroll-behavior:auto!important; } }

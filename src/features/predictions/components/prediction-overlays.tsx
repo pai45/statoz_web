@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 import {
   ArrowRightIcon,
   BoltIcon,
   CheckIcon,
   CloseIcon,
-  LockIcon,
   PaidIcon,
   TrophyIcon,
 } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
 import type { SettlementQuestionResult } from "@/domain/predictions";
-import { usePrefersReducedMotion } from "@/shared/hooks";
+import { useFullScreenMoment, usePrefersReducedMotion } from "@/shared/hooks";
 
 import type { SettlementOutcome } from "../state/prediction-store";
 import styles from "./predictions.module.css";
@@ -26,7 +25,14 @@ import styles from "./predictions.module.css";
 
 /* ---- Sealing --------------------------------------------------------------- */
 
-const lockedHoldMs = 3200;
+/**
+ * The seal cinematic, on the app's 4.5s clock: the plate slams in with a cyan
+ * flash and one confirm ring, a radar arc sweeps its ring, the check draws
+ * itself, and the headline resolves a letter at a time while the XP charges.
+ *
+ * It is the tab's one focal moment, so it is the one thing here that glows.
+ */
+const lockedHoldMs = 4500;
 
 export function PredictionLockedOverlay({
   potentialXp,
@@ -40,38 +46,100 @@ export function PredictionLockedOverlay({
   onDone: () => void;
 }) {
   const reduced = usePrefersReducedMotion();
+  useFullScreenMoment();
   const [xp, setXp] = useState(reduced ? potentialXp : 0);
+  const headline = automatic ? "KICKOFF LOCK ACTIVATED" : "PREDICTION LOCKED";
+
+  // The countdown above re-renders this tab every second; the cinematic runs on
+  // its own clock, so its finish handler is held rather than depended on.
+  const done = useRef(onDone);
+  useEffect(() => {
+    done.current = onDone;
+  });
 
   useEffect(() => {
     if (reduced) {
-      const skip = window.setTimeout(onDone, 400);
+      const skip = window.setTimeout(() => done.current(), 400);
       return () => window.clearTimeout(skip);
     }
+    // The XP charges over the app's window: 24% to 54% of the run.
+    const chargeFrom = lockedHoldMs * 0.24;
+    const chargeMs = lockedHoldMs * 0.3;
     const began = performance.now();
     let frame = requestAnimationFrame(function tick() {
-      const progress = Math.min(1, (performance.now() - began) / 1400);
-      setXp(Math.round(potentialXp * progress));
-      if (progress < 1) frame = requestAnimationFrame(tick);
+      const elapsed = performance.now() - began;
+      const progress = Math.min(1, Math.max(0, (elapsed - chargeFrom) / chargeMs));
+      setXp(Math.round(potentialXp * (1 - (1 - progress) ** 2)));
+      if (elapsed < chargeFrom + chargeMs) frame = requestAnimationFrame(tick);
     });
-    const finish = window.setTimeout(onDone, lockedHoldMs);
+    const finish = window.setTimeout(() => done.current(), lockedHoldMs);
     return () => {
       cancelAnimationFrame(frame);
       window.clearTimeout(finish);
     };
-  }, [reduced, potentialXp, onDone]);
+  }, [reduced, potentialXp]);
+
+  const letters = [...headline];
 
   return (
-    <div className={styles.overlay} role="status">
-      <div>
-        <div className={styles.seal}>
-          <LockIcon size={64} aria-hidden="true" />
-        </div>
-        <h2 className={styles.overlayHeadline}>{automatic ? "LOCKED AT KICKOFF" : "PREDICTION LOCKED"}</h2>
-        <p className={styles.overlayBody}>
-          {count} futures sealed. {automatic ? "Kickoff closed the card for you." : "Answers can no longer be edited."}
-        </p>
-        <p className={`${styles.overlayXp} ${styles.tabular}`}>+{xp} XP IN PLAY</p>
+    <div className={`${styles.overlay} ${styles.lockOverlay}`} role="status" aria-label={headline}>
+      <SubmitSeal />
+
+      <div className={styles.lockCopy}>
+        <h2 className={styles.lockHeadline} aria-hidden>
+          {letters.map((char, index) => (
+            <span
+              key={`${char}-${index}`}
+              style={{ animationDelay: `${lockedHoldMs * 0.14 + (index / letters.length) * lockedHoldMs * 0.14}ms` }}
+            >
+              {char === " " ? " " : char}
+            </span>
+          ))}
+        </h2>
+        <p className={styles.lockSealed}>{count} ANSWERS SEALED</p>
+        <span className={styles.lockMeter} aria-hidden>
+          <i />
+        </span>
+        <p className={`${styles.lockXp} ${styles.tabular}`}>UP TO {xp} XP</p>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The seal itself: a chamfered plate ringed by corner brackets, a radar arc
+ * that closes into a glowing ring, and a checkmark that draws itself in.
+ */
+function SubmitSeal() {
+  return (
+    <div className={styles.sealSlot} aria-hidden>
+      <span className={styles.sealFlash} />
+      <span className={styles.sealPulse} />
+      <svg className={styles.sealArt} viewBox="0 0 240 240">
+        <defs>
+          <linearGradient id="seal-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--ds-color-accent-cyan)" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="var(--ds-color-accent-cyan)" stopOpacity="0.05" />
+          </linearGradient>
+        </defs>
+
+        {/* The radar track, and the arc that sweeps it. */}
+        <circle className={styles.sealTrack} cx="120" cy="120" r="72" />
+        <circle className={styles.sealSweep} cx="120" cy="120" r="72" />
+
+        {/* The plate: cut at the top-right and bottom-left, never square. */}
+        <path
+          className={styles.sealPlate}
+          d="M76 76 H151 L164 89 V164 H89 L76 151 Z"
+          fill="url(#seal-fill)"
+        />
+
+        {/* Corner brackets, just outside the plate. */}
+        <path className={styles.sealBracket} d="M64 78 V64 H78 M176 78 V64 H162 M176 162 V176 H162 M64 162 V176 H78" />
+
+        {/* The check, drawn on. */}
+        <path className={styles.sealCheck} d="M100 121 L114 136 L142 102" />
+      </svg>
     </div>
   );
 }
@@ -93,6 +161,7 @@ export function SettlementRevealOverlay({
   onDone: () => void;
 }) {
   const reduced = usePrefersReducedMotion();
+  useFullScreenMoment();
   const results = outcome.results;
   const summaryStage = results.length + 1;
   const [stage, setStage] = useState(reduced ? summaryStage : 0);
@@ -139,6 +208,12 @@ export function SettlementRevealOverlay({
           </dl>
 
           {isContest ? <ContestPrizeBeat rank={outcome.rank} field={outcome.fieldSize} prizeOz={outcome.prizeOz} /> : null}
+
+          {outcome.beatenShare != null ? (
+            <p className={`${styles.beatenLine} ${styles.tabular}`}>
+              YOU BEAT {Math.round(outcome.beatenShare * 100)}% OF PREDICTORS
+            </p>
+          ) : null}
 
           <button type="button" className={[styles.pagerButton, styles.pagerFocal].join(" ")} onClick={onDone}>
             CONTINUE

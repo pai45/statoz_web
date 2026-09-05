@@ -105,6 +105,8 @@ export type QuizQuestion = {
    * excluded from scoring, in either direction.
    */
   forcedVoid?: boolean;
+  /** Art the question is asked over. A URL, so it is content rather than a token. */
+  backgroundAsset?: string;
 };
 
 export type PredictionQuiz = {
