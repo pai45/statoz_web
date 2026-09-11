@@ -10,6 +10,7 @@ import { levelFromXp } from "@/domain/progression";
 import { sportForGame, type GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { usePrefersReducedMotion } from "../../shared/state/use-reduced-motion";
 import { raceColumnMaxPx, resultDelayMs } from "../constants";
 import { fieldSize, startPositionMin, startPositionSpan } from "../tuning";
@@ -80,6 +81,7 @@ export function GrandPrix({ game }: GrandPrixProps) {
   const economy = useEconomy();
   const decks = useDecks();
   const sport = sportForGame(game);
+  const goBack = useGameReturn();
 
   const ownedLiveryIds = useMemo(
     () => economy?.owned.liveryIds ?? ["gridLine"],
@@ -126,7 +128,7 @@ export function GrandPrix({ game }: GrandPrixProps) {
           ownedLiveryIds={ownedLiveryIds}
           driverReady={driver !== null && hydrated}
           driverName={driver?.name ?? null}
-          backHref={`/games/${sport}`}
+          onBack={goBack}
           loadoutHref={`/decks/${sport}?returnTo=/play/grand-prix-dash`}
           onSelectCircuit={saveCircuit}
           onSelectLaps={saveLaps}

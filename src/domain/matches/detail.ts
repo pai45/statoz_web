@@ -8,11 +8,16 @@ import type {
   MatchScorer,
   MatchTrace,
   StatLeader,
+  MatchPlayerDossier,
+  MatchShot,
+  RunRatePoint,
+  BasketballScoringEvent,
 } from "./report";
 import type {
   MatchPredictionLeaderboardEntry,
   PredictionQuiz,
 } from "@/domain/predictions";
+import type { F1RaceReport } from "./race";
 
 export type MatchDetailOutcome = {
   id: string;
@@ -48,22 +53,33 @@ export type MatchDetailStat = {
 
 export type MatchDetailTimelineEvent = {
   minute: string;
-  side: "home" | "away";
+  side?: "home" | "away";
   type: "goal" | "yellow" | "red" | "substitution" | "score";
   player: string;
   secondary?: string;
+  marker?: boolean;
+  label?: string;
+  scoreDisplay?: string;
+  description?: string;
 };
 
 export type MatchDetailCommentary = {
   minute: string;
   text: string;
+  sequence?: number;
+  kind?: string;
+  side?: "home" | "away";
+  teamName?: string;
+  players?: string[];
 };
 
 export type MatchDetailPlayer = {
   name: string;
+  shortName?: string;
   number: number;
   role: string;
   captain?: boolean;
+  formationPlace?: number;
 };
 
 export type MatchDetailLineup = {
@@ -97,6 +113,15 @@ export type MatchDetailScoreboard = {
   boxScore?: BoxScore;
   innings?: InningsLine[];
   feed?: FeedEvent[];
+  shots?: MatchShot[];
+  runRate?: Array<{
+    innings: 1 | 2;
+    teamId: string;
+    points: RunRatePoint[];
+  }>;
+  players?: MatchPlayerDossier[];
+  basketballShots?: BasketballScoringEvent[];
+  race?: F1RaceReport;
 };
 
 /** Static, feature-owned data that makes a fixture's match-detail tabs complete. */

@@ -8,9 +8,10 @@ import { tennisPlayerCards } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 import { levelFromXp } from "@/domain/progression";
 
-import { sportForGame, type GameEntry } from "@/mocks/games";
+import type { GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { playColumnMaxWidth, resultDelayMs } from "../constants";
 import { tennisAthleteById } from "../data/athletes";
 import type { MatchSnapshot } from "../engine/tennis-game";
@@ -89,7 +90,8 @@ function rollOpponent(playerId: string): PlayerCard {
   return rivals[Math.floor(Math.random() * rivals.length)];
 }
 
-export function TennisRally({ game }: TennisRallyProps) {
+export function TennisRally({ game: _game }: TennisRallyProps) {
+  void _game;
   const [view, setView] = useState<View>("lobby");
   const [session, setSession] = useState(0);
   const [config, setConfig] = useState<TennisMatchConfig | null>(null);
@@ -98,7 +100,7 @@ export function TennisRally({ game }: TennisRallyProps) {
   const decks = useDecks();
   const hydrated = useIsHydrated();
   const progress = useTennisProgress();
-  const gamesHref = `/games/${sportForGame(game)}`;
+  const goBack = useGameReturn();
   const tennisLoadout = activeLoadout(decks, "tennis");
 
   const athlete = useMemo(
@@ -163,7 +165,7 @@ export function TennisRally({ game }: TennisRallyProps) {
           winStreak={progress.currentWinStreak}
           canResume={canResume}
           ready={hydrated && athlete !== null}
-          backHref={gamesHref}
+          onBack={goBack}
           onPlay={canResume ? resumeMatch : play}
         />
         <GameLandingAd />

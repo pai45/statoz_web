@@ -14,12 +14,12 @@ export { fixture, matchLeagues, team } from "./definitions";
 export const matchDemoAnchor = "2026-08-25T00:00:00.000Z";
 
 /** Stable reading order for the sport feed and static match routes. */
-export const sportFixtures: SportMatch[] = [...footballFixtures, ...cricketFixtures, ...basketballFixtures, ...tennisFixtures, ...motorsportFixtures];
+export const sportFixtures: SportMatch[] = [...footballFixtures, ...cricketFixtures, ...basketballFixtures, ...motorsportFixtures, ...tennisFixtures];
 
 const matchIndex = new Map(sportFixtures.map((match) => [match.id, match]));
 const leagueIndex = new Map(matchLeagues.map((league) => [league.id, league]));
 export const allMockMatchIds = sportFixtures.map((match) => match.id);
-export const trendingMatches = [requiredMatch("epl_cfc_new"), requiredMatch("epl_mu_ars"), requiredMatch("wnba_demo_dal_phx"), requiredMatch("1496576"), requiredMatch("wimbledon_mens_final_26")];
+export const trendingMatches = [requiredMatch("401879318"), requiredMatch("1535465"), requiredMatch("basketball-revamp-20260614-ny-sa"), requiredMatch("600057442"), requiredMatch("wimbledon_mens_final_26")];
 export function fixturesForSport(sport: Sport): SportMatch[] { return sportFixtures.filter((match) => match.sport === sport); }
 export function fixturesForLeague(leagueId: string): SportMatch[] { return sportFixtures.filter((match) => match.leagueId === leagueId); }
 export function matchById(id: string): SportMatch | undefined { return matchIndex.get(id); }

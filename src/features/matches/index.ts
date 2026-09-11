@@ -9,6 +9,8 @@ export { SportHubTabs, type SportHubSelection } from "./components/sport-hub-tab
 export { SportIcon } from "./components/sport-icon";
 export { TeamBadge, type TeamBadgeProps } from "./components/team-badge";
 export { TrendingFeed } from "./components/trending-feed";
+export { F1TrackMapScreen } from "./components/f1-track-map-screen";
+export { MatchPlayerDossierScreen } from "./components/match-player-dossier-screen";
 export { matchTrendingCatalog } from "@/mocks/matches";
 export { matchDetailFor } from "@/mocks/matches";
 export type { TrendingTileConfig, TrendingTileKind } from "@/mocks/matches";

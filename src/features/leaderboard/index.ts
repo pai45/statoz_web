@@ -6,6 +6,7 @@
  * roster for them to agree on.
  */
 export { LeaderboardScreen } from "./components/leaderboard-screen";
+export { LeaderboardSearchScreen } from "./components/leaderboard-search-screen";
 
 export { isPro, rivalRoster, rivalSeedByName } from "@/mocks/leaderboard";
 

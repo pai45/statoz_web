@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { LeaderboardScreen } from "@/features/leaderboard";
 
@@ -9,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function LeaderboardPage() {
-  return <LeaderboardScreen />;
+  return <Suspense><LeaderboardScreen /></Suspense>;
 }

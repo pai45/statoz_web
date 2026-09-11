@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { FootballIcon, GameIcon, MedalIcon, withAlpha } from "@/design-system";
+import { FootballIcon, GameIcon, withAlpha } from "@/design-system";
 
 import type { LeaderboardType } from "../types";
 
@@ -25,20 +25,12 @@ type EmptyConfig = {
 
 function configFor(type: LeaderboardType): EmptyConfig {
   switch (type) {
-    case "matchDay":
+    case "matches":
       return {
         icon: <FootballIcon size={48} />,
-        title: "NO LIVE MATCH LEADERBOARD",
-        body: "Come back when the next match starts.",
-        cta: "VIEW TOURNAMENT RANKING",
-        href: "/leaderboard",
-      };
-    case "tournament":
-      return {
-        icon: <MedalIcon size={48} />,
-        title: "YOU'RE NOT RANKED YET",
-        body: "Play today's match to enter the leaderboard.",
-        cta: "START PLAYING",
+        title: "NO MATCH RANKING YET",
+        body: "Make a match prediction to claim your first rank.",
+        cta: "VIEW MATCHES",
         href: "/",
       };
     case "games":

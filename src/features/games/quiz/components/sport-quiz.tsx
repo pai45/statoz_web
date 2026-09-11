@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 import {
   accentVar,
@@ -17,6 +16,7 @@ import { formatInt } from "@/shared/utils";
 
 import type { GameLauncherProps } from "../../components/game-launcher";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { sportForGame } from "@/mocks/games";
 import { useGameCareer } from "../../state/game-career";
 import { entryCost } from "../constants";
@@ -78,6 +78,7 @@ export function SportQuiz({ game }: GameLauncherProps) {
   const progress = progressForSport(record, sport);
   const economy = useEconomy();
   const career = useGameCareer();
+  const goBack = useGameReturn();
 
   const [view, setView] = useState<View>({ name: "lobby" });
   const [authored, setAuthored] = useState<Record<string, number>>({});
@@ -189,6 +190,7 @@ export function SportQuiz({ game }: GameLauncherProps) {
         coins={economy.coins}
         showCoins={ladderMode !== null}
         onBack={ladderMode ? () => setView({ name: "lobby" }) : null}
+        onLeave={goBack}
       />
 
       {!hydrated ? (
@@ -238,6 +240,7 @@ function QuizHeader({
   coins,
   showCoins,
   onBack,
+  onLeave,
 }: {
   title: string;
   subtitle: string;
@@ -245,6 +248,7 @@ function QuizHeader({
   showCoins: boolean;
   /** Null on the lobby, whose back button leaves the quiz altogether. */
   onBack: (() => void) | null;
+  onLeave: () => void;
 }) {
   return (
     <header
@@ -262,14 +266,15 @@ function QuizHeader({
           <ArrowLeftIcon size={18} />
         </button>
       ) : (
-        <Link
-          href="/"
+        <button
+          type="button"
+          onClick={onLeave}
           aria-label="Leave the quiz"
           className="grid size-10 shrink-0 place-items-center"
           style={{ color: cyan }}
         >
           <ArrowLeftIcon size={18} />
-        </Link>
+        </button>
       )}
 
       <div className="min-w-0 flex-1">

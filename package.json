@@ -12,7 +12,9 @@
     "deploy:preview": "node scripts/deploy.mjs preview",
     "deploy:prod": "node scripts/deploy.mjs production",
     "deploy:setup": "node scripts/deploy.mjs setup",
-    "deploy:check": "node scripts/deploy.mjs check"
+    "deploy:check": "node scripts/deploy.mjs check",
+    "sync:card-game": "node scripts/sync-card-game-snapshots.mjs",
+    "check:card-game": "node scripts/sync-card-game-snapshots.mjs --check"
   },
   "dependencies": {
     "lottie-react": "^3.1.1",

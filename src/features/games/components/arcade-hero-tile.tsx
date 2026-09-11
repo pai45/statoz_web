@@ -8,9 +8,9 @@ import type { GameId } from "../types";
 import { GameScene } from "./game-scenes";
 
 /**
- * `portrait` stacks type over a scene band — the shape the bento's narrow
- * columns need. `landscape` runs the scene full-bleed behind the type, which is
- * what a full-width deck banner wants.
+ * Both layouts anchor the scene to the card's right side. `portrait` uses
+ * compact typography for narrow bento columns; `landscape` gives the title
+ * more room on a full-width deck banner.
  */
 export type HeroLayout = "portrait" | "landscape";
 
@@ -67,9 +67,10 @@ export function ArcadeHeroTile({
         ].join(" ")}
       >
         <div
-          className={
-            landscape ? "absolute inset-0" : "absolute inset-x-0 bottom-0 h-[56%]"
-          }
+          className={[
+            "pointer-events-none absolute inset-y-px right-px",
+            landscape ? "w-[48%]" : "w-[68%]",
+          ].join(" ")}
         >
           <GameScene game={game} />
         </div>
@@ -128,15 +129,14 @@ export function ArcadeHeroTile({
             ))}
           </p>
 
-          <p
-            className={[
-              "line-clamp-2 font-display font-black leading-tight",
-              landscape ? "mt-1.5 max-w-[60%] text-xs" : "mt-1 text-2xs",
-            ].join(" ")}
-            style={{ color: accent }}
-          >
-            {entry.subtitle}
-          </p>
+          {landscape ? (
+            <p
+              className="mt-1.5 line-clamp-2 max-w-[60%] font-display text-xs font-black leading-tight"
+              style={{ color: accent }}
+            >
+              {entry.subtitle}
+            </p>
+          ) : null}
         </div>
 
         <p

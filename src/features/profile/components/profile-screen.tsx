@@ -6,6 +6,10 @@ import { accentVar, GameIcon, MatchIcon, PickIcon } from "@/design-system";
 import { AdSlot } from "@/features/ads";
 import { AuthBoundary } from "@/features/auth";
 import { equipCosmetic } from "@/features/economy";
+import {
+  pickHistoryRecords,
+  predictionHistoryRecords,
+} from "@/mocks/profile";
 
 import {
   loadOrCreatePlayerTag,
@@ -48,6 +52,37 @@ const cyan = accentVar("cyan");
 const lime = accentVar("lime");
 const orange = accentVar("orange");
 
+const settledPredictionRecords = predictionHistoryRecords.filter(
+  (record) => record.status === "won" || record.status === "lost",
+);
+const settledPredictionAnswers = settledPredictionRecords.reduce(
+  (total, record) => total + record.answered,
+  0,
+);
+const correctPredictionAnswers = settledPredictionRecords.reduce(
+  (total, record) => total + record.correct,
+  0,
+);
+const predictionAccuracy = settledPredictionAnswers === 0
+  ? 0
+  : Math.round((correctPredictionAnswers / settledPredictionAnswers) * 100);
+
+const settledPickRecords = pickHistoryRecords.filter(
+  (record) => record.status === "won" || record.status === "lost",
+);
+const wonPickRecords = settledPickRecords.filter(
+  (record) => record.status === "won",
+).length;
+const pickWinRate = settledPickRecords.length === 0
+  ? 0
+  : Math.round((wonPickRecords / settledPickRecords.length) * 100);
+const activePickRecords = pickHistoryRecords.filter(
+  (record) =>
+    record.status === "live" ||
+    record.status === "pending" ||
+    record.status === "unresolved",
+).length;
+
 type Editing = "avatar" | "banner" | null;
 
 export function ProfileScreen() {
@@ -80,21 +115,17 @@ function ProfileDossier() {
 
   const { career, achievements } = progress;
 
-  /**
-   * Predictions and picks have no store behind them yet, so both bands read
-   * zero. That is the same thing they show a player who has not made a call or
-   * placed a position — the band belongs on the dossier either way.
-   */
+  /** The dossier and its history routes project the same demo archive. */
   const predictStats: ProfileStat[] = [
-    { label: "PLAYED", value: achievements.predictionsMade },
-    { label: "ACCURACY", value: 0, suffix: "%" },
-    { label: "CORRECT", value: achievements.correctPredictions },
+    { label: "PLAYED", value: predictionHistoryRecords.length },
+    { label: "ACCURACY", value: predictionAccuracy, suffix: "%" },
+    { label: "CORRECT", value: correctPredictionAnswers },
   ];
 
   const pickStats: ProfileStat[] = [
-    { label: "PICKS", value: achievements.picksPlaced },
-    { label: "WIN RATE", value: 0, suffix: "%" },
-    { label: "ACTIVE", value: 0 },
+    { label: "PICKS", value: pickHistoryRecords.length },
+    { label: "WIN RATE", value: pickWinRate, suffix: "%" },
+    { label: "ACTIVE", value: activePickRecords },
   ];
 
   // The app counts draws here. Nothing the web plays can end level, so the

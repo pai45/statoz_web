@@ -1,23 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import {
   FilterChips,
   GridOnIcon,
   InsightsIcon,
+  InteractiveLineChart,
   MicIcon,
   ShowChartIcon,
-  TimerIcon,
   accentVar,
 } from "@/design-system";
 import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
 
-import { LineupsView } from "./match-report-parts";
 import {
   EmptyPanel,
   MatchIntelPanel,
-  MatchPulseHeader,
   SectionHeading,
   StatComparisonRow,
   StatsRow,
@@ -31,7 +30,7 @@ import styles from "./match-stats.module.css";
  * against the actual one, the card, the ball-by-ball feed, and the squads.
  */
 
-const tabs = ["OVERVIEW", "RACE", "CHASE", "SCORECARD", "MATCH FEED", "SQUADS"];
+const tabs = ["OVERVIEW", "RACE", "SCORECARD", "MATCH FEED"];
 
 export function CricketStatsView({
   match,
@@ -53,9 +52,7 @@ export function CricketStatsView({
               <div className="spanFull">
                 <MatchTraceChart match={match} trace={scoreboard.trace} showInningsModes />
               </div>
-              <div className="spanFull">
-                <InningsList match={match} scoreboard={scoreboard} heading="INNINGS" />
-              </div>
+              {scoreboard.runRate?.length ? <CricketRunRateChart match={match} scoreboard={scoreboard} /> : <EmptyPanel icon={ShowChartIcon} title="Run-rate data unavailable" message="Legal-delivery progression was not published for this innings." />}
             </div>
           ) : (
             <EmptyPanel
@@ -65,38 +62,8 @@ export function CricketStatsView({
             />
           )
         ) : null}
-        {tab === "CHASE" ? (
-          scoreboard.chase ? (
-            <div className={styles.stack}>
-              <div className="spanFull">
-                <MatchTraceChart
-                  match={match}
-                  trace={scoreboard.chase}
-                  homeLabel="SCORED AT"
-                  awayLabel="REQUIRED"
-                />
-              </div>
-              <section className={`${styles.tight} spanFull`}>
-                <SectionHeading label="WHERE IT WAS DECIDED" />
-                <StatsRow accent={accentVar("gold")}>
-                  <p style={{ margin: 0, color: "var(--ds-color-text-muted)", fontSize: "12px" }}>
-                    The two lines are the chase and the rate it needed. Where the required rate
-                    climbs above what they were scoring at is where the game turned.
-                  </p>
-                </StatsRow>
-              </section>
-            </div>
-          ) : (
-            <EmptyPanel
-              icon={TimerIcon}
-              title="Chase feed unavailable"
-              message="Ball-level run-rate samples have not been published."
-            />
-          )
-        ) : null}
         {tab === "SCORECARD" ? <Scorecard match={match} scoreboard={scoreboard} /> : null}
-        {tab === "MATCH FEED" ? <Feed scoreboard={scoreboard} /> : null}
-        {tab === "SQUADS" ? <LineupsView match={match} scoreboard={scoreboard} /> : null}
+        {tab === "MATCH FEED" ? <Feed match={match} scoreboard={scoreboard} /> : null}
       </div>
     </div>
   );
@@ -106,33 +73,10 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
   const [held, setHeld] = useState<string | null>(null);
   return (
     <div className={styles.stack}>
-      <div className="spanFull">
-        <MatchPulseHeader
-          match={match}
-          title={`${match.home.name} vs ${match.away.name}`}
-          pulse={scoreboard.pulse}
-        />
-      </div>
-
       <section className={styles.tight}>
         <SectionHeading label="MATCH INTEL" />
         <MatchIntelPanel match={match} intel={scoreboard.intel} />
       </section>
-
-      {match.resultLine ? (
-        <section className={styles.tight}>
-          <SectionHeading label="FINAL RESULT" />
-          <StatsRow accent="var(--ds-color-success)">
-            <b style={{ color: "var(--ds-color-success)", fontFamily: "var(--ds-font-display)", fontSize: "13px" }}>
-              {match.resultLine}
-            </b>
-          </StatsRow>
-        </section>
-      ) : null}
-
-      <div className="spanFull">
-        <InningsList match={match} scoreboard={scoreboard} heading="INNINGS SUMMARY" />
-      </div>
 
       <section className={styles.tight}>
         <SectionHeading label="TEAM COMPARISON" />
@@ -149,54 +93,6 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
         ))}
       </section>
     </div>
-  );
-}
-
-function InningsList({
-  match,
-  scoreboard,
-  heading,
-}: {
-  match: SportMatch;
-  scoreboard: MatchDetailScoreboard;
-  heading: string;
-}) {
-  const innings = scoreboard.innings ?? [];
-  return (
-    <section className={styles.tight}>
-      <SectionHeading label={heading} />
-      {innings.length === 0 ? (
-        <EmptyPanel
-          icon={GridOnIcon}
-          title="Scorecard unavailable"
-          message="Batting and bowling figures have not been published."
-        />
-      ) : (
-        innings.map((line) => (
-          <StatsRow key={line.team} accent={line.side === "home" ? match.home.color : match.away.color}>
-            <span className={styles.eventRow}>
-              <i
-                className={styles.eventSide}
-                style={{ background: line.side === "home" ? match.home.color : match.away.color }}
-                aria-hidden="true"
-              />
-              <span className={styles.eventCopy}>
-                <strong>{line.team}</strong>
-                <small>
-                  {line.topBat} · {line.topBowl}
-                </small>
-              </span>
-              <span className="grid justify-items-end">
-                <b className="ds-tabular font-display" style={{ fontSize: "15px" }}>{line.score}</b>
-                <small style={{ color: "var(--ds-color-text-muted)", fontSize: "9px" }}>
-                  {line.overs} · RR {line.runRate}
-                </small>
-              </span>
-            </span>
-          </StatsRow>
-        ))
-      )}
-    </section>
   );
 }
 
@@ -275,7 +171,9 @@ function Scorecard({ match, scoreboard }: { match: SportMatch; scoreboard: Match
             {card.batting.map((line) => (
               <tr key={line.name}>
                 <td>
-                  <strong style={line.dismissal ? undefined : { color: accent }}>{line.name}</strong>
+                  {scoreboard.players?.find((player) => player.name === line.name || player.shortName === line.name) ? (
+                    <Link href={`/matches/${match.id}/players/${scoreboard.players.find((player) => player.name === line.name || player.shortName === line.name)!.id}`}><strong style={line.dismissal ? undefined : { color: accent }}>{line.name}</strong></Link>
+                  ) : <strong style={line.dismissal ? undefined : { color: accent }}>{line.name}</strong>}
                   <small>{line.dismissal ?? "not out"}</small>
                 </td>
                 <td><b>{line.runs}</b></td>
@@ -305,7 +203,7 @@ function Scorecard({ match, scoreboard }: { match: SportMatch; scoreboard: Match
           <tbody>
             {card.bowling.map((line) => (
               <tr key={line.name}>
-                <td><strong>{line.name}</strong></td>
+                <td>{scoreboard.players?.find((player) => player.name === line.name || player.shortName === line.name) ? <Link href={`/matches/${match.id}/players/${scoreboard.players.find((player) => player.name === line.name || player.shortName === line.name)!.id}`}><strong>{line.name}</strong></Link> : <strong>{line.name}</strong>}</td>
                 <td>{line.overs}</td>
                 <td>{line.maidens}</td>
                 <td>{line.runs}</td>
@@ -345,18 +243,26 @@ function economy(runs: number, overs: string): string {
   return bowled === 0 ? "0.00" : (runs / bowled).toFixed(2);
 }
 
-function Feed({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
-  const feed = scoreboard.feed ?? [];
-  if (feed.length === 0) {
-    return (
+function Feed({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
+  const [teamId, setTeamId] = useState(match.home.id);
+  const allFeed = scoreboard.feed ?? [];
+  const feed = allFeed.some((entry) => entry.teamId) ? allFeed.filter((entry) => entry.teamId === teamId) : allFeed;
+  return (
+    <div className={styles.stack}>
+      {allFeed.some((entry) => entry.teamId) ? <FilterChips options={[match.home.shortName, match.away.shortName]} selected={teamId === match.home.id ? match.home.shortName : match.away.shortName} onSelect={(value) => setTeamId(value === match.home.shortName ? match.home.id : match.away.id)} label="Batting innings" /> : null}
+      {feed.length === 0 ? (
       <EmptyPanel
         icon={MicIcon}
         spark={InsightsIcon}
-        title="Ball feed unavailable"
-        message="Ball-by-ball arrives once the provider publishes it."
+        title={`${teamId === match.home.id ? match.home.shortName : match.away.shortName} commentary unavailable`}
+        message="This committed package does not publish a commentary timeline for that innings."
       />
-    );
-  }
+      ) : <FeedRows feed={feed} />}
+    </div>
+  );
+}
+
+function FeedRows({ feed }: { feed: NonNullable<MatchDetailScoreboard["feed"]> }) {
   const accentFor = (kind: string) =>
     kind === "wicket"
       ? "var(--ds-color-danger)"
@@ -378,4 +284,34 @@ function Feed({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
       ))}
     </div>
   );
+}
+
+function CricketRunRateChart({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
+  const runRate = scoreboard.runRate ?? [];
+  const [innings, setInnings] = useState<1 | 2>(1);
+  const current = runRate.find((entry) => entry.innings === innings) ?? runRate[0];
+  const [selected, setSelected] = useState<number | null>(null);
+  if (!current) return null;
+  const team = current.teamId === match.home.id ? match.home : match.away;
+  const hasRequired = current.points.some((point) => point.required != null);
+  return <section className={`${styles.tight} spanFull`}>
+    <SectionHeading label="INNINGS RUN RATE" />
+    <FilterChips options={["1ST INNINGS", "2ND INNINGS"]} selected={innings === 1 ? "1ST INNINGS" : "2ND INNINGS"} onSelect={(value) => { setInnings(value === "2ND INNINGS" ? 2 : 1); setSelected(null); }} label="Run rate innings" />
+    <InteractiveLineChart
+      series={[
+        { id: "actual", label: `${team.shortName} ACTUAL`, values: current.points.map((point) => point.actual), color: team.color },
+        ...(hasRequired ? [{ id: "required", label: "REQUIRED", values: current.points.map((point) => point.required ?? 0), color: "var(--ds-color-accent-pink)" }] : []),
+      ]}
+      markers={current.points.flatMap((point, index) => [
+        ...(point.boundary ? [{ index, value: point.actual, label: `${point.boundary} at ${point.over.toFixed(1)} ov`, color: "var(--ds-color-accent-gold)" }] : []),
+        ...(point.wicket ? [{ index, value: point.actual, label: `Wicket at ${point.over.toFixed(1)} ov`, color: team.color }] : []),
+      ])}
+      selectedIndex={selected}
+      onSelectedIndexChange={setSelected}
+      label={`${innings === 1 ? "First" : "Second"} innings run rate`}
+      valueText={(value, index) => `${current.points[index]?.over.toFixed(1) ?? "0.0"} overs, ${team.shortName} ${value.toFixed(2)}${current.points[index]?.required == null ? "" : `, required ${current.points[index].required?.toFixed(2)}`}`}
+      axisFormatter={(value) => `${value.toFixed(2)} RR`}
+      height={260}
+    />
+  </section>;
 }

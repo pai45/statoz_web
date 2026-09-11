@@ -7,6 +7,7 @@
 export { FriendsArena } from "./components/friends-arena";
 export { ReferralScreen } from "./components/referral-screen";
 export { ReferralInviteCard } from "./components/referral-invite-card";
+export { FriendRequestSent } from "./components/friend-request-sent";
 
 export {
   addFriend,

@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Glyph } from "@/design-system";
 import { levelProgress } from "@/domain/progression";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import type { PitchDuelHistoryEntry, PitchDuelProgress } from "../types";
 import styles from "./pitch-duel.module.css";
@@ -87,6 +88,7 @@ export function PitchDuelLobby({
             </button>
           </div>
           <p className={styles.resetNotice} role="status">{tutorialReset ? "Walkthrough armed for the next match." : ""}</p>
+          <GameLeaderboardCta sport="football" gameId="pitch-duel" />
         </div>
 
         <DailyDrop sport="football" />

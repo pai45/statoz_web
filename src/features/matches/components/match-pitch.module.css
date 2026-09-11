@@ -4,7 +4,7 @@
  * marks — so it scales with the panel instead of being an image.
  */
 
-.view { display: flex; min-height: 0; height: 100%; flex-direction: column; }
+.view { display: flex; min-height: 0; height: 100%; flex-direction: column; container-type: inline-size; }
 
 .scroll {
   display: grid;
@@ -66,10 +66,7 @@
   inset: 0;
   background:
     /* Halfway line. */
-    linear-gradient(var(--line), var(--line)) 0 50% / 100% 1.2px no-repeat,
-    /* The survey grid. */
-    repeating-linear-gradient(to right, var(--line) 0 1.2px, transparent 1.2px 32px),
-    repeating-linear-gradient(to bottom, var(--line) 0 1.2px, transparent 1.2px 32px);
+    linear-gradient(var(--line), var(--line)) 0 50% / 100% 1.2px no-repeat;
   box-shadow: inset 0 0 0 1.2px var(--line);
 }
 
@@ -139,7 +136,23 @@
 }
 .row { display: flex; justify-content: space-evenly; gap: 4px; }
 
-.player { display: grid; width: 72px; justify-items: center; }
+.player {
+  display: grid;
+  width: 72px;
+  min-height: 60px;
+  justify-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: default;
+}
+button.player { cursor: pointer; transition: scale 110ms ease; }
+button.player:hover .playerNumber { box-shadow: inset 0 0 0 1.5px var(--team-color), 0 0 9px color-mix(in srgb, var(--team-color) 30%, transparent); }
+button.player:active { scale: .92; }
+button.player:focus-visible { outline-color: var(--team-color); outline-offset: 2px; }
+
+.playerBadge { position: relative; display: block; width: 38px; height: 38px; }
 
 .playerNumber {
   display: grid;
@@ -171,6 +184,29 @@
   white-space: nowrap;
 }
 
+.playerMarks {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  display: flex;
+  gap: 1px;
+}
+.playerMarks i {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--mark-color) 75%, transparent);
+  border-radius: 50%;
+  background: var(--ds-color-background-primary);
+  color: var(--mark-color);
+}
+.playerMarks i[data-tone="goal"] { --mark-color: var(--ds-color-accent-gold); box-shadow: 0 0 6px color-mix(in srgb, var(--ds-color-accent-gold) 50%, transparent); }
+.playerMarks i[data-tone="assist"] { --mark-color: var(--ds-color-accent-cyan); }
+.playerMarks i[data-tone="red"] { --mark-color: var(--ds-color-danger); }
+.playerMarks i[data-tone="yellow"] { --mark-color: var(--ds-color-accent-gold); }
+.playerMarks i[data-tone="sub"] { --mark-color: var(--ds-color-text-muted); }
+
 /* ---- Bench ----------------------------------------------------------------- */
 
 .benchHead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; font-family: var(--ds-font-display); font-weight: 900; }
@@ -189,15 +225,22 @@
   padding: 8px 9px;
   border: 1px solid color-mix(in srgb, var(--ds-color-border-strong) 20%, transparent);
   background: color-mix(in srgb, var(--ds-color-background-secondary) 48%, transparent);
+  color: inherit;
+  text-align: left;
 }
+button.benchTile { cursor: pointer; transition: border-color 130ms ease, background 130ms ease, scale 110ms ease; }
+button.benchTile:hover { border-color: color-mix(in srgb, var(--team-color) 50%, transparent); background: color-mix(in srgb, var(--team-color) 7%, var(--ds-color-background-secondary)); }
+button.benchTile:active { scale: .97; }
+button.benchTile:focus-visible { outline-color: var(--team-color); }
 .benchTile > b { width: 28px; flex: none; color: var(--team-color); font-family: var(--ds-font-display); font-size: 10px; font-weight: 900; font-variant-numeric: tabular-nums; }
 .benchTile > span { display: grid; min-width: 0; }
+.benchTile > .playerMarks { position: static; display: flex; min-width: auto; margin-left: auto; }
 .benchTile strong { overflow: hidden; color: var(--ds-color-text-default); font-size: 10px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
 .benchTile small { overflow: hidden; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 7px; font-weight: 900; letter-spacing: .06em; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---- Desktop --------------------------------------------------------------- */
 
-@media (width >= 60rem) {
+@container (width >= 52rem) {
   /* The board and the squad read side by side rather than stacked. */
   .scroll {
     grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);

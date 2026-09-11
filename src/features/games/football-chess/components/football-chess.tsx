@@ -14,9 +14,10 @@ import type { PlayerCard } from "@/domain/cards";
 
 import { randomOpponentName } from "../../shared/data/opponent-names";
 import { generateShootoutOpponent } from "../../shared/engine/opponent";
-import { sportForGame, type GameEntry } from "@/mocks/games";
+import type { GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { isDraw, isFinished, playerWon } from "../engine/match";
 import {
   readFootballChessStats,
@@ -83,14 +84,15 @@ function squadFromLoadout(loadout: {
   return [attackers[0], attackers[1], defenders[0], defenders[1], keeper];
 }
 
-export function FootballChess({ game }: FootballChessProps) {
+export function FootballChess({ game: _game }: FootballChessProps) {
+  void _game;
   const [view, setView] = useState<"lobby" | "matchmaking" | "playing">("lobby");
   const [session, setSession] = useState(0);
   const [setup, setSetup] = useState<MatchSetup | null>(null);
   const decks = useDecks();
   const hydrated = useIsHydrated();
   const stats = useFootballChessStats();
-  const gamesHref = `/games/${sportForGame(game)}`;
+  const goBack = useGameReturn();
   const footballLoadout = activeLoadout(decks, "football");
   const player = useMatchmakingPlayer(`LV ${playerLevel}`);
 
@@ -118,7 +120,7 @@ export function FootballChess({ game }: FootballChessProps) {
           stats={stats}
           formation={stats.formation}
           squadReady={squad !== null && hydrated}
-          backHref={gamesHref}
+          onBack={goBack}
           onFormationChange={(formation) => saveFormation(formation)}
           onPlay={play}
         />
@@ -152,7 +154,6 @@ export function FootballChess({ game }: FootballChessProps) {
       squad={squad}
       formation={stats.formation}
       setup={setup}
-      backHref={gamesHref}
       onPlayAgain={play}
       onExit={() => setView("lobby")}
     />
@@ -194,7 +195,6 @@ type SessionProps = {
   formation: ChessFormation;
   /** The rival the queue landed on, drawn before matchmaking was shown. */
   setup: MatchSetup;
-  backHref: string;
   onPlayAgain: () => void;
   onExit: () => void;
 };

@@ -148,6 +148,7 @@
   flex-direction: column;
   background: transparent;
 }
+.teamQualifier { max-width: 100%; overflow: hidden; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 9px; font-weight: 800; letter-spacing: .04em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 
 .mainTabs { min-height: 50px; background: transparent; }
 .mainTabs :global(button) { background: transparent !important; }

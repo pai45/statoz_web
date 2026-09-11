@@ -61,7 +61,7 @@ export function RankUserBar({
           name={user.name}
           size={54}
           highlight
-          team={user.team}
+          team={user.team ?? undefined}
           src={user.team ? undefined : avatarSrc}
           frameColor={user.team ? undefined : frameColor}
         />

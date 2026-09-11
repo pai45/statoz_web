@@ -2,7 +2,7 @@ import type {
   GameMode,
   LeaderboardType,
   ScoreMeta,
-  TournamentBoard,
+  MatchesBoard,
   TournamentScope,
 } from "./types";
 
@@ -14,13 +14,9 @@ import type {
  * or hook behind it — is what makes that checkable.
  */
 
-export const leaderboardTypeOrder: LeaderboardType[] = [
-  "matchDay",
-  "tournament",
-  "games",
-];
+export const leaderboardTypeOrder: LeaderboardType[] = ["matches", "games"];
 
-export const tournamentBoardOrder: TournamentBoard[] = ["teams", "players"];
+export const matchesBoardOrder: MatchesBoard[] = ["players", "teams"];
 
 export const tournamentScopeOrder: TournamentScope[] = [
   "weekly",
@@ -28,12 +24,17 @@ export const tournamentScopeOrder: TournamentScope[] = [
   "allTime",
 ];
 
-export const gameModeOrder: GameMode[] = [
-  "quiz",
-  "cardDuel",
-  "streaks",
-  "accuracy",
-];
+export function jsSafeHash(value: string): number {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) % 0x7fffffff;
+  }
+  return hash;
+}
+
+export function leagueAdjustedScore(base: number, leagueId: string): number {
+  return base + (jsSafeHash(leagueId) % 700) - 320;
+}
 
 /** What the score column is measured in. */
 export function scoreMetaFor(
@@ -50,15 +51,14 @@ export function scoreFor(
   base: number,
   scope: TournamentScope,
   mode: GameMode,
+  leagueId: string,
 ): number {
   switch (type) {
-    case "matchDay":
-      return base;
-    case "tournament":
+    case "matches":
       // A season is six weeks of play, and all-time is twenty-seven.
-      return scope === "weekly" ? base : scope === "season" ? base * 6 : base * 27;
+      return leagueAdjustedScore(scope === "weekly" ? base : scope === "season" ? base * 6 : base * 27, leagueId);
     case "games":
       // Wins, not XP — a rough win count with a nudge per mode.
-      return Math.round(base / 55) + gameModeOrder.indexOf(mode);
+      return Math.max(0, Math.round(base / 55) + (jsSafeHash(mode) % 9) - 4);
   }
 }

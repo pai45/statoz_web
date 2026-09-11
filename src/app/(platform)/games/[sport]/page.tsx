@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { sportModules, sportOrder, type Sport } from "@/domain/sports";
 import { AdSlot } from "@/features/ads";
-import { SportGameDeck } from "@/features/games";
+import { SportGameDeck, SportGamesHub } from "@/features/games";
 
 /** Every sport is known up front, so all five decks prerender. */
 export function generateStaticParams() {
@@ -32,16 +32,9 @@ export default async function SportGamesPage({ params }: PageProps<"/games/[spor
   if (!sport) notFound();
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-5">
-      <div className="mx-auto w-full max-w-6xl">
-        <h1 className="mb-5 font-display text-xl font-black leading-compact tracking-wide">
-          {sportModules[sport].label.toUpperCase()} GAMES
-        </h1>
-        <div className="mb-5">
-          <AdSlot placement="games-catalog" />
-        </div>
-        <SportGameDeck sport={sport} />
-      </div>
-    </div>
+    <SportGamesHub sport={sport}>
+      <AdSlot placement="games-catalog" />
+      <SportGameDeck sport={sport} />
+    </SportGamesHub>
   );
 }

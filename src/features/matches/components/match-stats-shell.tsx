@@ -15,7 +15,8 @@ import styles from "./match-stats.module.css";
 /** Whose colour a figure takes. */
 export function sideColor(match: SportMatch, side: "home" | "away" | "gold"): string {
   if (side === "gold") return accentVar("gold");
-  return side === "home" ? match.home.color : match.away.color;
+  const team = side === "home" ? match.home : match.away;
+  return team.secondaryTextColor ?? team.color;
 }
 
 /**
@@ -192,8 +193,8 @@ export function StatComparisonRow({
 export function TeamLegendRow({ match }: { match: SportMatch }) {
   return (
     <div className={styles.legendRow}>
-      <TeamLegendMark name={match.home.name} short={match.home.shortName} color={match.home.color} />
-      <TeamLegendMark name={match.away.name} short={match.away.shortName} color={match.away.color} alignEnd />
+      <TeamLegendMark name={match.home.name} short={match.home.shortName} color={match.home.secondaryTextColor ?? match.home.color} />
+      <TeamLegendMark name={match.away.name} short={match.away.shortName} color={match.away.secondaryTextColor ?? match.away.color} alignEnd />
     </div>
   );
 }

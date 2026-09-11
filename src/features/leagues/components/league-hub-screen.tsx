@@ -41,7 +41,8 @@ import {
 
 import styles from "./league-hub.module.css";
 
-const validTabs: LeagueHubTab[] = ["table", "leaders", "games", "picks"];
+const teamTabs: LeagueHubTab[] = ["table", "leaders", "stats", "games", "picks"];
+const f1Tabs: LeagueHubTab[] = ["table", "rounds", "stats", "games", "picks"];
 
 export function LeagueHubScreen({
   snapshot,
@@ -55,15 +56,21 @@ export function LeagueHubScreen({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const validTabs = snapshot.kind === "f1" ? f1Tabs : teamTabs;
   const requested = searchParams.get("tab") as LeagueHubTab | null;
   const tab: LeagueHubTab = requested && validTabs.includes(requested) ? requested : "table";
   const activeIndex = validTabs.indexOf(tab);
-  const tabs: UnderlineTab[] = [
-    { id: "table", label: "TABLE", icon: <FormatListNumberedIcon size={21} /> },
-    { id: "leaders", label: "LEADERS", icon: <MedalIcon size={21} /> },
-    { id: "games", label: "GAMES", icon: <LeagueSportIcon sport={snapshot.sport} size={21} /> },
-    { id: "picks", label: "PICKS", icon: <InsightsIcon size={21} /> },
-  ];
+  const tabs: UnderlineTab[] = validTabs.map((id) => ({
+    id,
+    label: id.toUpperCase(),
+    icon: id === "table" || id === "rounds"
+      ? <FormatListNumberedIcon size={21} />
+      : id === "leaders"
+        ? <MedalIcon size={21} />
+        : id === "games"
+          ? <LeagueSportIcon sport={snapshot.sport} size={21} />
+          : <InsightsIcon size={21} />,
+  }));
 
   function selectTab(index: number) {
     const next = validTabs[index];
@@ -88,6 +95,8 @@ export function LeagueHubScreen({
       <main className={styles.content} key={tab} role="tabpanel" aria-label={tabs[activeIndex].label}>
         {tab === "table" ? <TableTab snapshot={snapshot} /> : null}
         {tab === "leaders" ? <LeadersTab snapshot={snapshot} /> : null}
+        {tab === "rounds" && snapshot.kind === "f1" ? <RoundsTab snapshot={snapshot} /> : null}
+        {tab === "stats" ? <StatsTab snapshot={snapshot} /> : null}
         {tab === "games" ? <GamesTab fixtures={fixtures} /> : null}
         {tab === "picks" ? <PicksTab markets={markets} accent={snapshot.accent} /> : null}
       </main>
@@ -113,13 +122,12 @@ export function DetailTopBar({ title, fallback }: { title: string; fallback: str
 }
 
 function LeagueHeader({ snapshot }: { snapshot: LeagueHubSnapshot }) {
-  const count = snapshot.groups.reduce((sum, group) => sum + group.rows.length, 0);
   return (
     <section className={styles.leagueHeader}>
       <span className={styles.leagueMark}>{snapshot.shortCode}</span>
       <span className={styles.leagueIdentity}>
         <h1>{snapshot.name}</h1>
-        <small>{snapshot.seasonLabel} {" // "} {count} {snapshot.sport === "motorsport" || snapshot.sport === "tennis" ? "COMPETITORS" : "TEAMS"}</small>
+        <small>{snapshot.seasonLabel}</small>
       </span>
     </section>
   );
@@ -151,7 +159,7 @@ function StandingsTable({ snapshot, group }: { snapshot: LeagueHubSnapshot; grou
               const nextZone = group.rows[index + 1]?.zone?.label;
               const showZone = row.zone && row.zone.label !== nextZone;
               return (
-                <LeagueTableRows key={row.competitor.id} row={row} snapshot={snapshot} showZone={Boolean(showZone)} columnCount={columnCount} />
+                <LeagueTableRows key={row.competitor.id} row={row} snapshot={snapshot} groupId={group.id} showZone={Boolean(showZone)} columnCount={columnCount} />
               );
             })}
           </tbody>
@@ -161,7 +169,13 @@ function StandingsTable({ snapshot, group }: { snapshot: LeagueHubSnapshot; grou
   );
 }
 
-function LeagueTableRows({ row, snapshot, showZone, columnCount }: { row: LeagueStandingRow; snapshot: LeagueHubSnapshot; showZone: boolean; columnCount: number }) {
+function LeagueTableRows({ row, snapshot, groupId, showZone, columnCount }: { row: LeagueStandingRow; snapshot: LeagueHubSnapshot; groupId: string; showZone: boolean; columnCount: number }) {
+  const identity = <><TeamBadge team={row.competitor} size={26} /><span>{row.tableName ?? row.competitor.name}</span></>;
+  const href = snapshot.kind === "f1" && groupId === "wdc"
+    ? `/leagues/${snapshot.id}/players/${row.competitor.id}`
+    : snapshot.kind === "team"
+      ? `/leagues/${snapshot.id}/teams/${row.competitor.id}`
+      : null;
   return (
     <>
       <tr className={styles.dataRow}>
@@ -169,10 +183,7 @@ function LeagueTableRows({ row, snapshot, showZone, columnCount }: { row: League
           <span>{row.rank}</span>{row.rankChange ? <i className={row.rankChange > 0 ? styles.rankUp : styles.rankDown}>{row.rankChange > 0 ? "▲" : "▼"}</i> : null}
         </td>
         <th scope="row">
-          <Link href={`/leagues/${snapshot.id}/teams/${row.competitor.id}`} className={styles.teamLink}>
-            <TeamBadge team={row.competitor} size={26} />
-            <span>{row.tableName ?? row.competitor.name}</span>
-          </Link>
+          {href ? <Link href={href} className={styles.teamLink}>{identity}</Link> : <span className={styles.teamLink}>{identity}</span>}
         </th>
         {snapshot.columns.map((column) => <td key={column.id} className={column.emphasis ? styles.emphasis : undefined}>{row.metrics[column.id]}</td>)}
       </tr>
@@ -199,24 +210,22 @@ function StatLeaderboard({ category, leagueAccent }: { category: LeagueLeaderCat
   const accent = category.accent === "league" ? leagueAccent : `var(--ds-color-${category.accent === "orange" ? "accent-orange" : category.accent})`;
   const [champion, ...chasers] = category.leaders;
   if (!champion) return null;
-  const top = Math.max(champion.value, 1);
   return (
     <div className={styles.leaderboard}>
       <HudPanel accent={accent} glow className={styles.championCard}>
         <div className={styles.championMeta}><span>◉ LEAGUE LEADER</span><span>{category.unitLabel}</span></div>
         <div className={styles.championBody}>
           <TeamBadge team={champion.competitor} size={42} />
-          <span><b>{champion.name}</b><small>{champion.competitor.name}</small></span>
+          <span className={styles.championIdentity}><b>{champion.name}</b><small>{champion.competitor.name}</small></span>
           <strong>{champion.displayValue}</strong>
         </div>
-        <Meter fraction={1} accent={accent} />
         {champion.detail ? <small className={styles.leaderDetail}>{champion.detail}</small> : null}
       </HudPanel>
       <ol className={styles.chaserGrid}>
         {chasers.map((leader, index) => (
           <li key={leader.id} className={styles.chaser} style={{ "--leader-delay": `${(index + 1) * 40}ms` } as CSSProperties}>
             <span className={styles.chaserRank}>{index + 2}</span><TeamBadge team={leader.competitor} size={27} />
-            <span className={styles.chaserIdentity}><b>{leader.name}</b><Meter fraction={Math.max(.04, leader.value / top)} accent={accent} /></span>
+            <span className={styles.chaserIdentity}><b>{leader.name}</b><small>{leader.competitor.shortName}</small></span>
             <strong>{leader.displayValue}</strong>
           </li>
         ))}
@@ -225,8 +234,59 @@ function StatLeaderboard({ category, leagueAccent }: { category: LeagueLeaderCat
   );
 }
 
-function Meter({ fraction, accent }: { fraction: number; accent: string }) {
-  return <span className={styles.meter}><i style={{ width: `${fraction * 100}%`, background: accent }} /></span>;
+function StatsTab({ snapshot }: { snapshot: LeagueHubSnapshot }) {
+  const [groupIndex, setGroupIndex] = useState(0);
+  if (snapshot.kind === "f1") {
+    return <F1Progression snapshot={snapshot} />;
+  }
+  const group = snapshot.statGroups[Math.min(groupIndex, snapshot.statGroups.length - 1)];
+  if (!group) return <NoDataState icon={InsightsIcon} title="No club stats" message="This snapshot does not publish club statistics." />;
+  return (
+    <section className={styles.leadersTab}>
+      <UnderlineTabs label="Team stat groups" tabs={snapshot.statGroups.map((item) => ({ id: item.id, label: item.label }))} activeIndex={groupIndex} accent={snapshot.accent} minTabWidth={112} onChange={setGroupIndex} className={styles.categoryTabs} />
+      <div className={styles.cardGrid}>
+        {group.boards.map((board) => (
+          <HudPanel key={board.id} accent={snapshot.accent} className={styles.championCard}>
+            <div className={styles.championMeta}><span>{board.label}</span><span>{board.description}</span></div>
+            <ol className={styles.chaserGrid}>
+              {board.entries.map((entry, index) => (
+                <li key={entry.competitor.id} className={styles.chaser}>
+                  <span className={styles.chaserRank}>{index + 1}</span>
+                  <TeamBadge team={entry.competitor} size={27} />
+                  <Link className={styles.chaserIdentity} href={`/leagues/${snapshot.id}/teams/${entry.competitor.id}`}><b>{entry.competitor.name}</b></Link>
+                  <strong>{entry.value}</strong>
+                </li>
+              ))}
+            </ol>
+          </HudPanel>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RoundsTab({ snapshot }: { snapshot: Extract<LeagueHubSnapshot, { kind: "f1" }> }) {
+  const [roundIndex, setRoundIndex] = useState(snapshot.rounds.length - 1);
+  const round = snapshot.rounds[Math.max(0, roundIndex)];
+  return (
+    <section className={styles.leadersTab}>
+      <UnderlineTabs label="Championship rounds" tabs={snapshot.rounds.map((item) => ({ id: item.id, label: item.code }))} activeIndex={roundIndex} accent={snapshot.accent} minTabWidth={72} onChange={setRoundIndex} className={styles.categoryTabs} />
+      <HudPanel accent={snapshot.accent} className={styles.championCard}>
+        <div className={styles.championMeta}><span>{round.label}</span><span>{round.code}</span></div>
+        <ol className={styles.chaserGrid}>{round.driverPoints.map((entry, index) => <li key={entry.name} className={styles.chaser}><span className={styles.chaserRank}>{index + 1}</span><span className={styles.chaserIdentity}><b>{entry.name}</b></span><strong>{entry.points} PTS</strong></li>)}</ol>
+      </HudPanel>
+    </section>
+  );
+}
+
+function F1Progression({ snapshot }: { snapshot: Extract<LeagueHubSnapshot, { kind: "f1" }> }) {
+  const leaders = snapshot.groups[0]?.rows.slice(0, 8) ?? [];
+  return (
+    <section className={styles.tabSection}>
+      <SectionHeading label="CHAMPIONSHIP PROGRESSION" />
+      <div className={styles.cardGrid}>{leaders.map((row) => <HudPanel key={row.competitor.id} accent={snapshot.accent} className={styles.championCard}><div className={styles.championBody}><TeamBadge team={row.competitor} size={36} /><span><b>{row.competitor.name}</b><small>THROUGH {snapshot.rounds.at(-1)?.code}</small></span><strong>{row.metrics.pts} PTS</strong></div></HudPanel>)}</div>
+    </section>
+  );
 }
 
 function GamesTab({ fixtures }: { fixtures: SportMatch[] }) {

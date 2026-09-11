@@ -6,7 +6,6 @@ import { useMemo, useState, type CSSProperties } from "react";
 import {
   ArrowRightIcon,
   BrandIcon,
-  ChevronLeftIcon,
   InteractiveLineChart,
   QuizIcon,
   colors,
@@ -57,13 +56,6 @@ export function MarketDetailScreen({ market }: { market: PickMarket }) {
 
   return (
     <main className={styles.screen}>
-      <header className={styles.topBar}>
-        <Link href="/picks" aria-label="Back to all picks" className={styles.backLink}>
-          <ChevronLeftIcon size={18} />
-        </Link>
-        <h1 className={styles.topTitle}>MARKET</h1>
-      </header>
-
       <div className={styles.body}>
         <div className={styles.column}>
           <MarketHeader market={market} />

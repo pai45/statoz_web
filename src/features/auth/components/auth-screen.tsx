@@ -15,7 +15,7 @@ export function AuthScreen() {
     <div className="flex min-h-dvh flex-col lg:grid lg:grid-cols-[1.05fr_minmax(26rem,0.95fr)]">
       <AuthHero
         media={authHeroMedia}
-        className="h-[44dvh] min-h-60 shrink-0 lg:h-auto lg:min-h-dvh"
+        className="aspect-[5/4] shrink-0 lg:aspect-auto lg:min-h-dvh"
       />
 
       <div

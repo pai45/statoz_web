@@ -13,9 +13,10 @@ import {
 } from "@/features/packs";
 import type { PlayerCard } from "@/domain/cards";
 
-import { sportForGame, type GameEntry } from "@/mocks/games";
+import type { GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { randomOpponentName } from "../../shared/data/opponent-names";
 import { generateShootoutOpponent } from "../../shared/engine/opponent";
 import { initialShootout, shootoutReducer } from "../engine/shootout";
@@ -49,12 +50,13 @@ export type PenaltyShootoutProps = {
 
 type View = "lobby" | "playing";
 
-export function PenaltyShootout({ game, entry }: PenaltyShootoutProps) {
+export function PenaltyShootout({ game: _game, entry }: PenaltyShootoutProps) {
+  void _game;
   const [view, setView] = useState<View>("lobby");
   const [session, setSession] = useState(0);
   const decks = useDecks();
   const footballLoadout = activeLoadout(decks, "football");
-  const gamesHref = `/games/${sportForGame(game)}`;
+  const goBack = useGameReturn();
 
   const squad = useMemo(
     () => {
@@ -74,7 +76,7 @@ export function PenaltyShootout({ game, entry }: PenaltyShootoutProps) {
         <ShootoutLobby
           squadReady={squad !== null}
           onPlay={play}
-          backHref={gamesHref}
+          onBack={goBack}
         />
         <GameLandingAd />
       </>

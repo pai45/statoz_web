@@ -10,8 +10,9 @@ import type { PlayerCard } from "@/domain/cards";
 
 import { levelFromXp } from "@/domain/progression";
 
-import { sportForGame, type GameEntry } from "@/mocks/games";
+import type { GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import {
   GameMatchGate,
   matchmakingFighter,
@@ -80,7 +81,8 @@ function squadFromClaim(
   return owned.length > 0 ? owned : null;
 }
 
-export function FinalOver({ game }: FinalOverProps) {
+export function FinalOver({ game: _game }: FinalOverProps) {
+  void _game;
   const [view, setView] = useState<"lobby" | "matchmaking" | "playing">("lobby");
   const [session, setSession] = useState(0);
   /** The rival the queue lands on. Drawn on the press, never on the server. */
@@ -89,7 +91,7 @@ export function FinalOver({ game }: FinalOverProps) {
   const economy = useEconomy();
   const hydrated = useIsHydrated();
   const stats = useFinalOverStats();
-  const gamesHref = `/games/${sportForGame(game)}`;
+  const goBack = useGameReturn();
   const level = levelFromXp(stats.xp);
   const player = useMatchmakingPlayer(`LV ${level}`);
 
@@ -114,7 +116,7 @@ export function FinalOver({ game }: FinalOverProps) {
         stats={stats}
         tier={stats.tier}
         squadReady={squad !== null && hydrated}
-        backHref={gamesHref}
+        onBack={goBack}
         onTierChange={(tier) => saveLobbySelection(tier, selectedKitId)}
         onPlay={play}
       />

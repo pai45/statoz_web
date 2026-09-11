@@ -64,6 +64,8 @@ export function MatchTraceChart({
     .map((marker) => ({ ...marker, index: marker.index - start }));
   const points = Math.max(home.length, away.length, 1);
   const index = Math.min(Math.max(selected, 0), Math.max(0, points - 1));
+  const homeColor = match.home.secondaryTextColor ?? match.home.color;
+  const awayColor = match.away.secondaryTextColor ?? match.away.color;
 
   useEffect(() => {
     const updateFullscreenState = () => {
@@ -140,11 +142,11 @@ export function MatchTraceChart({
           />
         ) : null}
         <span className={styles.traceReadout}>
-          <span style={{ color: match.home.color }} className="ds-tabular">
+          <span style={{ color: homeColor }} className="ds-tabular">
             {homeLabel ?? match.home.shortName} {home[index] ?? 0}
           </span>
           <small>{ticks[index] ?? ""}</small>
-          <span style={{ color: match.away.color }} className="ds-tabular">
+          <span style={{ color: awayColor }} className="ds-tabular">
             {awayLabel ?? match.away.shortName} {away[index] ?? 0}
           </span>
         </span>
@@ -173,8 +175,8 @@ export function MatchTraceChart({
         }}
       >
         <svg viewBox={`0 0 ${viewWidth} ${viewHeight}`} preserveAspectRatio="none" aria-hidden="true">
-          <path d={path(away)} fill="none" stroke={match.away.color} strokeWidth={3} vectorEffect="non-scaling-stroke" />
-          <path d={path(home)} fill="none" stroke={match.home.color} strokeWidth={3} vectorEffect="non-scaling-stroke" />
+          <path d={path(away)} fill="none" stroke={awayColor} strokeWidth={3} vectorEffect="non-scaling-stroke" />
+          <path d={path(home)} fill="none" stroke={homeColor} strokeWidth={3} vectorEffect="non-scaling-stroke" />
         </svg>
 
         <span
@@ -189,7 +191,7 @@ export function MatchTraceChart({
             className={[styles.traceMarker, marker.decisive ? styles.traceMarkerFocal : ""].filter(Boolean).join(" ")}
             style={{
               left: `${(x(Math.min(marker.index, points - 1)) / viewWidth) * 100}%`,
-              "--marker-color": marker.side === "home" ? match.home.color : match.away.color,
+              "--marker-color": marker.side === "home" ? homeColor : awayColor,
             } as CSSProperties}
             title={marker.label}
           />

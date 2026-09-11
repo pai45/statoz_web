@@ -3,6 +3,7 @@
 import { DailyDrop } from "@/features/packs";
 
 import { accentVar, Badge, Button, Glyph, withAlpha } from "@/design-system";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import { bingoStatus, formatCountdown } from "../engine/day-keys";
 import type { BingoProgress } from "../types";
@@ -31,7 +32,7 @@ export type BingoHomeProps = {
   onPlay: () => void;
   onOpenLogs: () => void;
   /** Leaving Football Bingo altogether. */
-  backHref: string;
+  onBack: () => void;
 };
 
 export function BingoHome({
@@ -41,7 +42,7 @@ export function BingoHome({
   now,
   onPlay,
   onOpenLogs,
-  backHref,
+  onBack,
 }: BingoHomeProps) {
   const orange = accentVar("orange");
   const status = bingoStatus(todayProgress, now);
@@ -57,7 +58,7 @@ export function BingoHome({
       className="flex min-h-dvh flex-col"
       style={{ background: "var(--ds-gradient-arena-backdrop)" }}
     >
-      <BingoHeader backHref={backHref} backLabel="Back to games" markGlyph="grid_view" />
+      <BingoHeader onBack={onBack} backLabel="Back to games" markGlyph="grid_view" />
 
       {/*
         * The app drops the content a proportional way down its stadium plate:
@@ -158,6 +159,7 @@ export function BingoHome({
               <Glyph name="chevron_right" size={22} />
             </span>
           </button>
+          <div className="mt-3.5"><GameLeaderboardCta sport="football" gameId="football-bingo" /></div>
         </div>
       </div>
         <DailyDrop sport="football" />

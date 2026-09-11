@@ -9,13 +9,13 @@ import { CommentaryView, LineupsView, TimelineList } from "./match-report-parts"
 import {
   EmptyPanel,
   MatchIntelPanel,
-  MatchPulseHeader,
   SectionHeading,
   StatComparisonRow,
   StatsRow,
   TeamLegendRow,
 } from "./match-stats-shell";
 import { MatchTraceChart } from "./match-trace-chart";
+import { BasketballShotMap } from "./basketball-shot-map";
 import styles from "./match-stats.module.css";
 
 /**
@@ -61,14 +61,6 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
   const [held, setHeld] = useState<string | null>(null);
   return (
     <div className={styles.stack}>
-      <div className="spanFull">
-        <MatchPulseHeader
-          match={match}
-          title={`${match.home.name} vs ${match.away.name}`}
-          pulse={scoreboard.pulse}
-        />
-      </div>
-
       <section className={styles.tight}>
         <SectionHeading label="MATCH INTEL" />
         <MatchIntelPanel match={match} intel={scoreboard.intel} />
@@ -129,6 +121,8 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
 }
 
 function Flow({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
+  const modes = ["GAME", "H1", "H2", "CLUTCH"];
+  const [mode, setMode] = useState(modes[0]);
   if (!scoreboard.trace) {
     return (
       <EmptyPanel
@@ -138,11 +132,26 @@ function Flow({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetai
       />
     );
   }
+  const indices = scoreboard.trace.ticks.map((tick, index) => ({ tick, index })).filter(({ tick }) => {
+    const period = Number.parseInt(tick.match(/Q(\d+)/)?.[1] ?? "0", 10);
+    if (mode === "H1") return period <= 2;
+    if (mode === "H2") return period >= 3;
+    if (mode === "CLUTCH") {
+      const clock = tick.match(/(\d+):(\d+)/);
+      return period === 4 && (Number(clock?.[1] ?? 99) * 60 + Number(clock?.[2] ?? 0)) <= 300;
+    }
+    return true;
+  }).map(({ index }) => index);
+  const first = indices[0] ?? 0;
+  const last = indices.at(-1) ?? Math.max(0, scoreboard.trace.ticks.length - 1);
+  const trace = { ...scoreboard.trace, ticks: scoreboard.trace.ticks.slice(first, last + 1), home: scoreboard.trace.home.slice(first, last + 1), away: scoreboard.trace.away.slice(first, last + 1), markers: scoreboard.trace.markers?.filter((marker) => marker.index >= first && marker.index <= last).map((marker) => ({ ...marker, index: marker.index - first })) };
   return (
     <div className={styles.stack}>
       <div className="spanFull">
-        <MatchTraceChart match={match} trace={scoreboard.trace} />
+        <FilterChips options={modes} selected={mode} onSelect={setMode} label="Score race period" />
+        <MatchTraceChart match={match} trace={trace} />
       </div>
+      <BasketballShotMap match={match} shots={scoreboard.basketballShots ?? []} />
       <section className={`${styles.tight} spanFull`}>
         <SectionHeading label="SCORING RUNS" />
         {scoreboard.scoreRows.map((row) => (

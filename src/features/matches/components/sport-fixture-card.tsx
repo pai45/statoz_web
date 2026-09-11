@@ -9,22 +9,33 @@ import { TeamBadge } from "./team-badge";
 
 export type SportFixtureCardProps = {
   match: SportMatch;
+  followedTeamName?: string;
+  /** Keeps feed cards unchanged while Trending opts into its shared chrome. */
+  appearance?: "default" | "trending";
 };
 
 /** Flutter-faithful fixture surface shared by every sport match home. */
-export function SportFixtureCard({ match }: SportFixtureCardProps) {
-  const stateColor = match.status === "live"
-    ? "var(--ds-color-danger)"
-    : match.status === "finished"
-      ? "var(--ds-color-fixture-border)"
-      : "var(--ds-color-fixture-predicted)";
+export function SportFixtureCard({
+  match,
+  followedTeamName,
+  appearance = "default",
+}: SportFixtureCardProps) {
+  const trending = appearance === "trending";
+  const followed = [match.home, match.away].find((team) => team.name === followedTeamName);
+  const stateColor = trending
+    ? "var(--ds-color-fixture-predicted)"
+    : match.status === "live"
+      ? "var(--ds-color-danger)"
+      : match.status === "finished"
+        ? "var(--ds-color-fixture-border)"
+        : followed?.color ?? "var(--ds-color-fixture-predicted)";
   const label = match.sport === "motorsport"
     ? `${match.home.name}, ${statusLabel(match)}`
     : `${match.home.name} versus ${match.away.name}, ${statusLabel(match)}`;
 
   return (
     <article
-      className={styles.shell}
+      className={`${styles.shell} ${trending ? styles.trending : ""}`}
       style={{ "--fixture-state": stateColor } as CSSProperties}
     >
       <div aria-hidden className={styles.lift} />
@@ -34,9 +45,9 @@ export function SportFixtureCard({ match }: SportFixtureCardProps) {
             {match.sport === "motorsport" ? (
               <RaceIdentity match={match} />
             ) : (
-              <Teams match={match} />
+              <Teams match={match} followedTeamName={followedTeamName} />
             )}
-            {match.resultLine ? (
+            {showsResultSummary(match) ? (
               <p className="mt-3 text-center text-xs font-semibold leading-body text-[var(--ds-color-fixture-result)]">
                 {match.resultLine}
               </p>
@@ -75,16 +86,23 @@ function StatusTag({ match }: { match: SportMatch }) {
   );
 }
 
-function Teams({ match }: { match: SportMatch }) {
+function Teams({ match, followedTeamName }: { match: SportMatch; followedTeamName?: string }) {
   const cricket = match.sport === "cricket";
   const hasScore = match.homeScore != null || match.awayScore != null;
+  const homeValue = scoreValue(match.homeScore);
+  const awayValue = scoreValue(match.awayScore);
+  const hasWinner = match.status === "finished" && homeValue != null && awayValue != null && homeValue !== awayValue;
+  const homeWinner = hasWinner ? homeValue > awayValue : null;
+  const awayWinner = hasWinner ? awayValue > homeValue : null;
   return (
     <div className="flex min-w-0 items-start">
-      <TeamColumn team={match.home} dim={match.status === "finished"} score={cricket ? match.homeScore : undefined} />
+      <TeamColumn team={match.home} followed={match.home.name === followedTeamName} dim={match.status === "finished" && homeWinner === false} winner={homeWinner} score={cricket ? match.homeScore : undefined} />
       <div className="flex shrink-0 flex-col items-center px-2 pt-2">
         {!cricket && hasScore ? (
           <span className="ds-tabular whitespace-nowrap font-display text-2xl font-black tracking-tight">
-            {match.homeScore ?? "-"} - {match.awayScore ?? "-"}
+            <span className={homeWinner === false ? "text-muted" : "text-foreground"}>{match.homeScore ?? "-"}</span>
+            <span className="text-muted"> - </span>
+            <span className={awayWinner === false ? "text-muted" : "text-foreground"}>{match.awayScore ?? "-"}</span>
           </span>
         ) : (
           <span className="font-display text-lg font-black text-muted">-</span>
@@ -102,7 +120,7 @@ function Teams({ match }: { match: SportMatch }) {
           </div>
         ) : null}
       </div>
-      <TeamColumn team={match.away} alignEnd dim={match.status === "finished"} score={cricket ? match.awayScore : undefined} />
+      <TeamColumn team={match.away} followed={match.away.name === followedTeamName} alignEnd dim={match.status === "finished" && awayWinner === false} winner={awayWinner} score={cricket ? match.awayScore : undefined} />
     </div>
   );
 }
@@ -111,37 +129,56 @@ function TeamColumn({
   team,
   alignEnd = false,
   dim,
+  winner,
+  followed,
   score,
 }: {
   team: SportTeam;
   alignEnd?: boolean;
   dim: boolean;
+  winner: boolean | null;
+  followed: boolean;
   score?: SportMatch["homeScore"];
 }) {
+  const cricketScore = score == null ? null : splitCricketScore(String(score));
   return (
     <div className={`flex min-w-0 flex-1 flex-col ${alignEnd ? "items-end text-right" : "items-start text-left"}`}>
-      <TeamBadge team={team} />
-      <span className={`mt-2 line-clamp-2 text-base font-bold leading-tight ${dim ? "text-[var(--ds-color-fixture-dim-name)]" : "text-foreground"}`}>
+      <span className={`flex items-center gap-2 ${alignEnd ? "flex-row-reverse" : ""}`}><TeamBadge team={team} />{cricketScore ? <b className={`ds-tabular font-display text-lg font-black ${dim ? "text-muted" : "text-foreground"}`}>{cricketScore.score}</b> : null}</span>
+      <span className={`mt-2 line-clamp-2 max-w-full text-base font-bold leading-tight ${dim ? "text-[var(--ds-color-fixture-dim-name)]" : "text-foreground"}`} style={followed ? { color: team.color } : undefined}>
         {team.name}
       </span>
-      {score != null ? (
-        <span className="ds-tabular mt-0.75 line-clamp-2 text-xs font-semibold leading-tight text-[var(--ds-color-fixture-score)]">
-          {score}
+      {cricketScore?.qualifier ? (
+        <span className={`ds-tabular mt-0.75 max-w-full text-xs font-semibold leading-tight ${winner ? "text-foreground" : "text-muted"}`}>
+          {cricketScore.qualifier}
         </span>
       ) : null}
     </div>
   );
 }
 
+function splitCricketScore(value: string): { score: string; qualifier: string } {
+  const index = value.indexOf("(");
+  return index < 0 ? { score: value.trim(), qualifier: "" } : { score: value.slice(0, index).trim(), qualifier: value.slice(index).trim().replace(/^\(|\)$/g, "") };
+}
+
+function scoreValue(value: SportMatch["homeScore"]): number | null {
+  const match = String(value ?? "").match(/\d+/);
+  return match ? Number(match[0]) : null;
+}
+
 function RaceIdentity({ match }: { match: SportMatch }) {
   return (
     <div className="flex flex-col items-center text-center">
       <TeamBadge team={match.home} />
-      <span className={`mt-2 line-clamp-2 text-base font-bold leading-tight ${match.status === "finished" ? "text-[var(--ds-color-fixture-dim-name)]" : "text-foreground"}`}>
+      <span className="mt-2 line-clamp-2 text-base font-bold leading-tight text-foreground">
         {match.home.name}
       </span>
     </div>
   );
+}
+
+function showsResultSummary(match: SportMatch): match is SportMatch & { resultLine: string } {
+  return Boolean(match.resultLine) && match.sport !== "football" && match.sport !== "basketball";
 }
 
 function StatusStrip({ match }: { match: SportMatch }) {

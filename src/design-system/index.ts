@@ -10,6 +10,7 @@ export * from "./components/data-display/hud-panel";
 export * from "./components/data-display/interactive-line-chart";
 export * from "./components/data-display/directory-card";
 export * from "./components/data-display/fixture-panel";
+export * from "./components/data-display/goal-mouth-diagram";
 export * from "./components/data-display/monogram";
 export * from "./components/data-display/player-card";
 export * from "./components/data-display/signal-panel";

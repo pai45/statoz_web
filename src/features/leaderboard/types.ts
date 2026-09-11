@@ -1,16 +1,17 @@
 import type { SportTeam } from "@/domain/matches";
+import type { GameId } from "@/features/games/types";
 
 /** Which board is on screen. Drives the score unit and the filter row. */
-export type LeaderboardType = "matchDay" | "tournament" | "games";
+export type LeaderboardType = "matches" | "games";
 
 /** The tournament board ranks either players or the teams they back. */
-export type TournamentBoard = "teams" | "players";
+export type MatchesBoard = "teams" | "players";
 
 /** How far back the tournament board counts. */
 export type TournamentScope = "weekly" | "season" | "allTime";
 
 /** The four modes the GAMES board separates wins by. */
-export type GameMode = "quiz" | "cardDuel" | "streaks" | "accuracy";
+export type GameMode = GameId;
 
 /**
  * One fabricated rival. There is no backend — a rival is a display name plus a
@@ -49,7 +50,7 @@ export type LeaderboardEntry = {
   badge?: string;
   isUser: boolean;
   /** Set on a team row, which shows a crest and opens no dossier. */
-  team?: SportTeam;
+  team?: SportTeam | null;
   /** Independent of the active board type and scope. */
   xp: number;
   /** Optional detail line beside the movement badge. */

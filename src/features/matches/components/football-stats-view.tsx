@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { BoltIcon, FilterChips, ShowChartIcon, accentVar } from "@/design-system";
 import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
@@ -10,13 +10,13 @@ import { MatchPitchView } from "./match-pitch-view";
 import {
   EmptyPanel,
   MatchIntelPanel,
-  MatchPulseHeader,
   SectionHeading,
   StatComparisonRow,
   StatsRow,
   TeamLegendRow,
 } from "./match-stats-shell";
 import { MatchTraceChart } from "./match-trace-chart";
+import { FootballShotMap } from "./football-shot-map";
 import styles from "./match-stats.module.css";
 
 /**
@@ -27,7 +27,7 @@ import styles from "./match-stats.module.css";
  * COMMENTARY the play-by-play.
  */
 
-const tabs = ["OVERVIEW", "MOMENTUM", "EVENTS", "LINEUPS", "COMMENTARY"];
+const tabs = ["OVERVIEW", "MOMENTUM", "LINEUPS", "COMMENTARY"];
 
 export function FootballStatsView({
   match,
@@ -37,16 +37,21 @@ export function FootballStatsView({
   scoreboard: MatchDetailScoreboard;
 }) {
   const [tab, setTab] = useState(tabs[0]);
+  const scroll = useRef<HTMLDivElement>(null);
+
+  const selectTab = (nextTab: string) => {
+    setTab(nextTab);
+    requestAnimationFrame(() => scroll.current?.scrollTo({ top: 0 }));
+  };
 
   return (
     <div className={styles.statsView}>
-      <FilterChips options={tabs} selected={tab} onSelect={setTab} label="Match report sections" />
-      <div className={styles.statsScroll}>
+      <FilterChips options={tabs} selected={tab} onSelect={selectTab} label="Match report sections" />
+      <div ref={scroll} className={styles.statsScroll}>
         {tab === "OVERVIEW" ? <Overview match={match} scoreboard={scoreboard} /> : null}
         {tab === "MOMENTUM" ? <Momentum match={match} scoreboard={scoreboard} /> : null}
-        {tab === "EVENTS" ? <TimelineList match={match} events={scoreboard.timeline} /> : null}
         {tab === "LINEUPS" ? <MatchPitchView match={match} scoreboard={scoreboard} /> : null}
-        {tab === "COMMENTARY" ? <CommentaryView commentary={scoreboard.commentary} /> : null}
+        {tab === "COMMENTARY" ? <CommentaryView match={match} commentary={scoreboard.commentary} /> : null}
       </div>
     </div>
   );
@@ -54,18 +59,8 @@ export function FootballStatsView({
 
 function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDetailScoreboard }) {
   const [held, setHeld] = useState<string | null>(null);
-  const scorers = scoreboard.scorers ?? [];
-
   return (
     <div className={styles.stack}>
-      <div className="spanFull">
-        <MatchPulseHeader
-          match={match}
-          title={`${match.home.name} vs ${match.away.name}`}
-          pulse={scoreboard.pulse}
-        />
-      </div>
-
       <section className={styles.tight}>
         <SectionHeading label="MATCH INTEL" />
         <MatchIntelPanel match={match} intel={scoreboard.intel} />
@@ -78,8 +73,8 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
           <StatComparisonRow
             key={stat.label}
             stat={stat}
-            homeColor={match.home.color}
-            awayColor={match.away.color}
+            homeColor={match.home.secondaryTextColor ?? match.home.color}
+            awayColor={match.away.secondaryTextColor ?? match.away.color}
             selected={held === stat.label}
             onSelect={() => setHeld((current) => (current === stat.label ? null : stat.label))}
           />
@@ -87,30 +82,7 @@ function Overview({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
       </section>
 
       <section className={`${styles.tight} spanFull`}>
-        <SectionHeading label="GOAL IMPACT" />
-        {scorers.length === 0 ? (
-          <EmptyPanel title="No goals yet" message="Scorers appear here as the goals go in." />
-        ) : (
-          scorers.map((scorer) => (
-            <StatsRow
-              key={`${scorer.minute}-${scorer.player}`}
-              accent={scorer.side === "home" ? match.home.color : match.away.color}
-            >
-              <span className={styles.eventRow}>
-                <i
-                  className={styles.eventSide}
-                  style={{ background: scorer.side === "home" ? match.home.color : match.away.color }}
-                  aria-hidden="true"
-                />
-                <b className={styles.eventMinute}>{scorer.minute}</b>
-                <span className={styles.eventCopy}>
-                  <strong>{scorer.player}</strong>
-                  <small>{scorer.note}</small>
-                </span>
-              </span>
-            </StatsRow>
-          ))
-        )}
+        <TimelineList match={match} events={scoreboard.timeline} />
       </section>
     </div>
   );
@@ -131,6 +103,9 @@ function Momentum({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
     <div className={styles.stack}>
       <div className="spanFull">
         <MatchTraceChart match={match} trace={scoreboard.trace} />
+      </div>
+      <div className="spanFull">
+        <FootballShotMap match={match} shots={scoreboard.shots ?? []} />
       </div>
       <section className={`${styles.tight} spanFull`}>
         <SectionHeading label="PRESSURE READ" />

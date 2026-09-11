@@ -6,6 +6,7 @@ import type {
 } from "@/domain/leagues";
 import type { SportTeam } from "@/domain/matches";
 import type { Sport } from "@/domain/sports";
+import { snapshotLeagueHubs } from "./snapshots";
 
 type TeamSeed = readonly [id: string, name: string, short: string, color: string, secondary?: string, ink?: string];
 type LeagueSeed = {
@@ -178,7 +179,7 @@ function leaders(seed: LeagueSeed, competitors: SportTeam[]): LeagueLeaderCatego
   }));
 }
 
-export const leagueHubSnapshots: LeagueHubSnapshot[] = seeds.map((seed) => {
+const generatedLeagueHubSnapshots: LeagueHubSnapshot[] = seeds.map((seed) => {
   const competitors = seed.teams.map(team);
   const groups = seed.id === "mls"
     ? [
@@ -186,8 +187,27 @@ export const leagueHubSnapshots: LeagueHubSnapshot[] = seeds.map((seed) => {
         { id: "west", label: "Western Conference", shortLabel: "WEST", rows: mlsRows(competitors.slice(15), true) },
       ]
     : [{ id: "all", label: "All competitors", shortLabel: "TABLE", rows: generatedRows(seed, competitors) }];
-  return { id: seed.id, sport: seed.sport, name: seed.name, shortCode: seed.shortCode, accent: seed.accent, seasonLabel: seed.seasonLabel, columns: columnsBySport[seed.sport], groups, leaderCategories: leaders(seed, competitors) };
+  return {
+    kind: "team",
+    id: seed.id,
+    sport: seed.sport,
+    name: seed.name,
+    shortCode: seed.shortCode,
+    accent: seed.accent,
+    seasonLabel: seed.seasonLabel,
+    columns: columnsBySport[seed.sport],
+    groups,
+    leaderCategories: leaders(seed, competitors),
+    statGroups: [],
+    seasons: [{ year: 2026, label: seed.seasonLabel, current: true }],
+  };
 });
+
+const snapshotIds = new Set(snapshotLeagueHubs.map((snapshot) => snapshot.id));
+export const leagueHubSnapshots: LeagueHubSnapshot[] = [
+  ...generatedLeagueHubSnapshots.filter((snapshot) => !snapshotIds.has(snapshot.id)),
+  ...snapshotLeagueHubs,
+];
 
 const snapshotIndex = new Map(leagueHubSnapshots.map((snapshot) => [snapshot.id, snapshot]));
 export const allLeagueHubIds = leagueHubSnapshots.map((snapshot) => snapshot.id);

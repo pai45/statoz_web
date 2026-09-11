@@ -93,10 +93,7 @@ const wash: Record<GameSceneId, string> = {
 
 export type GameSceneProps = {
   game: GameId;
-  /**
-   * Scene opacity. Hero tiles show the art outright; quick tiles run it as a
-   * watermark behind their type.
-   */
+  /** Card artwork defaults to 60%; other surfaces may override it. */
   opacity?: number;
   /** Lays the accent wash under the art. Off for watermark use. */
   washed?: boolean;
@@ -110,7 +107,7 @@ export type GameSceneProps = {
  * is barely a third as tall as it is wide, and filling would scale the art to
  * the width and crop away everything but a stripe.
  */
-export function GameScene({ game, opacity = 1, washed = true }: GameSceneProps) {
+export function GameScene({ game, opacity = 0.6, washed = true }: GameSceneProps) {
   const scene = gameRegistry[game].scene;
   const asset = gameSceneAssets[scene];
 
@@ -132,7 +129,7 @@ export function GameScene({ game, opacity = 1, washed = true }: GameSceneProps) 
         fill
         sizes="(min-width: 1024px) 20vw, 50vw"
         className="pointer-events-none select-none object-contain object-right"
-        style={opacity === 1 ? undefined : { opacity }}
+        style={{ opacity }}
       />
     </>
   );

@@ -1,11 +1,18 @@
 import type { AuthHeroMedia } from "./types";
 
-/**
- * The artwork above "Let's get started". Drop the file into
- * `public/assets/backgrounds/` and point this at it; while it is null the hero
- * carries the space with the crest and the app gradient alone.
- */
-export const authHeroMedia: AuthHeroMedia | null = null;
+/** Six-second compositions: desktop left panel and compact mobile header. */
+export const authHeroMedia: AuthHeroMedia = {
+  kind: "video",
+  src: "/assets/backgrounds/onboarding/desktop.webm",
+  mp4Src: "/assets/backgrounds/onboarding/desktop.mp4",
+  poster: "/assets/backgrounds/onboarding/desktop-poster.webp",
+  mobile: {
+    src: "/assets/backgrounds/onboarding/mobile.webm",
+    mp4Src: "/assets/backgrounds/onboarding/mobile.mp4",
+    poster: "/assets/backgrounds/onboarding/mobile-poster.webp",
+  },
+  alt: "Messi, Ronaldo, Virat Kohli, Lewis Hamilton and LeBron James. StatOz: One arena. Every game.",
+};
 
 /** Fallback when sign-in was not opened for a protected destination. */
 export const afterSignInHref = "/";

@@ -1,6 +1,6 @@
 "use client";
 
-import { AdaptiveDrawer } from "@/design-system";
+import { AdaptiveDrawer, FilterChips } from "@/design-system";
 
 import {
   setLeagueFilter,
@@ -86,22 +86,22 @@ function ChipGroup({
   options: [string, string][];
   onChange: (value: string) => void;
 }) {
+  const labels = options.map(([, text]) => text);
+  const selectedLabel = options.find(([id]) => id === value)?.[1] ?? labels[0];
+
   return (
     <section className={styles.settingsGroup}>
       <h3 className={styles.settingsLabel}>{label}</h3>
-      <div className={styles.chipWrap}>
-        {options.map(([id, text]) => (
-          <button
-            key={id}
-            type="button"
-            className={`${styles.filter} ${value === id ? styles.filterActive : ""}`}
-            aria-pressed={value === id}
-            onClick={() => onChange(id)}
-          >
-            {text}
-          </button>
-        ))}
-      </div>
+      <FilterChips
+        options={labels}
+        selected={selectedLabel}
+        onSelect={(selected) => {
+          const option = options.find(([, text]) => text === selected);
+          if (option) onChange(option[0]);
+        }}
+        label={`${label} filters`}
+        className={styles.marketFilterChips}
+      />
     </section>
   );
 }

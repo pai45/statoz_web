@@ -11,9 +11,10 @@ import type {
   LeaderboardEntry,
   LeaderboardType,
   ScoreMeta,
-  TournamentBoard,
+  MatchesBoard,
   TournamentScope,
 } from "../types";
+import type { Sport } from "@/domain/sports";
 
 /**
  * What a board shows, assembled from the fixed field and the live player.
@@ -26,9 +27,11 @@ import type {
 
 export type BoardSelection = {
   type: LeaderboardType;
-  board: TournamentBoard;
+  board: MatchesBoard;
   scope: TournamentScope;
   mode: GameMode;
+  sport: Sport;
+  leagueId: string;
   /** Omitted for guests so no local player is injected into a public board. */
   player?: PlayerStanding | null;
 };
@@ -47,9 +50,11 @@ export function useBoardEntries({
   board,
   scope,
   mode,
+  sport,
+  leagueId,
   player = null,
 }: BoardSelection): BoardState {
-  const isTeamBoard = type === "tournament" && board === "teams";
+  const isTeamBoard = type === "matches" && board === "teams";
   const personalized = player !== null;
 
   return useMemo(() => {
@@ -59,7 +64,7 @@ export function useBoardEntries({
       const entries = nationalTeams.map((seed, index) => ({
         rank: index + 1,
         name: seed.team.name,
-        score: seed.score,
+        score: scoreFor(type, seed.score, scope, mode, `${leagueId}:${seed.team.name}`),
         movement: seed.movement,
         isNew: false,
         badge: seed.team.shortName,
@@ -108,12 +113,14 @@ export function useBoardEntries({
     const entries: LeaderboardEntry[] = field.map((seed, index) => ({
       rank: index + 1,
       name: seed.name,
-      score: scoreFor(type, seed.xp, scope, mode),
+      score: scoreFor(type, seed.xp, scope, mode, `${leagueId}:${seed.name}`),
       movement: seed.movement,
       isNew: seed.isNew,
       badge: seed.badge,
       isUser: seed.isUser,
       xp: seed.xp,
+      team: null,
+      subtitle: `${seed.badge ?? sport.toUpperCase()} // BEST LEAGUE`,
     }));
 
     return {
@@ -122,5 +129,5 @@ export function useBoardEntries({
       user: entries.find((entry) => entry.isUser) ?? null,
       isTeamBoard,
     };
-  }, [type, scope, mode, isTeamBoard, personalized, player]);
+  }, [type, scope, mode, sport, leagueId, isTeamBoard, personalized, player]);
 }

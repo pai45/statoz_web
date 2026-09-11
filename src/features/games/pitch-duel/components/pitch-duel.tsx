@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import {
   ActionCard,
@@ -68,6 +68,7 @@ import {
   GameMatchGate,
   matchmakingFighter,
 } from "../../shared/components/matchmaking";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 
 export type PitchDuelProps = { game: GameId; entry: GameEntry };
 
@@ -111,8 +112,9 @@ function coinsFor(result: MatchAward["result"]): number {
   return result === "Victory" ? 50 : result === "Draw" ? 25 : 10;
 }
 
-export function PitchDuel({ game }: PitchDuelProps) {
-  const router = useRouter();
+export function PitchDuel({ game: _game }: PitchDuelProps) {
+  void _game;
+  const goBack = useGameReturn();
   const params = useSearchParams();
   const decks = useDecks();
   const identity = useProfileIdentity();
@@ -154,7 +156,7 @@ export function PitchDuel({ game }: PitchDuelProps) {
       }
       onReplay={() => setSession((value) => ({ id: value.id + 1, initialView: "matchmaking" }))}
       onHome={() => setSession((value) => ({ id: value.id + 1, initialView: "lobby" }))}
-      onExit={() => router.push(`/games/${game === "pitch-duel" ? "football" : "football"}`)}
+      onExit={goBack}
     />
   );
 }
@@ -317,7 +319,7 @@ function PitchDuelSession({
   }
 
   if (view === "howToPlay") {
-    return <PitchDuelHowTo onBack={() => setView("lobby")} onPlay={() => setView("matchmaking")} />;
+    return <PitchDuelHowTo onBack={() => setView("lobby")} />;
   }
 
   if (view === "matchmaking") {

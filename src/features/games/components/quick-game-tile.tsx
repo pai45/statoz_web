@@ -71,7 +71,7 @@ export function QuickGameTile({ game, entry }: QuickGameTileProps) {
       >
         {/* Bled off the bottom-right corner, the way the glyph mark used to be. */}
         <div className="pointer-events-none absolute -bottom-4 -right-5 h-4/5 w-3/5">
-          <GameScene game={game} opacity={0.11} washed={false} />
+          <GameScene game={game} washed={false} />
         </div>
 
         {/* The one bright line on the plate, stopping short of the notch. */}

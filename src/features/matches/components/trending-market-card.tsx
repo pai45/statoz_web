@@ -22,12 +22,14 @@ export function TrendingMarketCard({
   market = pickMarketById(market.id) ?? market;
   const future = kind === "future";
   const accent = accentVar("cyan");
+  const borderAccent = "var(--ds-color-fixture-predicted)";
   const leader = leadingOutcome(market);
   const hot = isHot(market);
 
   return (
     <SignalPanel
-      accent={accent}
+      accent={borderAccent}
+      appearance="balanced"
       tag={<Badge accent={accent}>{future ? "FUTURE" : "PICK"}</Badge>}
       href={`/picks/${market.id}`}
       label={market.question}

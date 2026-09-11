@@ -97,6 +97,16 @@
   --ds-gradient-pack-headline: linear-gradient(135deg, #5cdfff 0%, #d4ff5c 100%);
   --ds-gradient-card-nameplate: linear-gradient(to right, #202836 0%, #121824 100%);
   --ds-gradient-fixture-card: linear-gradient(to bottom, #1b2336 0%, #121a28 100%);
+  --ds-gradient-trending-card: linear-gradient(
+    to bottom,
+    color-mix(
+        in srgb,
+        var(--ds-color-accent-cyan) 4%,
+        var(--ds-color-background-elevated)
+      )
+      0%,
+    var(--ds-color-background-elevated) 100%
+  );
   --ds-gradient-league-table: linear-gradient(135deg, #121b30 0%, #0e1628 100%);
   /* The bed a decision sheet is taken on, raked from lit slate to hull dark. */
   --ds-gradient-hud-sheet: linear-gradient(135deg, #152139 0%, #0b101c 100%);

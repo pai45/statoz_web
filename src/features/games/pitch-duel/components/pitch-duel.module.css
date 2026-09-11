@@ -1017,6 +1017,60 @@
 .powerFormula i { color: var(--ds-color-text-muted); font-style: normal; }
 .powerFormula p { margin: 12px 0 0; color: var(--ds-color-text-muted); font-size: 10px; line-height: var(--ds-leading-body); text-align: center; }
 
+/* ---- Pitch Duel guide: card_game `how_to_play_screen.dart` ------------ */
+
+.howTo { background: var(--ds-color-background-primary); }
+.simpleHeader { min-height: 56px; gap: 8px; padding: 6px 16px; border-bottom-color: color-mix(in srgb, var(--ds-color-accent-violet) 52%, transparent); }
+.simpleHeader > button { color: var(--ds-color-text-default); }
+.guideSlash { width: 3px; height: 17px; flex: none; background: var(--ds-color-accent-cyan); transform: skewX(-31deg); }
+.simpleHeader h1 { font-size: var(--ds-text-lg); letter-spacing: var(--ds-tracking-label); }
+.simpleHeader p { margin-top: 3px; font: 700 var(--ds-text-2xs) var(--ds-font-display); letter-spacing: var(--ds-tracking-wide); }
+
+.howToBody { width: min(100%, 440px); padding: 16px 16px 32px; }
+.overviewStrip > div { min-height: 86px; padding: 14px 5px; border-color: color-mix(in srgb, var(--overview-accent) 35%, transparent); color: var(--overview-accent); background: color-mix(in srgb, var(--overview-accent) 7%, var(--ds-color-background-secondary)); }
+.overviewStrip svg { color: var(--overview-accent); }
+.overviewStrip b { margin-top: 6px; color: var(--ds-color-text-default); font-size: 9px; letter-spacing: .8px; }
+.overviewStrip span { margin-top: 3px; font-size: 9px; }
+.howToTitleRow { margin: 20px 0 10px; font-size: 10px; }
+.howToTitleRow b { color: color-mix(in srgb, var(--ds-color-accent-cyan) 70%, transparent); }
+
+.stepCard { min-height: 228px; padding: 20px; border-color: color-mix(in srgb, var(--step-accent) 50%, transparent); background: color-mix(in srgb, var(--step-accent) 7%, var(--ds-color-background-elevated)); clip-path: var(--ds-clip-fixture-flat); }
+.stepHeading { display: flex; align-items: flex-start; gap: 14px; }
+.stepHeading > span { display: grid; width: 52px; height: 52px; flex: none; place-items: center; border: 1px solid color-mix(in srgb, var(--step-accent) 45%, transparent); color: var(--step-accent); background: color-mix(in srgb, var(--step-accent) 12%, transparent); }
+.stepHeading > div { min-width: 0; }
+.stepHeading b { display: inline-flex; padding: 3px 7px; color: var(--step-accent); background: color-mix(in srgb, var(--step-accent) 18%, transparent); font: 900 9px var(--ds-font-display); letter-spacing: 1.8px; }
+.stepHeading h2 { margin: 5px 0 0; font: 950 var(--ds-text-base) var(--ds-font-display); letter-spacing: .8px; line-height: 1.1; }
+.stepCard > p { margin: 14px 0; color: var(--ds-color-text-subtle); font-size: var(--ds-text-sm); font-weight: 600; line-height: 1.45; }
+.stepCard > strong { margin-top: auto; padding: 7px 10px; color: color-mix(in srgb, var(--step-accent) 90%, transparent); background: color-mix(in srgb, var(--step-accent) 8%, transparent); font: 900 9px var(--ds-font-display); letter-spacing: 1.3px; text-align: center; }
+.stepNav { display: flex; min-height: 18px; align-items: center; justify-content: center; gap: 6px; margin: 12px 0 20px; }
+.stepNav > button { width: 6px; height: 6px; padding: 0; border-radius: var(--ds-radius-pill); background: color-mix(in srgb, var(--ds-color-text-muted) 35%, transparent); transition: width 250ms ease, background 250ms ease; }
+.stepNav > button[aria-pressed="true"] { width: 20px; background: var(--step-dot); }
+
+.powerFormula { margin: 0; padding: 16px; border-color: color-mix(in srgb, var(--ds-color-accent-gold) 40%, transparent); background: color-mix(in srgb, var(--ds-color-accent-gold) 5%, var(--ds-color-background-secondary)); clip-path: var(--ds-clip-fixture-flat); }
+.powerFormula h2,
+.quickRules h2 { margin: 0; color: color-mix(in srgb, var(--ds-color-accent-cyan) 75%, transparent); font: 900 10px var(--ds-font-display); letter-spacing: 2px; }
+.formulaItems { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-top: 14px; }
+.formulaItem { display: flex; min-width: 0; align-items: center; gap: 7px; }
+.formulaItem > i { color: var(--ds-color-text-muted); font-size: 18px; font-style: normal; font-weight: 700; }
+.formulaItem > span { display: flex; min-width: 0; flex-direction: column; align-items: center; color: var(--formula-accent); }
+.formulaItem > span > svg { display: grid; width: 44px; height: 44px; padding: 11px; border: 1px solid color-mix(in srgb, var(--formula-accent) 50%, transparent); border-radius: 50%; background: color-mix(in srgb, var(--formula-accent) 12%, transparent); }
+.formulaItem b { margin-top: 5px; color: color-mix(in srgb, var(--formula-accent) 90%, transparent); font: 900 7px var(--ds-font-display); letter-spacing: .8px; }
+.powerFormula p { margin: 12px 0 0; font-size: 11px; font-weight: 600; line-height: 1.4; }
+
+.quickRules { margin-top: 16px; padding: 16px; border: 1px solid color-mix(in srgb, var(--ds-color-accent-violet) 52%, transparent); background: color-mix(in srgb, var(--ds-color-accent-violet) 7%, var(--ds-color-background-secondary)); clip-path: var(--ds-clip-fixture-flat); }
+.quickRules h2 { margin-bottom: 12px; }
+.rule + .rule { border-top: 1px solid color-mix(in srgb, var(--ds-color-accent-violet) 20%, transparent); }
+.rule > button { display: grid; width: 100%; min-height: 36px; grid-template-columns: 16px 1fr 18px; align-items: center; gap: 10px; padding: 0; color: var(--ds-color-text-default); text-align: left; }
+.rule > button > svg:first-child { color: var(--ds-color-accent-violet); }
+.rule > button > svg:last-child { color: var(--ds-color-text-muted); transform: rotate(90deg); }
+.rule > button[aria-expanded="true"] > svg:last-child { transform: rotate(-90deg); }
+.rule b { font-size: var(--ds-text-sm); font-weight: 700; }
+.rule p { margin: -1px 0 10px 26px; color: var(--ds-color-text-muted); font-size: var(--ds-text-xs); font-weight: 600; line-height: 1.4; }
+
+@media (min-width: 768px) {
+  .howToBody { width: min(100%, 520px); padding-top: 20px; }
+}
+
 @keyframes lobbyRise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @media (min-width: 768px) {
   .lobbyExit { display: flex; }

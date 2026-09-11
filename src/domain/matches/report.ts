@@ -114,4 +114,63 @@ export type FeedEvent = {
   marker: string;
   text: string;
   kind: "score" | "wicket" | "note";
+  teamId?: string;
+};
+
+export type ShotOutcome = "goal" | "saved" | "blocked" | "missed";
+
+export type GoalPlacement = {
+  /** Viewer-left convention used by the broadcast feed. */
+  x: number;
+  y: number;
+  label: string;
+} | null;
+
+export type MatchShot = {
+  id: string;
+  minute: number;
+  period: 1 | 2;
+  side: "home" | "away";
+  player: string;
+  x: number;
+  y: number;
+  outcome: ShotOutcome;
+  detail: string;
+  goalPlacement: GoalPlacement;
+};
+
+export type RunRatePoint = {
+  over: number;
+  actual: number;
+  required?: number;
+  boundary?: 4 | 6;
+  wicket?: boolean;
+};
+
+export type MatchPlayerDossier = {
+  id: string;
+  name: string;
+  shortName?: string;
+  teamId: string;
+  role: string;
+  number?: string;
+  image?: string;
+  stats: Array<{ label: string; value: string }>;
+  heatmap?: Array<{ x: number; y: number; intensity: number; period?: 1 | 2 }>;
+  inningsTape?: Array<{ marker: string; text: string; kind: "score" | "wicket" | "note" }>;
+};
+
+export type BasketballScoringEvent = {
+  id: string;
+  period: number;
+  clock: string;
+  side: "home" | "away";
+  player: string;
+  text: string;
+  made: boolean;
+  points: 2 | 3;
+  /** ESPN's half-court frame: x runs 0..50 along the baseline. */
+  x: number;
+  /** Feet out from the rim, increasing toward half court. */
+  y: number;
 };

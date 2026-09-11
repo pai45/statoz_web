@@ -7,6 +7,7 @@ import type { CSSProperties } from "react";
 
 import { Glyph } from "@/design-system";
 import { levelProgress } from "@/domain/progression";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import {
   lobbyEnterMs,
@@ -29,7 +30,7 @@ export type FinalOverLobbyProps = {
   stats: FinalOverStats;
   tier: FinalOverTier;
   squadReady: boolean;
-  backHref: string;
+  onBack: () => void;
   onTierChange: (tier: FinalOverTier) => void;
   onPlay: () => void;
 };
@@ -42,7 +43,7 @@ export function FinalOverLobby({
   stats,
   tier,
   squadReady,
-  backHref,
+  onBack,
   onTierChange,
   onPlay,
 }: FinalOverLobbyProps) {
@@ -51,9 +52,9 @@ export function FinalOverLobby({
   return (
     <section className={styles.finalLobby} aria-labelledby="final-over-title">
       <header className={styles.finalLobbyHeader}>
-        <Link href={backHref} aria-label="Back to cricket games">
+        <button type="button" onClick={onBack} aria-label="Back to cricket games">
           <Glyph name="chevron_left" size={23} />
-        </Link>
+        </button>
 
         <div className={styles.lobbyLevel} aria-label={`Level ${band.level}, ${band.intoLevel} of ${band.levelSpan} XP`}>
           <span>LVL</span>
@@ -114,6 +115,7 @@ export function FinalOverLobby({
             <Link href="/profile/history/games">MATCH HISTORY</Link>
           </div>
         </div>
+        <GameLeaderboardCta sport="cricket" gameId="final-over" />
         <DailyDrop sport="cricket" />
       </div>
     </section>

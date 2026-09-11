@@ -4,6 +4,8 @@ import type { CSSProperties, ReactNode } from "react";
 export type SignalPanelProps = {
   /** CSS color that drives the panel's edge, hairline, wash, and lift. */
   accent: string;
+  /** Opt-in medium slate treatment; the original accent wash remains default. */
+  appearance?: "accented" | "balanced";
   /** Small label pinned to the left of the panel's top rail. */
   tag?: ReactNode;
   /** Sits opposite the tag on the top rail — a clock, a count, a status. */
@@ -54,6 +56,7 @@ const RAIL_INSET = "px-3.5";
  */
 export function SignalPanel({
   accent,
+  appearance = "accented",
   tag,
   meta,
   footer,
@@ -66,7 +69,22 @@ export function SignalPanel({
   children,
 }: SignalPanelProps) {
   const interactive = Boolean(href ?? onClick);
-  const style = { "--panel-accent": accent } as CSSProperties;
+  const balanced = appearance === "balanced";
+  const style = {
+    "--panel-accent": accent,
+    "--panel-edge": `color-mix(in srgb, ${accent} ${balanced ? 45 : 55}%, transparent)`,
+    "--panel-edge-hover": `color-mix(in srgb, ${accent} ${balanced ? 60 : 74}%, transparent)`,
+    "--panel-lift": `color-mix(in srgb, ${accent} ${balanced ? 16 : 22}%, transparent)`,
+    "--panel-surface": balanced
+      ? "var(--ds-gradient-trending-card)"
+      : `color-mix(in srgb, ${accent} 8%, var(--ds-color-background-elevated))`,
+    "--panel-top-line": `color-mix(in srgb, ${accent} ${balanced ? 65 : 80}%, transparent)`,
+    "--panel-footer-border": `1px solid color-mix(in srgb, ${accent} 16%, transparent)`,
+    "--panel-footer-background": balanced
+      ? "var(--ds-color-fixture-strip)"
+      : `color-mix(in srgb, ${accent} 7%, var(--ds-color-background-muted))`,
+    "--panel-footer-height": balanced ? "38px" : "32px",
+  } as CSSProperties;
 
   return (
     <div className="group relative h-full w-full" style={style}>
@@ -76,8 +94,7 @@ export function SignalPanel({
           className="absolute -inset-px translate-y-(--ds-shape-signal-lift)"
           style={{
             ...clip,
-            background:
-              "color-mix(in srgb, var(--panel-accent) 22%, transparent)",
+            background: "var(--panel-lift)",
           }}
         />
       ) : null}
@@ -101,9 +118,9 @@ export function SignalPanel({
           aria-hidden
           className={[
             "absolute -inset-px transition-[background-color] duration-150",
-            "bg-[color-mix(in_srgb,var(--panel-accent)_55%,transparent)]",
+            "bg-(--panel-edge)",
             interactive
-              ? "group-hover:bg-[color-mix(in_srgb,var(--panel-accent)_74%,transparent)] group-has-focus-visible:bg-(--panel-accent)"
+              ? "group-hover:bg-(--panel-edge-hover) group-has-focus-visible:bg-(--panel-accent)"
               : "",
           ]
             .filter(Boolean)
@@ -123,8 +140,7 @@ export function SignalPanel({
             .join(" ")}
           style={{
             ...clip,
-            background:
-              "color-mix(in srgb, var(--panel-accent) 8%, var(--ds-color-background-elevated))",
+            background: "var(--panel-surface)",
           }}
         />
         {/* The one bright line on the panel. It stops where the notch steps in
@@ -134,8 +150,7 @@ export function SignalPanel({
           aria-hidden
           className="absolute top-0 h-0.5 left-(--ds-shape-signal-cut) right-[calc(var(--ds-shape-signal-notch)+var(--ds-shape-signal-step))]"
           style={{
-            background:
-              "color-mix(in srgb, var(--panel-accent) 80%, transparent)",
+            background: "var(--panel-top-line)",
           }}
         />
 
@@ -168,12 +183,11 @@ export function SignalPanel({
 
           {footer ? (
             <div
-              className={`flex h-8 shrink-0 items-center gap-2 ${RAIL_INSET}`}
+              className={`flex shrink-0 items-center gap-2 ${RAIL_INSET}`}
               style={{
-                borderTop:
-                  "1px solid color-mix(in srgb, var(--panel-accent) 16%, transparent)",
-                background:
-                  "color-mix(in srgb, var(--panel-accent) 7%, var(--ds-color-background-muted))",
+                height: "var(--panel-footer-height)",
+                borderTop: "var(--panel-footer-border)",
+                background: "var(--panel-footer-background)",
               }}
             >
               {footer}

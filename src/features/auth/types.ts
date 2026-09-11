@@ -6,6 +6,10 @@ export type AuthHeroMedia = {
   kind: "video" | "image";
   /** Frame shown while a video buffers. */
   poster?: string;
+  /** Optional MP4 source for browsers without WebM support. */
+  mp4Src?: string;
+  /** Separately composed artwork for viewports below 1024px. */
+  mobile?: { src: string; mp4Src?: string; poster?: string };
   /** Describes the artwork; leave unset when it is purely decorative. */
   alt?: string;
 };

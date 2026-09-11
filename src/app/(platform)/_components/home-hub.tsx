@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import {
@@ -59,9 +59,19 @@ export type HomeHubProps = {
  */
 export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
   const router = useRouter();
-  const [tab, setTab] = useState(0);
-  const [matchSport, setMatchSport] = useState<SportHubSelection>(null);
-  const [gamesSport, setGamesSport] = useState<SportHubSelection>(null);
+  const searchParams = useSearchParams();
+  const requestedSport = searchParams.get("sport");
+  const initialSport = sportOrder.includes(requestedSport as Sport)
+    ? (requestedSport as Sport)
+    : null;
+  const initialTab = searchParams.get("tab") === "games" ? 1 : 0;
+  const [tab, setTab] = useState(initialTab);
+  const [matchSport, setMatchSport] = useState<SportHubSelection>(
+    initialTab === 0 ? initialSport : null,
+  );
+  const [gamesSport, setGamesSport] = useState<SportHubSelection>(
+    initialTab === 1 ? initialSport : null,
+  );
   const [selectorMode, setSelectorMode] = useState<"matches" | "games" | null>(null);
   const matchCounts = fixtureCountsBySport();
   const gameCounts = Object.fromEntries(
@@ -69,20 +79,38 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
   ) as Record<Sport, SportSelectorCount>;
   const visibleSelectorMode = selectorMode ?? (tab === 0 ? "matches" : "games");
 
+  function persistBrowseState(nextTab: number, sport: SportHubSelection) {
+    const params = new URLSearchParams();
+    params.set("tab", nextTab === 0 ? "match" : "games");
+    if (sport !== null) params.set("sport", sport);
+    router.replace(`/?${params.toString()}`);
+  }
+
+  function selectTab(nextTab: number) {
+    setTab(nextTab);
+    persistBrowseState(nextTab, nextTab === 0 ? matchSport : gamesSport);
+  }
+
+  function selectSport(mode: "matches" | "games", selection: SportHubSelection) {
+    if (mode === "matches") setMatchSport(selection);
+    else setGamesSport(selection);
+    persistBrowseState(mode === "matches" ? 0 : 1, selection);
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <GlidingTabs
         label="Match or games"
         tabs={tabs}
         activeIndex={tab}
-        onChange={setTab}
+        onChange={selectTab}
       />
 
       {tab === 0 ? (
         <div role="tabpanel" aria-label="Match" className="flex min-h-0 flex-1 flex-col">
           <SportHubTabs
             selected={matchSport}
-            onSelect={setMatchSport}
+            onSelect={(selection) => selectSport("matches", selection)}
             onMore={() => setSelectorMode("matches")}
             onSearch={() => router.push("/matches/search")}
           />
@@ -104,7 +132,7 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
         <div role="tabpanel" aria-label="Games" className="flex min-h-0 flex-1 flex-col">
           <SportHubTabs
             selected={gamesSport}
-            onSelect={setGamesSport}
+            onSelect={(selection) => selectSport("games", selection)}
             onMore={() => setSelectorMode("games")}
           />
           <div className="flex-1 overflow-y-auto px-4 py-3">
@@ -122,8 +150,7 @@ export function HomeHub({ matchFeed, gamesFeed, sportDecks }: HomeHubProps) {
         selected={visibleSelectorMode === "matches" ? matchSport : gamesSport}
         counts={visibleSelectorMode === "matches" ? matchCounts : gameCounts}
         onSelect={(selection) => {
-          if (visibleSelectorMode === "matches") setMatchSport(selection);
-          else setGamesSport(selection);
+          selectSport(visibleSelectorMode, selection);
         }}
         onClose={() => setSelectorMode(null)}
       />

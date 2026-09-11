@@ -63,6 +63,27 @@
   pointer-events: none;
 }
 
+.annotation {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  translate: -50% -50%;
+  rotate: 45deg;
+  border: 1px solid var(--annotation-color);
+  background: var(--ds-color-background-secondary);
+  pointer-events: none;
+}
+
+.axisHint {
+  position: absolute;
+  top: var(--ds-space-4);
+  right: var(--ds-space-6);
+  color: var(--ds-color-text-muted);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-2xs);
+  font-weight: 900;
+}
+
 .guide {
   top: 0;
   bottom: 0;

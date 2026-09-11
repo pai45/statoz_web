@@ -4,6 +4,8 @@ import type { Sport } from "@/domain/sports";
 import { DailyDrop } from "@/features/packs";
 
 import { accentVar, Button, Glyph, withAlpha } from "@/design-system";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
+import type { GameId } from "@/features/games/types";
 
 import {
   averageAttempts,
@@ -44,7 +46,7 @@ export type GuessHomeProps = {
   onOpenToday: () => void;
   onOpenLogs: () => void;
   /** Leaving the game altogether. */
-  backHref: string;
+  onBack: () => void;
   /** What the mode is called for this sport, e.g. `DAILY FOOTBALL MYSTERY`. */
   sportLabel: string;
   sport: Sport;
@@ -57,7 +59,7 @@ export function GuessHome({
   now,
   onOpenToday,
   onOpenLogs,
-  backHref,
+  onBack,
   sportLabel,
   sport,
 }: GuessHomeProps) {
@@ -65,6 +67,7 @@ export function GuessHome({
   const streak = solveStreak(archive, currentDayKey);
   const rate = Math.round(winRate(archive) * 100);
   const average = averageAttempts(archive);
+  const leaderboardMode: GameId = sport === "football" ? "guess-player" : sport === "cricket" ? "cricket-guess-player" : sport === "basketball" ? "basketball-guess-player" : sport === "motorsport" ? "guess-driver" : "tennis-guess-winner";
 
   const ctaLabel =
     todayRecord?.status !== "inProgress"
@@ -81,7 +84,7 @@ export function GuessHome({
       <GuessHeader
         eyebrow="DAILY CAREER INTEL"
         title="GUESS THE PLAYER"
-        backHref={backHref}
+        onBack={onBack}
         backLabel="Back to games"
         right={<HeaderMark />}
       />
@@ -172,6 +175,7 @@ export function GuessHome({
               <Glyph name="chevron_right" size={22} />
             </span>
           </button>
+          <div className="mt-3.5"><GameLeaderboardCta sport={sport} gameId={leaderboardMode} /></div>
         </div>
       </div>
         <DailyDrop sport={sport} />

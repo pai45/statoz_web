@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { accentVar, Button, Glyph, hudChamferPath, withAlpha } from "@/design-system";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import {
   lobbyBriefDelayMs,
@@ -33,7 +34,7 @@ export type TennisLobbyProps = {
   canResume: boolean;
   /** False until storage has answered, which is what decides the CTA's label. */
   ready: boolean;
-  backHref: string;
+  onBack: () => void;
   onPlay: () => void;
 };
 
@@ -51,7 +52,7 @@ export function TennisLobby({
   winStreak,
   canResume,
   ready,
-  backHref,
+  onBack,
   onPlay,
 }: TennisLobbyProps) {
   const lime = accentVar("lime");
@@ -147,14 +148,16 @@ export function TennisLobby({
           >
             DECK BUILDER
           </Link>
-          <Link
-            href={backHref}
+          <button
+            type="button"
+            onClick={onBack}
             className="mt-4 block text-center font-bold leading-compact text-muted underline-offset-4 hover:underline"
             style={{ fontSize: "var(--ds-text-2xs)" }}
           >
             Back to Tennis games
-          </Link>
+          </button>
         </div>
+        <div className="mt-4"><GameLeaderboardCta sport="tennis" gameId="tennis-rally" /></div>
         <DailyDrop sport="tennis" />
       </div>
     </div>

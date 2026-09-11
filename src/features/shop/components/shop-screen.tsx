@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
 
@@ -8,6 +9,7 @@ import {
   LockIcon,
   PlayerCard,
   ProfileIcon,
+  SearchIcon,
   UnderlineTabs,
   accentVar,
   glyphRegistry,
@@ -137,7 +139,7 @@ export function ShopScreen() {
 
 function ShopCatalog({ economy }: { economy: EconomySnapshot }) {
   const searchParams = useSearchParams();
-  const [sport, setSport] = useState<Sport>("football");
+  const [sport, setSport] = useState<Sport>(() => sportOrder.includes(searchParams.get("sport") as Sport) ? searchParams.get("sport") as Sport : "football");
   const [category, setCategory] = useState<ShopCategory>(() => tabFromQuery(searchParams.get("tab")));
   const [filter, setFilter] = useState("ALL");
   const [notice, setNotice] = useState("");
@@ -283,6 +285,7 @@ function ShopCatalog({ economy }: { economy: EconomySnapshot }) {
       className={`${styles.shell} relative isolate flex min-h-full flex-1 flex-col`}
       style={{ "--shop-accent": accent } as CSSProperties}
     >
+      <div className="flex justify-end border-b border-line-muted px-3 py-2"><Link href="/shop/search" className="flex min-h-10 items-center gap-2 px-3 font-display text-2xs font-black tracking-ultra text-muted hover:text-cyan"><SearchIcon size={18} /> SEARCH SHOP</Link></div>
       <UnderlineTabs
         tabs={sportOrder.map((entry) => ({
           id: entry,

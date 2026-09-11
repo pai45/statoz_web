@@ -34,6 +34,7 @@ import { formatInt, normaliseTag, playerTagForName } from "@/shared/utils";
 
 import { toggleFriend, useFriends } from "../state/friends-store";
 import { ReferralInviteCard } from "./referral-invite-card";
+import { FriendRequestSent } from "./friend-request-sent";
 import styles from "./friends.module.css";
 
 /**
@@ -83,6 +84,7 @@ function FriendsArenaBoard() {
 
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const [sentName, setSentName] = useState<string | null>(null);
   const [openRival, setOpenRival] = useState<OpenRival | null>(null);
 
   useEffect(() => {
@@ -119,7 +121,8 @@ function FriendsArenaBoard() {
 
   function onToggleFriend(name: string) {
     const nowFriend = toggleFriend(name);
-    setToast(nowFriend ? `${name} added to friends` : `${name} removed from friends`);
+    if (nowFriend) setSentName(name);
+    else setToast(`${name} removed from friends`);
   }
 
   function challenge(seed: RivalSeed) {
@@ -255,6 +258,7 @@ function FriendsArenaBoard() {
           onClose={() => setOpenRival(null)}
         />
       ) : null}
+      {sentName ? <FriendRequestSent name={sentName} onComplete={() => setSentName(null)} /> : null}
     </div>
   );
 }

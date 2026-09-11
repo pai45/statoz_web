@@ -5,6 +5,7 @@ import { DailyDrop } from "@/features/packs";
 import type { CSSProperties } from "react";
 
 import { accentVar, Button, Glyph, withAlpha } from "@/design-system";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import type { FootballChessStats } from "../state/football-chess-progress";
 import { played, winRate } from "../state/football-chess-progress";
@@ -31,7 +32,7 @@ export type ChessLobbyProps = {
   stats: FootballChessStats;
   formation: ChessFormation;
   squadReady: boolean;
-  backHref: string;
+  onBack: () => void;
   onFormationChange: (formation: ChessFormation) => void;
   onPlay: () => void;
 };
@@ -44,7 +45,7 @@ export function ChessLobby({
   stats,
   formation,
   squadReady,
-  backHref,
+  onBack,
   onFormationChange,
   onPlay,
 }: ChessLobbyProps) {
@@ -181,13 +182,14 @@ export function ChessLobby({
               ? `SHAPE: ${formationCodes[formation]}  ${formationLabels[formation]}`
               : "BUILD A 5-A-SIDE DECK: 2 ATK · 2 DEF · GK"}
           </p>
-          <Button accent={gold} variant="ghost" fullWidth href={backHref}>
+          <Button accent={gold} variant="ghost" fullWidth onClick={onBack}>
             BACK TO GAMES
           </Button>
           <Button accent={gold} variant="ghost" fullWidth href="/decks/football?returnTo=/play/football-chess">
             DECK BUILDER
           </Button>
         </div>
+        <GameLeaderboardCta sport="football" gameId="football-chess" />
         <DailyDrop sport="football" />
       </div>
     </div>

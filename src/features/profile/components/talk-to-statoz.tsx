@@ -69,6 +69,16 @@ export function TalkToStatoz() {
             </li>
           ))}
         </ul>
+
+        <section className={styles.socialPanel} aria-labelledby="follow-statoz-title">
+          <h2 id="follow-statoz-title">FOLLOW US ON</h2>
+          <p>Highlights, hot takes, and the next drop.</p>
+          <div className={styles.socialActions}>
+            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">INSTAGRAM</a>
+            <a href="https://www.reddit.com/" target="_blank" rel="noreferrer">REDDIT</a>
+            <a href="https://www.youtube.com/" target="_blank" rel="noreferrer">YOUTUBE</a>
+          </div>
+        </section>
       </div>
     </div>
   );

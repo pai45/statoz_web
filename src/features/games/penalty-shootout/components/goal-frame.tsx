@@ -1,4 +1,4 @@
-import { accentVar, withAlpha } from "@/design-system";
+import { GoalMouthStructure, accentVar, withAlpha } from "@/design-system";
 
 import {
   arenaWidth,
@@ -112,14 +112,9 @@ export function GoalNet({ ripple }: { ripple?: Ripple }) {
 export function GoalStructure() {
   return (
     <g aria-hidden>
-      <path
-        d={`M ${goalLeft} ${groundY} L ${goalLeft} ${crossbarY} L ${goalRight} ${crossbarY} L ${goalRight} ${groundY}`}
-        fill="none"
-        stroke="rgb(255 255 255 / 92%)"
-        strokeWidth={4}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <g stroke="rgb(255 255 255 / 92%)" strokeLinecap="round" strokeLinejoin="round">
+        <GoalMouthStructure left={goalLeft} right={goalRight} top={crossbarY} bottom={groundY} />
+      </g>
       <line
         x1={0}
         y1={groundY}

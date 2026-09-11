@@ -48,11 +48,13 @@ function TrendingTile({ config }: { config: TrendingTileConfig }) {
 }
 
 const CHROME = accentVar("cyan");
+const BORDER_ACCENT = "var(--ds-color-fixture-predicted)";
 
 function Unavailable({ kind }: { kind: TrendingTileConfig["kind"] }) {
   return (
     <SignalPanel
-      accent={CHROME}
+      accent={BORDER_ACCENT}
+      appearance="balanced"
       lifted={false}
       pad={false}
       tag={<Badge accent={CHROME}>{kind.toUpperCase()}</Badge>}

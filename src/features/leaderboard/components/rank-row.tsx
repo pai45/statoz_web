@@ -58,7 +58,7 @@ export function RankRow({ entry, accent, meta, avatarSrc, frameColor, onOpen }: 
           name={entry.name}
           size={48}
           highlight={isUser}
-          team={entry.team}
+          team={entry.team ?? undefined}
           src={isUser ? avatarSrc : undefined}
           frameColor={isUser ? frameColor : undefined}
         />

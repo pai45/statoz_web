@@ -116,7 +116,7 @@ export function RankWinnerTile({
             name={entry.name}
             size={avatarSize}
             ring={color}
-            team={entry.team}
+            team={entry.team ?? undefined}
             src={avatarSrc}
             frameColor={entry.isUser ? frameColor : undefined}
           />
@@ -145,7 +145,7 @@ export function RankWinnerTile({
               name={entry.name}
               size={avatarSize}
               ring={color}
-              team={entry.team}
+              team={entry.team ?? undefined}
               src={avatarSrc}
               frameColor={entry.isUser ? frameColor : undefined}
             />

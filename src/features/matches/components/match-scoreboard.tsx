@@ -8,6 +8,7 @@ import type { MatchDetailScoreboard, SportMatch } from "@/domain/matches";
 import { BasketballStatsView } from "./basketball-stats-view";
 import { CricketStatsView } from "./cricket-stats-view";
 import { FootballStatsView } from "./football-stats-view";
+import { MotorsportStatsView } from "./motorsport-stats-view";
 import { CommentaryView, TimelineList } from "./match-report-parts";
 import { MatchPitchView } from "./match-pitch-view";
 import {
@@ -40,6 +41,7 @@ export function MatchScoreboard({
   if (match.sport === "football") return <FootballStatsView match={match} scoreboard={scoreboard} />;
   if (match.sport === "basketball") return <BasketballStatsView match={match} scoreboard={scoreboard} />;
   if (match.sport === "cricket") return <CricketStatsView match={match} scoreboard={scoreboard} />;
+  if (match.sport === "motorsport" && scoreboard.race) return <MotorsportStatsView report={scoreboard.race} />;
   return <GenericStatsView match={match} scoreboard={scoreboard} />;
 }
 

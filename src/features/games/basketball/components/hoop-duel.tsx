@@ -7,9 +7,9 @@ import { settleCoinReward, useEconomy } from "@/features/economy";
 
 import { levelFromXp } from "@/domain/progression";
 
-import { sportForGame, type GameEntry } from "@/mocks/games";
+import type { GameEntry } from "@/mocks/games";
 import type { GameId } from "../../types";
-import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import {
   GameMatchGate,
   matchmakingFighter,
@@ -83,14 +83,15 @@ function rosterFromClaim(playerCardIds: string[] | undefined): BasketballAthlete
   return roster.length === 3 ? roster : null;
 }
 
-export function HoopDuel({ game }: HoopDuelProps) {
+export function HoopDuel({ game: _game }: HoopDuelProps) {
+  void _game;
   const [view, setView] = useState<"lobby" | "playing">("lobby");
   const [session, setSession] = useState(0);
   const decks = useDecks();
   const economy = useEconomy();
   const hydrated = useIsHydrated();
   const stats = useHoopDuelStats();
-  const gamesHref = `/games/${sportForGame(game)}`;
+  const goBack = useGameReturn();
 
   const basketballLoadout = activeLoadout(decks, "basketball");
   const roster = useMemo(() => rosterFromClaim(basketballLoadout?.playerIds), [basketballLoadout]);
@@ -105,17 +106,14 @@ export function HoopDuel({ game }: HoopDuelProps) {
     // out there — Flutter's deck builder asks the same question explicitly.
     const starter = roster === null ? null : bestOf(roster);
     return (
-      <>
-        <HoopDuelLobby
-          stats={stats}
-          squadReady={roster !== null && hydrated}
-          starterName={starter?.name ?? null}
-          backHref={gamesHref}
-          onDifficultyChange={saveDifficulty}
-          onPlay={play}
-        />
-        <GameLandingAd />
-      </>
+      <HoopDuelLobby
+        stats={stats}
+        squadReady={roster !== null && hydrated}
+        starterName={starter?.name ?? null}
+        onBack={goBack}
+        onDifficultyChange={saveDifficulty}
+        onPlay={play}
+      />
     );
   }
 

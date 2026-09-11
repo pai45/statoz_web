@@ -7,6 +7,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 
 import { accentVar, feedbackVar, Glyph, withAlpha } from "@/design-system";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import {
   circuitCardGapPx,
@@ -69,7 +70,7 @@ export type GrandPrixLobbyProps = {
   /** Whether the loadout has a driver signed. */
   driverReady: boolean;
   driverName: string | null;
-  backHref: string;
+  onBack: () => void;
   loadoutHref: string;
   onSelectCircuit: (circuit: GrandPrixCircuitId) => void;
   onSelectLaps: (laps: number) => void;
@@ -83,7 +84,7 @@ export function GrandPrixLobby({
   ownedLiveryIds,
   driverReady,
   driverName,
-  backHref,
+  onBack,
   loadoutHref,
   onSelectCircuit,
   onSelectLaps,
@@ -382,8 +383,9 @@ export function GrandPrixLobby({
           <span aria-hidden className="size-0.75 rounded-full bg-border" />
           <LobbyLink href="/shop">LIVERY SHOP</LobbyLink>
           <span aria-hidden className="size-0.75 rounded-full bg-border" />
-          <LobbyLink href={backHref}>ALL RACING GAMES</LobbyLink>
+          <LobbyLink onClick={onBack}>ALL RACING GAMES</LobbyLink>
         </div>
+        <div className="mt-4"><GameLeaderboardCta sport="motorsport" gameId="grand-prix-dash" /></div>
         <DailyDrop sport="motorsport" />
       </div>
     </div>
@@ -401,12 +403,16 @@ function SectionLabel({ children }: { children: string }) {
   );
 }
 
-function LobbyLink({ href, children }: { href: string; children: string }) {
+function LobbyLink({ href, onClick, children }: { href?: string; onClick?: () => void; children: string }) {
+  const className = "py-2 font-display font-black leading-none text-muted underline-offset-4 hover:underline";
+  const style = { fontSize: "9px", letterSpacing: "1.8px" };
+  if (onClick) return <button type="button" onClick={onClick} className={className} style={style}>{children}</button>;
+  if (!href) return null;
   return (
     <Link
       href={href}
-      className="py-2 font-display font-black leading-none text-muted underline-offset-4 hover:underline"
-      style={{ fontSize: "9px", letterSpacing: "1.8px" }}
+      className={className}
+      style={style}
     >
       {children}
     </Link>

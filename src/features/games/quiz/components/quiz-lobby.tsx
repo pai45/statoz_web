@@ -16,6 +16,7 @@ import {
   withAlpha,
 } from "@/design-system";
 import { sportModuleFor, type Sport } from "@/domain/sports";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import { questionsPerSet, setCount } from "../constants";
 import {
@@ -89,6 +90,9 @@ export function QuizLobby({ sport, progress, onPickMode }: QuizLobbyProps) {
             />
           </div>
         ))}
+      </div>
+      <div className="mt-4">
+        <GameLeaderboardCta sport={sport} gameId={`${sport}-quiz` as import("../../types").GameId} />
       </div>
         <DailyDrop sport={sport} />
     </div>

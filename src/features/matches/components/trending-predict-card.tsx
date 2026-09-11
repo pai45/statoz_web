@@ -12,6 +12,7 @@ export type TrendingPredictCardProps = {
 };
 
 const PRIMARY_ACCENT = accentVar("cyan");
+const BORDER_ACCENT = "var(--ds-color-fixture-predicted)";
 
 /** An open prediction mission on a fixture. */
 export function TrendingPredictCard({
@@ -20,7 +21,8 @@ export function TrendingPredictCard({
 }: TrendingPredictCardProps) {
   return (
     <SignalPanel
-      accent={PRIMARY_ACCENT}
+      accent={BORDER_ACCENT}
+      appearance="balanced"
       tag={<Badge accent={PRIMARY_ACCENT}>PREDICT</Badge>}
       href={`/matches/${match.id}`}
       label={`Predict ${match.home.name} versus ${match.away.name}`}
@@ -37,14 +39,14 @@ export function TrendingPredictCard({
       {/* The matchup is this tile's focal element, so it carries the weight the
           other kinds give to a figure. */}
       <div className="flex flex-1 items-center justify-between gap-2">
-        <TeamBadge team={match.home} size={32} />
+        <TeamBadge team={match.home} size={46} />
         <span
           className="font-display text-2xs font-black tracking-label"
           style={{ color: PRIMARY_ACCENT }}
         >
           VS
         </span>
-        <TeamBadge team={match.away} size={32} />
+        <TeamBadge team={match.away} size={46} />
       </div>
 
       <p className="truncate font-display text-sm font-black tracking-label">

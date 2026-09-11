@@ -17,7 +17,7 @@ import {
   withAlpha,
 } from "@/design-system";
 import { activeLoadout, isLoadoutComplete, useDecks } from "@/features/cards-decks";
-import { isFriend, toggleFriend, useFriends } from "@/features/friends";
+import { FriendRequestSent, isFriend, toggleFriend, useFriends } from "@/features/friends";
 import { avatarForName } from "@/features/onboarding";
 
 import { rivalDossier, type RivalDossier } from "../data/rival-dossier";
@@ -165,6 +165,7 @@ function RivalActions({
   const decks = useDecks();
   const friends = useFriends();
   const [notice, setNotice] = useState<string | null>(null);
+  const [requestSent, setRequestSent] = useState(false);
   const friend = isFriend(friends, name);
 
   useEffect(() => {
@@ -191,7 +192,8 @@ function RivalActions({
           icon={friend ? <CheckIcon size={16} /> : <PlusIcon size={16} />}
           onSelect={() => {
             const nowFriend = toggleFriend(name);
-            setNotice(nowFriend ? `${name} added to friends` : `${name} removed from friends`);
+            if (nowFriend) setRequestSent(true);
+            else setNotice(`${name} removed from friends`);
           }}
         />
       </div>
@@ -200,6 +202,7 @@ function RivalActions({
           {notice}
         </p>
       ) : null}
+      {requestSent ? <FriendRequestSent name={name} onComplete={() => setRequestSent(false)} /> : null}
     </div>
   );
 }

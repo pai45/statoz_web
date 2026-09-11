@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { sportOrder, type Sport } from "@/domain/sports";
 import { GamesTrendingFeed, SportGameDeck } from "@/features/games";
@@ -13,10 +13,12 @@ const sportDecks = Object.fromEntries(
 
 export default function HomePage() {
   return (
-    <HomeHub
-      matchFeed={<TrendingFeed />}
-      gamesFeed={<GamesTrendingFeed />}
-      sportDecks={sportDecks}
-    />
+    <Suspense fallback={<div className="flex-1 bg-background" />}>
+      <HomeHub
+        matchFeed={<TrendingFeed />}
+        gamesFeed={<GamesTrendingFeed />}
+        sportDecks={sportDecks}
+      />
+    </Suspense>
   );
 }

@@ -25,6 +25,12 @@ export const gradients = {
   cardNameplate: "linear-gradient(to right, #202836 0%, #121824 100%)",
   /** The neutral navy body shared by sport fixture cards. */
   fixtureCard: "linear-gradient(to bottom, #1b2336 0%, #121a28 100%)",
+  /** The restrained slate-and-cyan body shared by the MATCH Trending feed. */
+  trendingCard: [
+    "linear-gradient(to bottom,",
+    "color-mix(in srgb, var(--ds-color-accent-cyan) 4%, var(--ds-color-background-elevated)) 0%,",
+    "var(--ds-color-background-elevated) 100%)",
+  ].join(" "),
   /** Dense data surface used by league standings and ranked rows. */
   leagueTable: "linear-gradient(135deg, #121b30 0%, #0e1628 100%)",
   /** The bed a decision sheet is taken on, raked from lit slate to hull dark. */

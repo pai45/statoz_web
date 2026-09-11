@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 
 import {
   CheckIcon,
@@ -9,6 +9,7 @@ import {
   HistoryIcon,
   InsightsIcon,
   MicIcon,
+  SwapHorizIcon,
   accentVar,
 } from "@/design-system";
 import type {
@@ -43,6 +44,9 @@ export function TimelineList({
         message="Goals, cards and substitutions will be tracked here."
       />
     );
+  }
+  if (match.sport === "football") {
+    return <FootballTimeline match={match} events={events} />;
   }
   return (
     <div className={styles.tight}>
@@ -82,7 +86,13 @@ function EventGlyph({ type }: { type: MatchDetailTimelineEvent["type"] }) {
   );
 }
 
-export function CommentaryView({ commentary }: { commentary: MatchDetailCommentary[] }) {
+export function CommentaryView({
+  commentary,
+  match,
+}: {
+  commentary: MatchDetailCommentary[];
+  match?: SportMatch;
+}) {
   if (commentary.length === 0) {
     return (
       <EmptyPanel
@@ -94,19 +104,159 @@ export function CommentaryView({ commentary }: { commentary: MatchDetailCommenta
     );
   }
   return (
-    <div className={styles.tight}>
-      <SectionHeading label="PLAY BY PLAY" />
-      {commentary.map((item) => (
-        <StatsRow key={`${item.minute}-${item.text}`}>
-          <span className={styles.eventRow}>
-            <b className={styles.eventMinute}>{item.minute}</b>
-            <span className={styles.eventCopy}>
-              <strong style={{ whiteSpace: "normal", fontWeight: 400 }}>{item.text}</strong>
-            </span>
-          </span>
-        </StatsRow>
-      ))}
+    <div className={styles.commentary}>
+      <header className={styles.logHeader}>
+        <h3>LIVE MATCH COMMS</h3>
+        <span>{commentary.length} ENTRIES</span>
+      </header>
+      <ol className={styles.commentaryList}>
+        {commentary.map((item, index) => {
+          const sequence = item.sequence ?? index;
+          const teamName = item.teamName
+            ?? (item.side === "home" ? match?.home.name : item.side === "away" ? match?.away.name : undefined);
+          const channel = [teamName, item.kind?.replaceAll("-", " ")]
+            .filter(Boolean)
+            .join(" // ")
+            .toUpperCase();
+          return (
+            <li key={`${sequence}-${item.minute}-${item.text}`} className={styles.commentaryRow}>
+              <span className={styles.commentaryStamp}>
+                <b>{item.minute || "—"}</b>
+                <small>SEQ {String(sequence).padStart(3, "0")}</small>
+              </span>
+              <span className={styles.commentaryRule} aria-hidden="true" />
+              <span className={styles.commentaryCopy}>
+                {channel ? <strong>{channel}</strong> : null}
+                <span>{item.text}</span>
+                {item.players?.length ? <small>PLAYERS // {item.players.join(" · ")}</small> : null}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
     </div>
+  );
+}
+
+function FootballTimeline({ match, events }: { match: SportMatch; events: MatchDetailTimelineEvent[] }) {
+  const homeColor = match.home.secondaryTextColor ?? match.home.color;
+  const awayColor = match.away.secondaryTextColor ?? match.away.color;
+
+  return (
+    <section className={styles.matchTimeline}>
+      <header className={styles.logHeader}>
+        <h3>MATCH TIMELINE</h3>
+        <span>{String(events.length).padStart(3, "0")} EVENTS</span>
+      </header>
+      <div className={styles.timelineMoments}>
+        {events.map((event, index) => event.marker ? (
+          <TimelinePeriod key={`${event.label}-${event.minute}-${index}`} event={event} />
+        ) : (
+          <TimelineMoment
+            key={`${event.minute}-${event.player}-${index}`}
+            event={event}
+            accent={event.side === "home" ? homeColor : awayColor}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TimelinePeriod({ event }: { event: MatchDetailTimelineEvent }) {
+  return (
+    <div className={styles.timelinePeriod}>
+      <i aria-hidden="true" />
+      <span aria-hidden="true" className={styles.timelineTarget} />
+      <b>{event.label ?? "MATCH EVENT"}{event.scoreDisplay ? ` ${event.scoreDisplay}` : ""}</b>
+      <i aria-hidden="true" />
+    </div>
+  );
+}
+
+function TimelineMoment({ event, accent }: { event: MatchDetailTimelineEvent; accent: string }) {
+  const [open, setOpen] = useState(false);
+  const isHome = event.side === "home";
+  const body = <TimelineEventBody event={event} accent={accent} home={isHome} />;
+  const cells = (
+    <>
+      <span className={styles.timelineTeamCell}>{isHome ? body : null}</span>
+      <span className={styles.timelineSpine} data-goal={event.type === "goal" || undefined}>
+        <b style={{ "--event-accent": accent } as CSSProperties}><span>{event.minute}</span></b>
+      </span>
+      <span className={styles.timelineTeamCell}>{isHome ? null : body}</span>
+    </>
+  );
+
+  return (
+    <div className={styles.timelineMoment} style={{ "--event-accent": accent } as CSSProperties}>
+      {event.description ? (
+        <button
+          type="button"
+          className={styles.timelineMain}
+          onClick={() => setOpen((current) => !current)}
+          aria-expanded={open}
+        >
+          {cells}
+        </button>
+      ) : <div className={styles.timelineMain}>{cells}</div>}
+      {open && event.description ? (
+        <div className={styles.timelineReport} data-side={isHome ? "home" : "away"}>
+          <p>{event.description}</p>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function TimelineEventBody({
+  event,
+  accent,
+  home,
+}: {
+  event: MatchDetailTimelineEvent;
+  accent: string;
+  home: boolean;
+}) {
+  const glyph = <TimelineEventGlyph type={event.type} accent={accent} />;
+  return (
+    <span className={styles.timelineBody} data-side={home ? "home" : "away"}>
+      {home ? null : glyph}
+      <span className={styles.timelineEventCopy}>
+        {event.type === "substitution" ? (
+          <>
+            <strong data-in>{event.player.toUpperCase()}</strong>
+            {event.secondary ? <strong data-out>{event.secondary.toUpperCase()}</strong> : null}
+          </>
+        ) : (
+          <>
+            <strong>{event.player.toUpperCase()}</strong>
+            {event.type === "goal" && event.scoreDisplay ? <b style={{ color: accent }}>{event.scoreDisplay}</b> : null}
+            {event.secondary ? <small>ASSIST {event.secondary.toUpperCase()}</small> : null}
+          </>
+        )}
+      </span>
+      {home ? glyph : null}
+    </span>
+  );
+}
+
+function TimelineEventGlyph({ type, accent }: { type: MatchDetailTimelineEvent["type"]; accent: string }) {
+  let mark: ReactNode;
+  if (type === "goal" || type === "score") mark = <FootballIcon size={15} aria-hidden="true" />;
+  else if (type === "substitution") mark = <SwapHorizIcon size={15} aria-hidden="true" />;
+  else mark = <i className={styles.timelineCard} data-card={type} aria-hidden="true" />;
+  const tone = type === "yellow"
+    ? "var(--ds-color-accent-gold)"
+    : type === "red"
+      ? "var(--ds-color-danger)"
+      : type === "substitution"
+        ? "var(--ds-color-accent-lime)"
+        : accent;
+  return (
+    <span className={styles.timelineGlyph} style={{ "--event-tone": tone } as CSSProperties}>
+      <span>{mark}</span>
+    </span>
   );
 }
 

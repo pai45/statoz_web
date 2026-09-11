@@ -69,13 +69,18 @@ function TeamDetails({
   cricket: boolean;
   alignEnd?: boolean;
 }) {
-  const innings = cricket && score != null && String(score) !== "" ? String(score) : null;
+  const innings = cricket && score != null && String(score) !== "" ? splitCricketScore(String(score)) : null;
   return (
     <span className={`${styles.summaryTeam} ${alignEnd ? styles.summaryTeamEnd : ""}`}>
       <span className={styles.teamName}>{team.name}</span>
-      {innings ? <span className={styles.teamInnings}>{innings}</span> : null}
+      {innings ? <><span className={styles.teamInnings}>{innings.score}</span>{innings.qualifier ? <span className={styles.teamQualifier}>{innings.qualifier}</span> : null}</> : null}
     </span>
   );
+}
+
+function splitCricketScore(value: string): { score: string; qualifier: string } {
+  const index = value.indexOf("(");
+  return index < 0 ? { score: value.trim(), qualifier: "" } : { score: value.slice(0, index).trim(), qualifier: value.slice(index).trim().replace(/^\(|\)$/g, "") };
 }
 
 function GrandPrixSummary({ match }: { match: SportMatch }) {

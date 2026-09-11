@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { accentVar } from "@/design-system";
-import { sportForGame, type GameEntry } from "@/mocks/games";
+import type { GameEntry } from "@/mocks/games";
 
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { completedCount } from "../engine/archive";
 import { dayKeyFor } from "../engine/day-keys";
 import {
@@ -42,7 +43,8 @@ export type FootballBingoProps = {
 
 type View = "home" | "logs" | "grid";
 
-export function FootballBingo({ game }: FootballBingoProps) {
+export function FootballBingo({ game: _game }: FootballBingoProps) {
+  void _game;
   const hydrated = useIsHydrated();
   const archive = useBingoArchive();
   const now = useClock();
@@ -51,7 +53,7 @@ export function FootballBingo({ game }: FootballBingoProps) {
   const [openDayKey, setOpenDayKey] = useState<string | null>(null);
 
   const todayKey = now === null ? null : dayKeyFor(now);
-  const gamesHref = `/games/${sportForGame(game)}`;
+  const goBack = useGameReturn();
 
   useEffect(() => {
     if (todayKey === null) return;
@@ -121,7 +123,7 @@ export function FootballBingo({ game }: FootballBingoProps) {
           setView("grid");
         }}
         onOpenLogs={() => setView("logs")}
-        backHref={gamesHref}
+        onBack={goBack}
       />
       <GameLandingAd />
     </>

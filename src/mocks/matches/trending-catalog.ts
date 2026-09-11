@@ -19,9 +19,9 @@ export type TrendingTileConfig = {
  */
 export const matchTrendingCatalog: TrendingTileConfig[] = [
   {
-    id: "trend-live-epl",
+    id: "trend-fulham-chelsea",
     kind: "match",
-    sourceId: "epl_cfc_new",
+    sourceId: "401879318",
     sport: "football",
     span: "wide",
   },
@@ -47,16 +47,16 @@ export const matchTrendingCatalog: TrendingTileConfig[] = [
     span: "square",
   },
   {
-    id: "trend-wnba-predict",
-    kind: "predict",
-    sourceId: "wnba_demo_dal_phx",
+    id: "trend-spurs-knicks",
+    kind: "match",
+    sourceId: "basketball-revamp-20260614-ny-sa",
     sport: "basketball",
-    span: "square",
+    span: "wide",
   },
   {
-    id: "trend-live-cricket",
+    id: "trend-rcb-gt",
     kind: "match",
-    sourceId: "1496576",
+    sourceId: "1535465",
     sport: "cricket",
     span: "wide",
   },
@@ -89,9 +89,9 @@ export const matchTrendingCatalog: TrendingTileConfig[] = [
     span: "square",
   },
   {
-    id: "trend-belgian-gp-future",
-    kind: "future",
-    sourceId: "f1_belgian_gp_winner",
+    id: "trend-italian-gp",
+    kind: "match",
+    sourceId: "600057442",
     sport: "motorsport",
     span: "square",
   },

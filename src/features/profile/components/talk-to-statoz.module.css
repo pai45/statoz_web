@@ -47,6 +47,33 @@
   list-style: none;
 }
 
+.socialPanel { display: grid; gap: 6px; margin-top: 10px; }
+.socialPanel h2 {
+  margin: 0;
+  color: var(--ds-color-accent-cyan);
+  font-family: var(--ds-font-display);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: var(--ds-tracking-ultra);
+}
+.socialPanel p { margin: 0; color: var(--ds-color-text-subtle); font-size: 12.5px; }
+.socialActions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.socialActions a {
+  display: grid;
+  min-height: 48px;
+  place-items: center;
+  border: 1px solid var(--ds-color-border-default);
+  background: var(--ds-color-background-elevated);
+  color: var(--ds-color-text-subtle);
+  font-family: var(--ds-font-display);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: var(--ds-tracking-wide);
+  text-decoration: none;
+}
+.socialActions a:hover,
+.socialActions a:focus-visible { border-color: var(--ds-color-accent-cyan); color: var(--ds-color-text-default); outline: none; }
+
 /* ---- Compose --------------------------------------------------------------- */
 
 /* A column, not a stack: the app pins TRANSMIT to the bottom edge, so the dock

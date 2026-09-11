@@ -11,7 +11,6 @@ import type { GlyphName, PaletteName } from "@/design-system";
 export type SupportChannelId =
   | "bug"
   | "feature"
-  | "feedback"
   | "mismatch"
   | "shoutout";
 
@@ -55,21 +54,10 @@ export const supportChannels: SupportChannel[] = [
     accent: "cyan",
   },
   {
-    id: "feedback",
-    title: "Feedback & Enhancements",
-    tagline: "Polish, friction, or UX that could hit harder.",
-    composeSubtitle: "// CHANNEL 03 · TUNING PASS",
-    composeHint: "Call out what feels off — or what almost nails it.",
-    summaryHint: "What should we tune?",
-    detailsHint: "Where in the app? What would feel better?",
-    icon: "tune",
-    accent: "violet",
-  },
-  {
     id: "mismatch",
     title: "Score / Data Mismatch",
     tagline: "Wrong score, odds, lineup, or live feed drift.",
-    composeSubtitle: "// CHANNEL 04 · DATA SYNC",
+    composeSubtitle: "// CHANNEL 03 · DATA SYNC",
     composeHint: "Flag the fixture, market, or stat that doesn't match reality.",
     summaryHint: "Match / market that looks wrong",
     detailsHint: "What did you see vs what should it be?",
@@ -80,7 +68,7 @@ export const supportChannels: SupportChannel[] = [
     id: "shoutout",
     title: "Shoutout",
     tagline: "Love a moment, mode, or beat? Send it up.",
-    composeSubtitle: "// CHANNEL 05 · FAN SIGNAL",
+    composeSubtitle: "// CHANNEL 04 · FAN SIGNAL",
     composeHint: "Tell us what slapped. We live for these.",
     summaryHint: "What made you cheer?",
     detailsHint: "Share the moment — mode, card, streak, vibe…",

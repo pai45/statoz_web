@@ -3,20 +3,19 @@
 import { withAlpha } from "@/design-system";
 
 import {
-  gameModeOrder,
-  tournamentBoardOrder,
+  matchesBoardOrder,
   tournamentScopeOrder,
 } from "../scoring";
-import { useBoardCountdown } from "../state/use-board-countdown";
+import { gameRegistry, sportGameDecks } from "@/mocks/games";
+import type { Sport } from "@/domain/sports";
 import type {
   GameMode,
   LeaderboardType,
-  TournamentBoard,
+  MatchesBoard,
   TournamentScope,
 } from "../types";
 
 import styles from "./leaderboard.module.css";
-import { CountdownPill } from "./rank-parts";
 import { plateFill, RankPlate } from "./rank-plate";
 
 /**
@@ -30,7 +29,7 @@ import { plateFill, RankPlate } from "./rank-plate";
 const panel = "var(--ds-color-background-elevated)";
 const line = "var(--ds-color-border-strong)";
 
-const boardLabels: Record<TournamentBoard, string> = {
+const boardLabels: Record<MatchesBoard, string> = {
   teams: "TEAMS",
   players: "PLAYERS",
 };
@@ -41,18 +40,12 @@ const scopeLabels: Record<TournamentScope, string> = {
   allTime: "ALL-TIME",
 };
 
-const modeLabels: Record<GameMode, string> = {
-  quiz: "QUIZ",
-  cardDuel: "CARD DUEL",
-  streaks: "STREAKS",
-  accuracy: "ACCURACY",
-};
-
 export type LeaderboardFiltersProps = {
   type: LeaderboardType;
+  sport: Sport;
   accent: string;
-  board: TournamentBoard;
-  onBoard: (board: TournamentBoard) => void;
+  board: MatchesBoard;
+  onBoard: (board: MatchesBoard) => void;
   scope: TournamentScope;
   onScope: (scope: TournamentScope) => void;
   mode: GameMode;
@@ -61,6 +54,7 @@ export type LeaderboardFiltersProps = {
 
 export function LeaderboardFilters({
   type,
+  sport,
   accent,
   board,
   onBoard,
@@ -69,38 +63,23 @@ export function LeaderboardFilters({
   mode,
   onMode,
 }: LeaderboardFiltersProps) {
-  if (type === "matchDay") {
-    return (
-      /* Right-aligned over the board, as the app sets it; in the sidebar
-         there is nothing to align to, so it simply starts. */
-      <div className="flex justify-end lg:justify-start">
-        <BoardCountdown />
-      </div>
-    );
-  }
-
-  if (type === "tournament") {
+  if (type === "matches") {
     return (
       <div className="flex flex-col gap-2.5">
         <ChipRow
           label="Tournament board"
-          items={tournamentBoardOrder.map((id) => ({ id, label: boardLabels[id] }))}
+          items={matchesBoardOrder.map((id) => ({ id, label: boardLabels[id] }))}
           activeId={board}
           accent={accent}
           onSelect={onBoard}
         />
-        {board === "players" ? (
-          <ChipRow
-            label="Ranking period"
-            items={tournamentScopeOrder.map((id) => ({
-              id,
-              label: scopeLabels[id],
-            }))}
-            activeId={scope}
-            accent={accent}
-            onSelect={onScope}
-          />
-        ) : null}
+        <ChipRow
+          label="Ranking period"
+          items={tournamentScopeOrder.map((id) => ({ id, label: scopeLabels[id] }))}
+          activeId={scope}
+          accent={accent}
+          onSelect={onScope}
+        />
       </div>
     );
   }
@@ -111,10 +90,10 @@ export function LeaderboardFilters({
       aria-label="Game mode"
       className={`${styles.railScroll} -mx-4 flex gap-1.75 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0`}
     >
-      {gameModeOrder.map((id) => (
+      {sportGameDecks[sport].map((id) => (
         <FilterChip
           key={id}
-          label={modeLabels[id]}
+          label={gameRegistry[id].title.toUpperCase()}
           active={id === mode}
           accent={accent}
           transparentWhenIdle
@@ -124,13 +103,6 @@ export function LeaderboardFilters({
       ))}
     </div>
   );
-}
-
-/** The pill only appears once the browser has a clock behind it. */
-function BoardCountdown() {
-  const remaining = useBoardCountdown();
-  if (!remaining) return null;
-  return <CountdownPill remaining={remaining} />;
 }
 
 function ChipRow<Id extends string>({

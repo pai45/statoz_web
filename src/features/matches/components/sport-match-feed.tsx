@@ -16,6 +16,8 @@ import {
 } from "@/design-system";
 import type { SportMatch } from "@/domain/matches";
 import type { Sport } from "@/domain/sports";
+import { useProfileIdentity } from "@/features/profile";
+import { followableLeagues } from "@/mocks/onboarding";
 
 import {
   fixturesForSport,
@@ -30,6 +32,7 @@ const DAY_MS = 86_400_000;
 const PREVIEW_COUNT = 3;
 
 export function SportMatchFeed({ sport }: { sport: Sport }) {
+  const identity = useProfileIdentity();
   const weekMode = sport === "motorsport";
   const fixtures = useMemo(() => fixturesForSport(sport), [sport]);
   const periods = useMemo(
@@ -38,6 +41,9 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
   );
   const [selectedPeriod, setSelectedPeriod] = useState(() => initialPeriod(fixtures, weekMode));
   const [direction, setDirection] = useState<"left" | "right">("left");
+  const favoriteClubs = followableLeagues.filter((league) => league.sport === sport && identity.favoriteTeams[league.id]).flatMap((league) => league.teams.filter((team) => team.id === identity.favoriteTeams[league.id]).map((team) => ({ ...team, leagueId: league.id })));
+  const [selectedClubId, setSelectedClubId] = useState(() => favoriteClubs[0]?.id ?? "");
+  const selectedClub = favoriteClubs.find((club) => club.id === selectedClubId) ?? favoriteClubs[0];
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
 
   const currentIndex = Math.max(0, periods.indexOf(selectedPeriod));
@@ -47,13 +53,19 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
     const date = fromDateKey(dateKey(match.kickoff));
     return date >= selectedStart && date <= selectedEnd;
   }).length;
+  const periodFixtures = fixtures.filter((match) => {
+    const date = fromDateKey(dateKey(match.kickoff));
+    return weekMode ? date >= selectedStart && date <= selectedEnd : dateKey(match.kickoff) === selectedPeriod;
+  });
+  const pinned = selectedClub ? periodFixtures.filter((match) => fixtureHasClub(match, selectedClub.name, selectedClub.shortName)).sort(pinPriority)[0] : undefined;
   const visibleFixtures = fixtures
     .filter((match) => {
       const date = fromDateKey(dateKey(match.kickoff));
       if (weekMode) return date >= selectedStart && date <= selectedEnd;
       return date >= selectedStart;
     })
-    .sort(compareKickoff);
+    .filter((match) => match.id !== pinned?.id)
+    .sort((left, right) => Number(Boolean(selectedClub && fixtureHasClub(right, selectedClub.name, selectedClub.shortName))) - Number(Boolean(selectedClub && fixtureHasClub(left, selectedClub.name, selectedClub.shortName))) || compareKickoff(left, right));
   const groupedDays = groupByDay(visibleFixtures);
 
   function move(delta: number) {
@@ -113,6 +125,7 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
       />
 
       <div key={`${sport}-${selectedPeriod}`} className="mt-3 flex flex-col gap-5">
+        {pinned && selectedClub ? <section className={styles.clubPin}><header><b>YOUR CLUB</b>{pinned.status === "finished" ? null : <small>{pinned.status === "live" ? "LIVE NOW" : "KICKING OFF"}</small>}{favoriteClubs.length > 1 ? <select aria-label="Choose followed club" value={selectedClub.id} onChange={(event) => setSelectedClubId(event.target.value)}>{favoriteClubs.map((club) => <option key={`${club.leagueId}-${club.id}`} value={club.id}>{club.name}</option>)}</select> : null}</header><SportFixtureCard match={pinned} followedTeamName={selectedClub.name} /></section> : null}
         {groupedDays.length === 0 ? (
           <EmptyPeriod date={selectedStart} weekMode={weekMode} />
         ) : (
@@ -129,6 +142,18 @@ export function SportMatchFeed({ sport }: { sport: Sport }) {
       </div>
     </div>
   );
+}
+
+function normalizedIdentity(value: string): string { return value.toLocaleLowerCase().replace(/[^a-z0-9]+/g, ""); }
+function fixtureHasClub(match: SportMatch, name: string, shortName: string): boolean {
+  const aliases = [name, shortName].map(normalizedIdentity);
+  return [match.home, match.away].some((team) => [team.name, team.shortName].map(normalizedIdentity).some((value) => aliases.includes(value) || value.includes(aliases[0]) || aliases[0].includes(value)));
+}
+function pinPriority(left: SportMatch, right: SportMatch): number {
+  const rank = (match: SportMatch) => match.status === "live" ? 0 : match.status === "scheduled" ? 1 : 2;
+  const state = rank(left) - rank(right);
+  if (state) return state;
+  return left.status === "finished" ? right.kickoff.localeCompare(left.kickoff) : left.kickoff.localeCompare(right.kickoff);
 }
 
 function MatchDayNavigator({

@@ -21,6 +21,13 @@ export type LineChartSeries = {
   fill?: boolean;
 };
 
+export type LineChartMarker = {
+  index: number;
+  value: number;
+  label: string;
+  color?: string;
+};
+
 export type InteractiveLineChartProps = {
   /** Chronological values, oldest to newest. Empty input renders as zero. */
   values?: number[];
@@ -39,6 +46,11 @@ export type InteractiveLineChartProps = {
   stepped?: boolean;
   /** Pins the vertical range instead of fitting it to the data. */
   scale?: { min: number; max: number };
+  /** Places smaller values at the top, useful for race positions. */
+  invertYAxis?: boolean;
+  /** Optional annotated moments pinned to exact samples. */
+  markers?: LineChartMarker[];
+  axisFormatter?: (value: number) => string;
   accent?: string;
   height?: CSSProperties["height"];
   className?: string;
@@ -70,6 +82,9 @@ export function InteractiveLineChart({
   valueText,
   stepped = false,
   scale,
+  invertYAxis = false,
+  markers = [],
+  axisFormatter,
   accent = "var(--ds-color-accent-cyan)",
   height,
   className,
@@ -93,7 +108,9 @@ export function InteractiveLineChart({
 
   const xAt = (index: number) =>
     pointCount === 1 ? viewBoxWidth : (viewBoxWidth * index) / (pointCount - 1);
-  const yAt = (value: number) => viewBoxHeight - ((value - minValue) / spread) * viewBoxHeight;
+  const yAt = (value: number) => invertYAxis
+    ? ((value - minValue) / spread) * viewBoxHeight
+    : viewBoxHeight - ((value - minValue) / spread) * viewBoxHeight;
 
   /** A stepped line holds its value across to the next point, then jumps. */
   function pathFor(line: LineChartSeries): string {
@@ -195,7 +212,20 @@ export function InteractiveLineChart({
           className={styles.marker}
           style={{ left: `${selectedX}%`, top: `${selectedY}%` }}
         />
+        {markers.map((marker) => (
+          <span
+            key={`${marker.index}-${marker.label}`}
+            className={styles.annotation}
+            title={marker.label}
+            style={{
+              left: `${(xAt(marker.index) / viewBoxWidth) * 100}%`,
+              top: `${(yAt(marker.value) / viewBoxHeight) * 100}%`,
+              "--annotation-color": marker.color ?? accent,
+            } as CSSProperties}
+          />
+        ))}
       </div>
+      {axisFormatter ? <span className={styles.axisHint} aria-hidden>{axisFormatter(activeValue)}</span> : null}
     </div>
   );
 }

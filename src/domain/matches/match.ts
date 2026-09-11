@@ -12,6 +12,8 @@ export type SportTeam = {
   secondaryColor?: string;
   /** Contrast-safe badge label color when white is unsuitable. */
   badgeTextColor?: string;
+  /** Contrast-safe supporting label color for two-tone identity surfaces. */
+  secondaryTextColor?: string;
 };
 
 export type TennisSetScore = {

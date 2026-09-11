@@ -9,6 +9,7 @@ import { sportForGame, type GameEntry } from "@/mocks/games";
 
 import type { GameId } from "../../types";
 import { GameLandingAd } from "../../shared/components/game-landing-ad";
+import { useGameReturn } from "../../shared/hooks/use-game-return";
 import { useClock } from "../../shared/state/use-clock";
 import { extraAttemptCost, hintCost } from "../constants";
 import {
@@ -93,7 +94,7 @@ export function GuessPlayer({ game }: GuessPlayerProps) {
   const record = openDayKey === null ? undefined : archive.resultsByDay[openDayKey];
   const puzzle =
     deck === null || record === undefined ? null : puzzleForRecord(deck, record);
-  const gamesHref = `/games/${sport}`;
+  const goBack = useGameReturn();
 
   /**
    * Opening the archive needs the browser's clock and it writes, neither of
@@ -232,7 +233,7 @@ export function GuessPlayer({ game }: GuessPlayerProps) {
   /* ---- Which screen --------------------------------------------------- */
 
   if (deck === null) return <Unsupported />;
-  if (deck.issues.length > 0) return <IntelLinkFailed issue={deck.issues[0]} href={gamesHref} />;
+  if (deck.issues.length > 0) return <IntelLinkFailed issue={deck.issues[0]} onBack={goBack} />;
   if (!hydrated || now === null || todayKey === null) return <Opening />;
 
   if (view === "logs") {
@@ -298,7 +299,7 @@ export function GuessPlayer({ game }: GuessPlayerProps) {
         now={now}
         onOpenToday={openToday}
         onOpenLogs={openLogs}
-        backHref={gamesHref}
+        onBack={goBack}
         sportLabel={`${deck.sport.toUpperCase()} DECK`}
       />
       <GameLandingAd />
@@ -355,7 +356,7 @@ function Unsupported() {
 }
 
 /** The app's `INTEL LINK FAILED` state, when the deck no longer validates. */
-function IntelLinkFailed({ issue, href }: { issue: string; href: string }) {
+function IntelLinkFailed({ issue, onBack }: { issue: string; onBack: () => void }) {
   return (
     <div className="grid min-h-dvh place-items-center px-5 text-center">
       <Panel accent="var(--ds-color-danger)" className="max-w-md">
@@ -372,7 +373,7 @@ function IntelLinkFailed({ issue, href }: { issue: string; href: string }) {
           {issue}
         </p>
         <div className="mt-5">
-          <Button accent={accentVar("cyan")} variant="tonal" size="md" fullWidth href={href}>
+          <Button accent={accentVar("cyan")} variant="tonal" size="md" fullWidth onClick={onBack}>
             BACK TO GAMES
           </Button>
         </div>

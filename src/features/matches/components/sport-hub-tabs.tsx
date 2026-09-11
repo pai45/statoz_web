@@ -23,7 +23,7 @@ export type SportHubTabsProps = {
 };
 
 /** Motorsport stays in All Sports rather than crowding the shortcuts. */
-const shortcuts: Sport[] = sportOrder.filter((sport) => sport !== "motorsport");
+const shortcuts: Sport[] = sportOrder.filter((sport) => sport === "football" || sport === "cricket" || sport === "basketball");
 
 /** Browse strip above the feed: Trending, four sports, then All Sports. */
 export function SportHubTabs({

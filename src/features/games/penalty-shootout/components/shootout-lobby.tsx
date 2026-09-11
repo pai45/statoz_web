@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import { accentVar, Progress, withAlpha } from "@/design-system";
 import { ArenaBackdrop } from "@/features/onboarding";
+import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
 
 import {
   lobbyActionsDelayMs,
@@ -53,14 +54,14 @@ export type ShootoutLobbyProps = {
   /** Whether the squad can take the spot: 2 attackers, 2 defenders, a keeper. */
   squadReady: boolean;
   onPlay: () => void;
-  /** Where the back arrow leads — the sport's games deck. */
-  backHref: string;
+  /** Leaves the game and returns through browser history. */
+  onBack: () => void;
 };
 
 export function ShootoutLobby({
   squadReady,
   onPlay,
-  backHref,
+  onBack,
 }: ShootoutLobbyProps) {
   const progress = useShootoutProgress();
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -71,8 +72,9 @@ export function ShootoutLobby({
       <ArenaBackdrop />
 
       <header className="relative flex shrink-0 items-center gap-2 px-4 py-3">
-        <Link
-          href={backHref}
+        <button
+          type="button"
+          onClick={onBack}
           aria-label="Back to football games"
           className="grid size-11 shrink-0 place-items-center"
           style={{ color: lime }}
@@ -86,7 +88,7 @@ export function ShootoutLobby({
               strokeLinejoin="round"
             />
           </svg>
-        </Link>
+        </button>
         <h1
           className="min-w-0 flex-1 truncate font-display font-black leading-compact"
           style={{
@@ -198,6 +200,7 @@ export function ShootoutLobby({
               onClick={() => setHistoryOpen(true)}
             />
           </div>
+          <div className="mt-3.5"><GameLeaderboardCta sport="football" gameId="penalty-shootout" /></div>
         <DailyDrop sport="football" />
         </div>
       </div>

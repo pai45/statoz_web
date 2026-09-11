@@ -2,11 +2,9 @@
 .header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
 .headerActions { display:flex; align-items:center; gap:10px; }
 .title { font-family:var(--ds-font-display); font-size:clamp(1.45rem,4vw,2.1rem); font-weight:950; letter-spacing:.08em; }
-.iconButton,.filter,.range,.preset,.stepper,.primary,.secondary { min-height:44px; border:1px solid var(--ds-color-border-default); background:var(--ds-color-background-elevated); color:inherit; font-family:var(--ds-font-display); font-weight:900; letter-spacing:.06em; }
+.iconButton,.range,.preset,.stepper,.primary,.secondary { min-height:44px; border:1px solid var(--ds-color-border-default); background:var(--ds-color-background-elevated); color:inherit; font-family:var(--ds-font-display); font-weight:900; letter-spacing:.06em; }
 .iconButton { min-width:44px; clip-path:var(--ds-clip-octagon); color:var(--ds-color-accent-cyan); font-size:1.2rem; }
-.filters { display:flex; gap:7px; overflow-x:auto; padding:2px 0 12px; scrollbar-width:none; }
-.filter { flex:0 0 auto; min-height:32px; padding:0 11px; border-color:color-mix(in srgb,var(--ds-color-border-strong) 28%,transparent); background:transparent; color:var(--ds-color-text-muted); font-size:11px; letter-spacing:.07em; clip-path:var(--ds-clip-chip); }
-.filterActive { border-color:color-mix(in srgb,var(--ds-color-accent-cyan) 72%,transparent); background:color-mix(in srgb,var(--ds-color-accent-cyan) 14%,transparent); color:var(--ds-color-accent-cyan); }
+.typeFilters { gap:var(--ds-space-4); padding:var(--ds-space-2) 0 var(--ds-space-12); }
 .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); align-items:start; gap:14px; }
 .grid > :nth-child(2) { animation-delay:70ms; }.grid > :nth-child(3) { animation-delay:140ms; }.grid > :nth-child(n+4) { animation-delay:180ms; }
 /* ---- Hub chrome ------------------------------------------------------------ */
@@ -38,9 +36,9 @@
 
 .settingsBody { display:grid; gap:16px; padding:16px 16px 18px; }
 .settingsTitle { color:var(--ds-color-accent-cyan); font-family:var(--ds-font-display); font-size:12px; font-weight:900; letter-spacing:.15em; }
-.settingsGroup { display:grid; gap:8px; }
+.settingsGroup { display:grid; min-width:0; gap:8px; }
 .settingsLabel { margin:0; color:var(--ds-color-text-muted); font-family:var(--ds-font-display); font-size:8px; font-weight:900; letter-spacing:.17em; }
-.chipWrap { display:flex; flex-wrap:wrap; gap:7px; }
+.marketFilterChips { width:100%; gap:var(--ds-space-4); padding:0; }
 
 /* ---- Market card ----------------------------------------------------------- */
 
@@ -183,5 +181,5 @@
 @keyframes marketPulse { 50% { opacity:.45; } }
 @media (min-width:768px) { .page,.detail { padding-inline:24px; }.chartDialog { width:min(92vw,900px); height:auto; max-height:88dvh; margin:auto; padding:28px; } }
 @media (min-width:1024px) { .detailGrid { grid-template-columns:minmax(0,1.55fr) minmax(340px,.8fr); align-items:start; }.detailSide { position:sticky; top:88px; }.matchPanel { height:auto; min-height:590px; overflow:visible; padding:18px 18px 24px; }.matchPanel .grid { gap:18px; } }
-@media (hover:hover) { .filter:hover,.range:hover,.preset:hover,.stepper:hover,.secondary:hover { border-color:var(--ds-color-accent-cyan); transform:translateY(-1px); }.primary:hover { filter:brightness(1.08); }.questionLink:hover { color:var(--ds-color-accent-cyan); } }
+@media (hover:hover) { .range:hover,.preset:hover,.stepper:hover,.secondary:hover { border-color:var(--ds-color-accent-cyan); transform:translateY(-1px); }.primary:hover { filter:brightness(1.08); }.questionLink:hover { color:var(--ds-color-accent-cyan); } }
 @media (prefers-reduced-motion:reduce) { .card,.liveDot,.cardEnter,.skeleton { animation:none; } .page *, .detail * { scroll-behavior:auto!important; } }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { BoltIcon, FlashOnIcon, NoDataState, PickIcon, ScheduleIcon, SettingsIcon, TimerIcon, accentVar } from "@/design-system";
+import { BoltIcon, FilterChips, FlashOnIcon, NoDataState, PickIcon, ScheduleIcon, SettingsIcon, TimerIcon, accentVar } from "@/design-system";
 import type { PickMarketType } from "@/domain/predictions";
 import { useAuthSession } from "@/features/auth";
 import { HowToPlayButton } from "@/features/how-to-play";
@@ -25,6 +25,8 @@ const typeFilters: { id: PickMarketType | "all"; label: string }[] = [
   { id: "event", label: "EVENT" },
   { id: "future", label: "FUTURES" },
 ];
+
+const typeFilterLabels = typeFilters.map((filter) => filter.label);
 
 /** Every open market, filtered by type on the strip and by league in the sheet. */
 export function PicksScreen() {
@@ -57,19 +59,16 @@ export function PicksScreen() {
         </div>
       </div>
 
-      <nav className={styles.filters} aria-label="Pick types">
-        {typeFilters.map((filter) => (
-          <button
-            type="button"
-            key={filter.id}
-            className={`${styles.filter} ${picks.typeFilter === filter.id ? styles.filterActive : ""}`}
-            aria-pressed={picks.typeFilter === filter.id}
-            onClick={() => setTypeFilter(filter.id)}
-          >
-            {filter.label}
-          </button>
-        ))}
-      </nav>
+      <FilterChips
+        options={typeFilterLabels}
+        selected={typeFilters.find((filter) => filter.id === picks.typeFilter)?.label ?? "ALL"}
+        onSelect={(label) => {
+          const filter = typeFilters.find((option) => option.label === label);
+          if (filter) setTypeFilter(filter.id);
+        }}
+        label="Pick types"
+        className={styles.typeFilters}
+      />
 
       {!picks.hydrated ? (
         <PicksSkeleton />
