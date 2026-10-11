@@ -51,6 +51,7 @@ function CampaignCreative({ format }: { format: AdFormat }) {
         alt=""
         fill
         sizes={imageSizes(format)}
+        loading={format === "horizontal" ? "eager" : undefined}
         className={styles.image}
       />
       <span className={styles.scrim} />

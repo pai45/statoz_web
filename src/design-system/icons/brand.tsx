@@ -24,7 +24,11 @@ export type BrandIconProps = {
   priority?: boolean;
 };
 
-/** Renders one of the brand artwork assets at a square size. */
+/**
+ * Renders one of the brand artwork assets at a square size. Some artwork is
+ * not square (the coins are 21×20), so the box is pinned to 1:1 and the art is
+ * contained within it rather than letting `height: auto` reshape the image.
+ */
 export function BrandIcon({
   name,
   size = 18,
@@ -41,7 +45,9 @@ export function BrandIcon({
       alt={resolved}
       width={size}
       height={size}
-      className={className}
+      className={["aspect-square object-contain", className]
+        .filter(Boolean)
+        .join(" ")}
       priority={priority}
       aria-hidden={resolved === "" ? true : undefined}
     />
