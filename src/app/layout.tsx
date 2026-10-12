@@ -41,6 +41,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${onest.variable} ${orbitron.variable} h-full antialiased`}
     >
+      <head>
+        {/*
+         * Google AdSense. A plain async tag rather than `next/script`: AdSense
+         * verifies site ownership by reading this tag out of the served
+         * `<head>`, and `next/script`'s default strategy injects client-side.
+         */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6501993109896836"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         <AuthProvider>
           {children}
