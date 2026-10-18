@@ -68,7 +68,10 @@ export async function synchronize(root, { check = false } = {}) {
   const font = await fs.readFile(path.join(root, flutter ? 'assets/fonts/SpaceGrotesk-VariableFont_wght.ttf' : 'src/app/fonts/space-grotesk-variable.ttf'));
   if (hash(font) !== m.asset.sha256) throw new Error(`Font checksum differs: ${root}`);
   const license = await fs.readFile(path.join(root, flutter ? 'assets/fonts/SpaceGrotesk-OFL.txt' : 'src/app/fonts/space-grotesk-OFL.txt'));
-  if (hash(license) !== m.asset.licenseSha256) throw new Error(`Font license checksum differs: ${root}`);
+  // The license is text, so validate its canonical LF form. This keeps the
+  // provenance check stable when a checkout applies platform line endings.
+  const normalizedLicense = license.toString('utf8').replace(/\r\n/g, '\n');
+  if (hash(normalizedLicense) !== m.asset.licenseSha256) throw new Error(`Font license checksum differs: ${root}`);
   const files = flutter ? { 'lib/design_system/typography.dart': generateDart(m) } : {
     'src/design-system/tokens/typography.ts': web.ts,
     'src/design-system/styles/typography.css': `${web.classes}\n`,
