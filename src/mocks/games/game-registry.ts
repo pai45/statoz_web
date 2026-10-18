@@ -1,5 +1,4 @@
 import type { AccentName } from "@/design-system";
-import { sportModuleFor } from "@/domain/sports";
 
 import type { GameId, GameSceneId, GameTileKind } from "@/features/games/types";
 
@@ -26,7 +25,7 @@ export type GameEntry = {
    * games need no cards and so have no gate.
    */
   requiresDeck?: true;
-  /** The illustration this game shows; formats that repeat share one. */
+  /** Legacy format identifier; discovery artwork is resolved by game id. */
   scene: GameSceneId;
   href: string;
 };
@@ -42,6 +41,7 @@ export type GameEntry = {
  * few differ from the id: the arcade names a game, the module names a sport.
  */
 export const gameRegistry: Record<GameId, GameEntry> = {
+  "retro-circuit": {kind:"hero",title:"RETRO CIRCUIT",titleLines:["RETRO","CIRCUIT"],subtitle:"THREE LAPS. ONE CLEAN LINE.",badgeLabel:"RETRO // ARCADE RACING",ctaLabel:"CHASE THE HORIZON",accent:"game-grand-prix-dash",scene:"grand-prix-dash",href:"/play/retro-circuit"},
   /* ---- football ------------------------------------------------------- */
   "pitch-duel": {
     kind: "hero",
@@ -49,7 +49,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "TACTICAL CARD GAME",
     badgeLabel: "FEATURED // TACTICAL",
     ctaLabel: "ENTER THE DUEL",
-    accent: "cyan",
+    accent: "game-pitch-duel",
     glow: true,
     scene: "pitch-duel",
     href: "/play/pitch-duel",
@@ -62,7 +62,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "SUDDEN-DEATH SPOT KICKS",
     badgeLabel: "SUDDEN DEATH",
     ctaLabel: "TAKE THE SHOT",
-    accent: sportModuleFor("football").accent,
+    accent: "game-penalty-shootout",
     scene: "penalty-shootout",
     href: "/play/penalty-shootout",
     requiresDeck: true,
@@ -74,7 +74,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "TACTICAL SQUAD DUEL",
     badgeLabel: "FEATURED // 5V5",
     ctaLabel: "MAKE YOUR MOVE",
-    accent: sportModuleFor("football").accent,
+    accent: "game-football-chess",
     scene: "football-chess",
     href: "/play/football-chess",
     requiresDeck: true,
@@ -83,7 +83,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "FOOTBALL QUIZ",
     subtitle: "TRIVIA GAUNTLET",
-    accent: "violet",
+    accent: "game-football-quiz",
     scene: "quiz",
     href: "/play/quiz/football",
   },
@@ -94,9 +94,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     // asks which player turned out for the pair. The trending bento says
     // "BUILD A WINNING GRID".
     subtitle: "CLUB x CLUB GRID",
-    // Orange in the deck, cyan in the bento. Orange keeps it distinct from the
-    // three cyan football games it sits beside.
-    accent: "orange",
+    accent: "game-football-bingo",
     scene: "bingo",
     href: "/play/football-bingo",
   },
@@ -104,9 +102,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "GUESS THE PLAYER",
     subtitle: "DAILY FOOTBALL MYSTERY",
-    // Pink is the family colour every other mystery game uses; the bento's lime
-    // was the odd one out.
-    accent: "pink",
+    accent: "game-guess-player",
     scene: "guess-player",
     href: "/play/guess-player",
   },
@@ -118,7 +114,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "THREE-OVER CHASE",
     badgeLabel: "FEATURED // THREE OVERS",
     ctaLabel: "START THE CHASE",
-    accent: sportModuleFor("cricket").accent,
+    accent: "game-final-over",
     scene: "final-over",
     href: "/play/final-over",
     requiresDeck: true,
@@ -127,7 +123,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "CRICKET QUIZ",
     subtitle: "TRIVIA GAUNTLET",
-    accent: "violet",
+    accent: "game-cricket-quiz",
     scene: "quiz",
     href: "/play/quiz/cricket",
   },
@@ -135,7 +131,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "GUESS THE PLAYER",
     subtitle: "DAILY CRICKET MYSTERY",
-    accent: "pink",
+    accent: "game-cricket-guess-player",
     scene: "guess-player",
     href: "/play/guess-player/cricket",
   },
@@ -147,7 +143,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "STREET 1-ON-1 ARCADE HOOPS",
     badgeLabel: "FEATURED // STREET",
     ctaLabel: "HIT THE COURT",
-    accent: "gold",
+    accent: "game-hoop-duel",
     scene: "hoop-duel",
     href: "/play/basketball",
     requiresDeck: true,
@@ -156,7 +152,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "BASKETBALL QUIZ",
     subtitle: "TRIVIA GAUNTLET",
-    accent: "violet",
+    accent: "game-basketball-quiz",
     scene: "quiz",
     href: "/play/quiz/basketball",
   },
@@ -164,7 +160,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "GUESS THE PLAYER",
     subtitle: "DAILY BASKETBALL MYSTERY",
-    accent: "pink",
+    accent: "game-basketball-guess-player",
     scene: "guess-player",
     href: "/play/guess-player/basketball",
   },
@@ -176,7 +172,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "2D ARCADE SETS // 5 MODES",
     badgeLabel: "FEATURED // NEW",
     ctaLabel: "STEP ON COURT",
-    accent: "lime",
+    accent: "game-tennis-rally",
     scene: "tennis-rally",
     href: "/play/tennis",
     requiresDeck: true,
@@ -185,7 +181,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "TENNIS QUIZ",
     subtitle: "TRIVIA GAUNTLET",
-    accent: "violet",
+    accent: "game-tennis-quiz",
     scene: "quiz",
     href: "/play/quiz/tennis",
   },
@@ -193,7 +189,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "GUESS THE WINNER",
     subtitle: "DAILY MYSTERY",
-    accent: "cyan",
+    accent: "game-tennis-guess-winner",
     scene: "guess-winner",
     href: "/play/guess-winner",
   },
@@ -206,7 +202,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     subtitle: "ONE-LAP ARCADE RACER",
     badgeLabel: "FEATURED // RACE",
     ctaLabel: "RACE NOW",
-    accent: "racing",
+    accent: "game-grand-prix-dash",
     scene: "grand-prix-dash",
     href: "/play/grand-prix",
     requiresDeck: true,
@@ -215,7 +211,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "MOTORSPORT QUIZ",
     subtitle: "TRIVIA GAUNTLET",
-    accent: "violet",
+    accent: "game-motorsport-quiz",
     scene: "quiz",
     href: "/play/quiz/motorsport",
   },
@@ -223,7 +219,7 @@ export const gameRegistry: Record<GameId, GameEntry> = {
     kind: "quick",
     title: "GUESS THE DRIVER",
     subtitle: "DAILY F1 MYSTERY",
-    accent: "pink",
+    accent: "game-guess-driver",
     scene: "guess-driver",
     href: "/play/guess-driver",
   },

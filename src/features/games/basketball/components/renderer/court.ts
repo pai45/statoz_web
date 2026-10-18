@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 /**
  * The rooftop neon court — the web port of `_CourtComponent` from
  * `games/basketball/basketball_game.dart`.
@@ -571,7 +572,7 @@ export class CourtScene {
 
     ctx.save();
     ctx.clip();
-    ctx.font = displayFontOf(palette, 8, 800);
+    ctx.font = displayFontOf(palette, typography.sizePx.p8, typography.weight.extrabold);
     ctx.fillStyle = withAlpha(palette.text, 0.84);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -716,7 +717,7 @@ export class CourtScene {
     ctx.beginPath();
     ctx.rect(0, railY, projection.width, railH);
     ctx.clip();
-    ctx.font = displayFontOf(palette, 10, 700);
+    ctx.font = displayFontOf(palette, typography.sizePx.p10, typography.weight.bold);
     ctx.fillStyle = withAlpha(palette.cyan, 0.5);
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
@@ -819,7 +820,7 @@ export class CourtScene {
     const labelY = floorY + Math.min(floorDepth * 0.24, px * 0.58);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.font = displayFontOf(palette, 8, 800);
+    ctx.font = displayFontOf(palette, typography.sizePx.p8, typography.weight.extrabold);
     withLetterSpacing(ctx, "1.5px", () => {
       ctx.fillStyle = withAlpha(palette.gold, 0.52);
       ctx.fillText("3PT", arcAt.x - px * 0.58, labelY);
@@ -849,7 +850,7 @@ export class CourtScene {
     );
     ctx.strokeStyle = withAlpha(palette.gold, 0.34);
     ctx.stroke();
-    ctx.font = displayFontOf(palette, 8, 900);
+    ctx.font = displayFontOf(palette, typography.sizePx.p8, typography.weight.black);
     ctx.fillStyle = withAlpha(palette.cyan, 0.38);
     withLetterSpacing(ctx, "1.8px", () =>
       ctx.fillText("HOOP // DUEL", emblemAt.x, emblemY),
@@ -1016,7 +1017,7 @@ export class CourtScene {
     ctx.strokeStyle = withAlpha(clock <= 3 ? palette.danger : palette.gold, 0.6);
     ctx.lineWidth = 1.2;
     ctx.strokeRect(boxCenterX - boxW / 2, boxCenterY - boxH / 2, boxW, boxH);
-    ctx.font = displayFontOf(palette, 13, 800);
+    ctx.font = displayFontOf(palette, typography.sizePx.p13, typography.weight.extrabold);
     ctx.fillStyle = clock <= 3 ? palette.danger : palette.gold;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

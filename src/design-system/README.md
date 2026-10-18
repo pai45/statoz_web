@@ -28,3 +28,7 @@ when they are assembled from design-system components.
 - Keep components accessible, responsive, and independent of application data.
 - Add component tests next to the component when implementation begins.
 - Do not import from `src/app`, `src/features`, `src/domain`, or `src/server`.
+
+## Editorial discovery
+
+Use `components/data-display/discovery-card` for plate chrome, lifecycle tags, outcome rows, team labels, progress and VS. Sport/data/navigation adapters stay in features/matches. See `docs/discovery-card-library.md`; `npm run discovery:check` verifies the shipped library.

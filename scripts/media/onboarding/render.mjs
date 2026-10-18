@@ -33,7 +33,7 @@ const athletes=await Promise.all([
   ['messi','MESSI','FOOTBALL',colors.cyan],['ronaldo','RONALDO','FOOTBALL',colors.cyan],
   ['kohli','KOHLI','CRICKET',colors.gold],['hamilton','HAMILTON','FORMULA 1',colors.red],['lebron','LEBRON','BASKETBALL',colors.orange],
 ].map(async([id,name,sport,color])=>({id,name,sport,color,uri:await uri(path.join(SOURCE,`${id}.webp`),'image/webp')})));
-const scene={colors,athletes,arena:await uri(path.join(SOURCE,'arena-v2.webp'),'image/webp'),logo:await uri(path.join(ROOT,'public/assets/icons/app_logo.png'),'image/png'),fonts:await Promise.all(['orbitron','onest'].map(async name=>({name,uri:await uri(path.join(ROOT,`src/app/fonts/${name}-latin-variable.woff2`),'font/woff2')})))};
+const scene={tokens:css,colors,athletes,arena:await uri(path.join(SOURCE,'arena-v2.webp'),'image/webp'),logo:await uri(path.join(ROOT,'public/assets/icons/app_logo.png'),'image/png'),fonts:await Promise.all(['orbitron','spaceGrotesk'].map(async name=>({name,uri:await uri(path.join(ROOT,name === "spaceGrotesk" ? "src/app/fonts/space-grotesk-variable.ttf" : "src/app/fonts/orbitron-latin-variable.woff2"),name === "spaceGrotesk" ? "font/ttf" : "font/woff2")})))};
 const template=await fs.readFile(path.join(ROOT,'scripts/media/onboarding/scene.html'),'utf8');
 function ffmpegPath(){
   if(process.env.FFMPEG_PATH)return process.env.FFMPEG_PATH;

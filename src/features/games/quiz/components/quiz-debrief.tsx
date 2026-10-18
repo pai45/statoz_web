@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import {
   accentVar,
@@ -66,7 +67,7 @@ export function QuizDebrief({
           <p
             className="font-display font-black leading-none"
             style={{
-              fontSize: "11px",
+              fontSize: typography.sizeRem.p11,
               letterSpacing: "var(--ds-tracking-ultra)",
               color: accent,
             }}
@@ -88,7 +89,7 @@ export function QuizDebrief({
           <span
             className="ds-tabular shrink-0 border px-2 py-1 font-display font-black leading-none"
             style={{
-              fontSize: "11px",
+              fontSize: typography.sizeRem.p11,
               color: gold,
               background: withAlpha(gold, 0.13),
               borderColor: withAlpha(gold, 0.5),

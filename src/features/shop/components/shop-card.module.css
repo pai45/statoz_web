@@ -117,8 +117,8 @@
 
 .rarity {
   font-family: var(--ds-font-display);
-  font-size: 8px;
-  font-weight: 900;
+  font-size:var(--ds-size-p8);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 1.4px;
   opacity: 0.9;
 }
@@ -132,8 +132,8 @@
   background: color-mix(in srgb, var(--shop-accent) 18%, transparent);
   color: var(--shop-accent);
   font-family: var(--ds-font-display);
-  font-size: 8px;
-  font-weight: 900;
+  font-size:var(--ds-size-p8);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 1px;
   white-space: nowrap;
 }
@@ -145,7 +145,7 @@
   align-items: center;
   gap: 5px;
   font-family: var(--ds-font-display);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -166,8 +166,8 @@
   background: transparent;
   color: var(--shop-accent);
   font-family: var(--ds-font-display);
-  font-size: 12px;
-  font-weight: 900;
+  font-size:var(--ds-size-p12);
+  font-weight:var(--ds-weight-black);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   transition: transform 150ms ease, filter 150ms ease;
@@ -205,8 +205,8 @@
 
 .footerLabel {
   font-family: var(--ds-font-display);
-  font-size: 10px;
-  font-weight: 900;
+  font-size:var(--ds-size-p10);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 1.4px;
 }
 
@@ -230,8 +230,8 @@
   box-shadow: 0 0 16px color-mix(in srgb, var(--shop-accent) 40%, transparent);
   color: var(--shop-accent);
   font-family: var(--ds-font-display);
-  font-size: 18px;
-  font-weight: 900;
+  font-size:var(--ds-size-p18);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 2px;
 }
 

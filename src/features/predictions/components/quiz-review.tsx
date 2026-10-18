@@ -1,5 +1,7 @@
 "use client";
 
+
+import { typography } from "@/design-system/tokens/typography";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 import {
@@ -72,17 +74,14 @@ export function CommunityTelemetry({
       </header>
       <p
         className={[styles.display, styles.tabular].join(" ")}
-        style={{ margin: "9px 0 0", color: accent, fontSize: "15px" }}
+        style={{ margin: "9px 0 0", color: accent, fontSize: typography.sizeRem.p15 }}
       >
         {hasVotes ? `${accuracy}% CROWD ACCURACY` : "NO CROWD VOTES"}
       </p>
-      <p className="mt-1" style={{ color: "var(--ds-color-text-muted)", fontSize: "11.5px" }}>
+      <p className="mt-1" style={{ color: "var(--ds-color-text-muted)", fontSize: typography.sizeRem.p11_5 }}>
         {hasVotes
           ? `${crowdCorrectVotes} / ${crowdTotalVotes} votes matched the final answers.`
           : "Vote data will appear when the community feed is available."}
-      </p>
-      <p className={styles.pollMeta} style={{ marginTop: "8px", color: "var(--ds-color-success)" }}>
-        ACTUAL ANSWERS ARE MARKED IN GREEN BELOW
       </p>
     </section>
   );
@@ -269,7 +268,7 @@ function PollBody({
   const answers = pollAnswers(question, votes, selected);
   const total = totalVotes(votes);
   if (answers.length === 0 || total === 0) {
-    return <p style={{ color: "var(--ds-color-text-muted)", fontSize: "12px" }}>NO CROWD VOTES YET</p>;
+    return <p style={{ color: "var(--ds-color-text-muted)", fontSize: typography.sizeRem.p12 }}>NO CROWD VOTES YET</p>;
   }
   const correct = settledAnswerFor(question);
 
@@ -323,7 +322,7 @@ function PollResultRow({
         </span>
         {selected ? <span className={styles.pollMeta} style={{ color: "var(--ds-color-accent-cyan)" }}>YOU</span> : null}
         {correct ? <span className={styles.pollMeta} style={{ color: "var(--ds-color-success)" }}>RIGHT</span> : null}
-        <span className={styles.tabular} style={{ color: accent, fontWeight: 800 }}>
+        <span className={styles.tabular} style={{ color: accent, fontWeight: typography.weight.bold }}>
           {Math.round(share * 100)}% · {votes} VOTES
         </span>
       </div>

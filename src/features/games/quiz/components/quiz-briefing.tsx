@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useEffect, useRef, type ReactNode } from "react";
 
@@ -100,7 +101,7 @@ export function QuizBriefing({
         <div className="flex items-center gap-2">
           <h2
             className="flex-1 font-display font-black leading-none"
-            style={{ fontSize: "17px", letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p17, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             ENTRY BRIEFING
           </h2>
@@ -126,13 +127,13 @@ export function QuizBriefing({
                 <div className="min-w-0 flex-1">
                   <p
                     className="truncate font-display font-black leading-none"
-                    style={{ fontSize: "18px", letterSpacing: "var(--ds-tracking-ultra)" }}
+                    style={{ fontSize: typography.sizeRem.p18, letterSpacing: "var(--ds-tracking-ultra)" }}
                   >
                     {modeLabels[mode]} · SET {setNumber}
                   </p>
                   <p
                     className="mt-1.25 truncate font-display font-black leading-none text-muted"
-                    style={{ fontSize: "8.5px", letterSpacing: "var(--ds-tracking-wide)" }}
+                    style={{ fontSize: typography.sizeRem.p8_5, letterSpacing: "var(--ds-tracking-wide)" }}
                   >
                     {sportModuleFor(sport).label.toUpperCase()} ·{" "}
                     {modeBlurb(mode, sport)}
@@ -189,7 +190,7 @@ export function QuizBriefing({
           <span
             className="font-display font-black leading-none"
             style={{
-              fontSize: "10px",
+              fontSize: typography.sizeRem.p10,
               letterSpacing: "var(--ds-tracking-ultra)",
               color: canAfford ? undefined : feedbackVar("danger"),
             }}
@@ -212,7 +213,7 @@ export function QuizBriefing({
           </Button>
           <p
             className="mt-2 text-center font-display font-black leading-none text-muted"
-            style={{ fontSize: "8.5px", letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p8_5, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {canAfford
               ? `${entryCost} COINS WILL BE SPENT`
@@ -242,13 +243,13 @@ function BriefingStat({
       </span>
       <span
         className="flex-1 font-display font-black leading-none text-muted"
-        style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-ultra)" }}
+        style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-ultra)" }}
       >
         {label}
       </span>
       <span
         className="font-display font-black leading-none"
-        style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-label)", color: accent }}
+        style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-label)", color: accent }}
       >
         {value}
       </span>

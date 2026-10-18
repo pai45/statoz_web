@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { withAlpha } from "@/design-system";
 
@@ -177,7 +178,7 @@ function FilterChip({
         <span
           className="block truncate px-2 py-1.75 text-center font-display font-black leading-none"
           style={{
-            fontSize: "10px",
+            fontSize: typography.sizeRem.p10,
             letterSpacing: "var(--ds-tracking-wide)",
             color: active ? accent : "var(--ds-color-text-muted)",
           }}

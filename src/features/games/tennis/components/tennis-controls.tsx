@@ -1,5 +1,7 @@
 "use client";
 
+
+import { typography } from "@/design-system/tokens/typography";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Glyph, hudChamferPath } from "@/design-system";
@@ -345,8 +347,8 @@ function ShotPad({
             fill={withAlpha("#ffffff", 0.88)}
             style={{
               fontFamily: "var(--ds-font-display), sans-serif",
-              fontSize: 9,
-              fontWeight: 800,
+              fontSize: typography.sizePx.p9,
+              fontWeight: typography.weight.extrabold,
               letterSpacing: "0.8px",
             }}
           >

@@ -26,7 +26,7 @@
   color: var(--team-ink);
   font-family: var(--ds-font-display);
   font-size: var(--team-badge-font-size);
-  font-weight: 700;
+  font-weight:var(--ds-weight-bold);
   line-height: 1;
 }
 

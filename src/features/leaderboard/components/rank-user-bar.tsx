@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { withAlpha } from "@/design-system";
 
@@ -70,7 +71,7 @@ export function RankUserBar({
           <div className="flex items-center gap-2">
             <span
               className="font-display font-extrabold leading-none"
-              style={{ fontSize: "11px", color: withAlpha(accent, 0.85) }}
+              style={{ fontSize: typography.sizeRem.p11, color: withAlpha(accent, 0.85) }}
             >
               {label}
             </span>
@@ -80,7 +81,7 @@ export function RankUserBar({
           <div className="mt-0.5 flex items-baseline gap-2">
             <span
               className="ds-tabular font-display font-black leading-none"
-              style={{ fontSize: rankText ? "20px" : "28px" }}
+              style={{ fontSize: rankText ? typography.sizeRem.p20 : typography.sizeRem.p28 }}
             >
               {rankText ?? `#${user.rank}`}
             </span>
@@ -90,7 +91,7 @@ export function RankUserBar({
           {user.subtitle ? (
             <p
               className="mt-1 truncate font-display font-black leading-none text-muted"
-              style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-ultra)" }}
+              style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-ultra)" }}
             >
               {user.subtitle}
             </p>
@@ -102,7 +103,7 @@ export function RankUserBar({
             <span
               className="font-display font-black leading-none"
               style={{
-                fontSize: "11px",
+                fontSize: typography.sizeRem.p11,
                 letterSpacing: "var(--ds-tracking-label)",
                 color: accent,
                 border: `1px solid ${withAlpha(accent, 0.6)}`,
@@ -117,12 +118,12 @@ export function RankUserBar({
             key={`user-${meta.unit}-${user.score}`}
             value={user.score}
             className="ds-tabular font-display font-black leading-none"
-            style={{ fontSize: "21px", color: accent }}
+            style={{ fontSize: typography.sizeRem.p21, color: accent }}
           />
           <span
             className="mt-1 font-display font-black leading-none"
             style={{
-              fontSize: "9px",
+              fontSize: typography.sizeRem.p9,
               letterSpacing: "var(--ds-tracking-label)",
               color: withAlpha(accent, 0.7),
             }}

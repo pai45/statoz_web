@@ -37,6 +37,6 @@
 }
 .clubPin { display: grid; gap: var(--ds-space-2); }
 .clubPin > header { display: flex; min-height: 32px; align-items: center; gap: var(--ds-space-3); }
-.clubPin > header b { color: var(--ds-color-accent-gold); font: 900 var(--ds-text-2xs) var(--ds-font-display); letter-spacing: var(--ds-tracking-ultra); }
-.clubPin > header small { margin-left: auto; color: var(--ds-color-danger); font: 900 var(--ds-text-2xs) var(--ds-font-display); }
+.clubPin > header b { color: var(--ds-color-accent-gold); font:var(--ds-weight-black) var(--ds-text-2xs) var(--ds-font-display); letter-spacing: var(--ds-tracking-ultra); }
+.clubPin > header small { margin-left: auto; color: var(--ds-color-danger); font:var(--ds-weight-black) var(--ds-text-2xs) var(--ds-font-display); }
 .clubPin select { margin-left: auto; max-width: 150px; border: 1px solid var(--ds-color-border-muted); background: var(--ds-color-background-data); color: var(--ds-color-text-default); font-size: var(--ds-text-2xs); }

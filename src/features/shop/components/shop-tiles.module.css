@@ -102,8 +102,8 @@
   padding: 0 10px 8px;
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
-  font-size: 11px;
-  font-weight: 800;
+  font-size:var(--ds-size-p11);
+  font-weight:var(--ds-weight-extrabold);
   letter-spacing: 0.6px;
   line-height: 1;
   text-align: center;
@@ -146,8 +146,8 @@
   padding: 8px 10px;
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
-  font-size: 11px;
-  font-weight: 800;
+  font-size:var(--ds-size-p11);
+  font-weight:var(--ds-weight-extrabold);
   letter-spacing: 0.6px;
   text-align: center;
   text-overflow: ellipsis;
@@ -183,8 +183,8 @@
   padding: 0 10px;
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
-  font-size: 11px;
-  font-weight: 800;
+  font-size:var(--ds-size-p11);
+  font-weight:var(--ds-weight-extrabold);
   letter-spacing: 0.6px;
   text-align: center;
   text-overflow: ellipsis;
@@ -213,8 +213,8 @@
   overflow: hidden;
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
-  font-size: 16px;
-  font-weight: 900;
+  font-size:var(--ds-size-p16);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 1.2px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -224,8 +224,8 @@
   margin: 0;
   color: color-mix(in srgb, var(--ds-color-text-default) 54%, transparent);
   font-family: var(--ds-font-display);
-  font-size: 8px;
-  font-weight: 700;
+  font-size:var(--ds-size-p8);
+  font-weight:var(--ds-weight-bold);
   letter-spacing: 1.2px;
 }
 
@@ -386,14 +386,14 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   font-family: var(--ds-font-display);
-  font-size: 10px;
-  font-weight: 900;
+  font-size:var(--ds-size-p10);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 0.6px;
   line-height: 1.15;
   text-align: center;
 }
 @media (width >= 30rem) {
-  .packName { font-size: 11px; }
+  .packName { font-size:var(--ds-size-p11); }
 }
 
 .packMeta {
@@ -404,12 +404,12 @@
   margin: 4px 0 0;
   color: var(--ds-color-accent-cyan);
   font-family: var(--ds-font-display);
-  font-size: 8px;
-  font-weight: 700;
+  font-size:var(--ds-size-p8);
+  font-weight:var(--ds-weight-bold);
   letter-spacing: 1px;
 }
 @media (width >= 30rem) {
-  .packMeta { font-size: 9px; }
+  .packMeta { font-size:var(--ds-size-p9); }
 }
 
 .packStar {
@@ -422,8 +422,8 @@
 
 .inrRail {
   font-family: var(--ds-font-display);
-  font-size: 12px;
-  font-weight: 900;
+  font-size:var(--ds-size-p12);
+  font-weight:var(--ds-weight-black);
   font-variant-numeric: tabular-nums;
 }
 
@@ -455,15 +455,15 @@
   margin: 0;
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
-  font-size: 13px;
-  font-weight: 900;
+  font-size:var(--ds-size-p13);
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-ultra);
 }
 
 .emptyBody {
   margin: 0;
   color: var(--ds-color-text-muted);
-  font-size: 12px;
+  font-size:var(--ds-size-p12);
 }
 
 .emptySport {
@@ -472,7 +472,7 @@
   border: 1px solid var(--ds-color-border-strong);
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
-  font-size: 9px;
-  font-weight: 900;
+  font-size:var(--ds-size-p9);
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-ultra);
 }

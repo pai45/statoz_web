@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useRef, useState } from "react";
 
@@ -110,7 +111,7 @@ function Momentum({ match, scoreboard }: { match: SportMatch; scoreboard: MatchD
       <section className={`${styles.tight} spanFull`}>
         <SectionHeading label="PRESSURE READ" />
         <StatsRow accent={accentVar("cyan")}>
-          <p style={{ margin: 0, color: "var(--ds-color-text-muted)", fontSize: "12px" }}>
+          <p style={{ margin: 0, color: "var(--ds-color-text-muted)", fontSize: typography.sizeRem.p12 }}>
             Drag the trace to read either side&rsquo;s pressure at any point. Goals ride the plot as
             markers, and the one that decided it carries the halo.
           </p>

@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -36,6 +37,8 @@ import {
 } from "./quiz-flow";
 import { PredictionLockedOverlay, SettlementRevealOverlay } from "./prediction-overlays";
 import { QuizHubCard } from "./quiz-hub-card";
+import {useEditorialSingleColumn} from "@/features/matches/editorial-layout";
+import editorial from "@/features/matches/components/editorial-discovery.module.css";
 import {
   CommunityTelemetry,
   PredictionLockDock,
@@ -100,6 +103,7 @@ function QuizHub({
   onNotice: (message: string | null) => void;
   onOpen: (quizId: string) => void;
 }) {
+  const singleColumn=useEditorialSingleColumn();
   const predictions = usePredictions();
   const economy = useEconomy();
   const session = useAuthSession();
@@ -128,7 +132,7 @@ function QuizHub({
     <div className={styles.flowScroll}>
       <LockLine match={match} untilLockMs={untilLockMs} hydrated={now != null} />
       {notice ? <ReviewNotice text={notice} /> : null}
-      <div className={`${styles.hubList} px-5 pt-4 pb-16`}>
+      <div data-single={singleColumn||undefined} className={`${styles.hubList} ${match.status === "finished" && match.sport !== "tennis" && quizzes.every(q => {const p=predictionFor(predictions,match.id,q.id);return p!=null && p.status!=="settled";}) ? editorial.pairedReveals : ""} px-5 pt-4 pb-16`}>
         {quizzes.map((quiz, index) => (
           <QuizHubCard
             key={quiz.id}
@@ -304,7 +308,7 @@ export function PredictionQuizScreen({
           crowdTotalVotes={crowd.total}
           fieldSize={matchBoardRivals(match.id, quiz.id).length}
         />
-        <div className={`${styles.reviewList} pt-5`}>
+        <div className={`${styles.reviewList} ${styles.communityReviewList}`}>
           {quiz.questions.map((question, index) => (
             <ReviewQuestionCard
               key={question.id}
@@ -453,7 +457,7 @@ function EmptyState({ title, message }: { title: string; message: string }) {
   return (
     <div className="grid h-full place-items-center px-8 text-center">
       <div>
-        <h2 className={styles.overlayHeadline} style={{ fontSize: "16px" }}>{title}</h2>
+        <h2 className={styles.overlayHeadline} style={{ fontSize: typography.sizeRem.p16 }}>{title}</h2>
         <p className={styles.overlayBody}>{message}</p>
       </div>
     </div>

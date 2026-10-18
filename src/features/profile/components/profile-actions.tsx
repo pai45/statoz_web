@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -158,7 +159,7 @@ function SettingsSheet({ onClose }: { onClose: () => void }) {
           <span
             className="block font-display font-black leading-none"
             style={{
-              fontSize: "12px",
+              fontSize: typography.sizeRem.p12,
               letterSpacing: "var(--ds-tracking-wide)",
               color: danger,
             }}
@@ -207,7 +208,7 @@ function LogoutConfirm({
             type="button"
             onClick={onCancel}
             className="flex-1 cursor-pointer py-3 font-display font-black leading-none text-muted"
-            style={{ fontSize: "11px", letterSpacing: "var(--ds-tracking-mega)" }}
+            style={{ fontSize: typography.sizeRem.p11, letterSpacing: "var(--ds-tracking-mega)" }}
           >
             CANCEL
           </button>
@@ -217,7 +218,7 @@ function LogoutConfirm({
             onClick={logOut}
             className="flex-1 cursor-pointer py-3 font-display font-black leading-none"
             style={{
-              fontSize: "11px",
+              fontSize: typography.sizeRem.p11,
               letterSpacing: "var(--ds-tracking-mega)",
               color: danger,
             }}
@@ -230,7 +231,7 @@ function LogoutConfirm({
       <div className="px-5 pb-5 pt-4">
         <p
           className="font-display font-black leading-tight"
-          style={{ fontSize: "16px", letterSpacing: "var(--ds-tracking-label)" }}
+          style={{ fontSize: typography.sizeRem.p16, letterSpacing: "var(--ds-tracking-label)" }}
         >
           LOG OUT OF STATOZ?
         </p>

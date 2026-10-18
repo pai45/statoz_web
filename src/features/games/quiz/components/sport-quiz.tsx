@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useState } from "react";
 
@@ -280,13 +281,13 @@ function QuizHeader({
       <div className="min-w-0 flex-1">
         <h1
           className="truncate font-display font-black leading-none"
-          style={{ fontSize: "15px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p15, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           {title}
         </h1>
         <p
           className="mt-1 truncate font-display font-black leading-none text-muted"
-          style={{ fontSize: "8px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           {subtitle}
         </p>
@@ -304,7 +305,7 @@ function QuizHeader({
           <BrandIcon name="ozCoins" size={16} alt="" />
           <span
             className="ds-tabular font-display font-black leading-none"
-            style={{ fontSize: "11px", color: gold }}
+            style={{ fontSize: typography.sizeRem.p11, color: gold }}
           >
             {formatInt(coins)}
           </span>
@@ -320,7 +321,7 @@ function Loading() {
     <div className="grid flex-1 place-items-center">
       <p
         className="font-display font-black leading-none text-muted"
-        style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-ultra)" }}
+        style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-ultra)" }}
       >
         LOADING...
       </p>

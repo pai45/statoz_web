@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -211,14 +212,14 @@ export function QuizPlay({
         </button>
         <h1
           className="min-w-0 flex-1 truncate font-display font-black leading-none"
-          style={{ fontSize: "15px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p15, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           {sportModuleFor(sport).label.toUpperCase()} QUIZ
         </h1>
         <span
           className="mr-2 shrink-0 border px-2 py-1 font-display font-black leading-none"
           style={{
-            fontSize: "9px",
+            fontSize: typography.sizeRem.p9,
             letterSpacing: "var(--ds-tracking-ultra)",
             color: accent,
             background: withAlpha(accent, 0.12),
@@ -274,7 +275,7 @@ export function QuizPlay({
             <p
               className="font-display font-black leading-none"
               style={{
-                fontSize: "8.5px",
+                fontSize: typography.sizeRem.p8_5,
                 letterSpacing: "var(--ds-tracking-ultra)",
                 color: scanning ? accentVar("cyan") : accent,
               }}
@@ -318,7 +319,7 @@ export function QuizPlay({
           <span
             className="absolute left-3.5 top-0 grid min-h-8.5 min-w-10.5 place-items-center border px-2.25 font-display font-black leading-none"
             style={{
-              fontSize: "14px",
+              fontSize: typography.sizeRem.p14,
               color: accent,
               background: `color-mix(in srgb, ${accent} 14%, var(--ds-color-background-elevated))`,
               borderColor: accent,
@@ -446,14 +447,14 @@ function HudMetric({
         </span>
         <span
           className="truncate font-display font-black leading-none text-muted"
-          style={{ fontSize: "7.5px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p7_5, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           {label}
         </span>
       </span>
       <span
         className="ds-tabular mt-1.25 truncate font-display font-black leading-none"
-        style={{ fontSize: "11.5px", letterSpacing: "var(--ds-tracking-label)", color }}
+        style={{ fontSize: typography.sizeRem.p11_5, letterSpacing: "var(--ds-tracking-label)", color }}
       >
         {value}
       </span>
@@ -533,7 +534,7 @@ function PrimaryAction({
     <span
       className="flex h-13 items-center justify-center gap-2 font-display font-black leading-none"
       style={{
-        fontSize: "13px",
+        fontSize: typography.sizeRem.p13,
         letterSpacing: "var(--ds-tracking-ultra)",
         clipPath: "var(--ds-clip-hud)",
         background: focal ? accent : "var(--ds-color-background-elevated)",
@@ -609,7 +610,7 @@ function ExitDialog({
       >
         <h2
           className="font-display font-black leading-none"
-          style={{ fontSize: "17px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p17, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           EXIT QUIZ?
         </h2>

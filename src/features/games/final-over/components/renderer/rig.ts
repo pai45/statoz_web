@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 /**
  * Procedural athlete rendering for Final Over — the web port of the app's
  * `games/final_over/final_over_rig.dart` and the `rigLimb` primitives it builds
@@ -622,7 +623,7 @@ function drawJerseyNumber(
   ctx.translate(at.x, at.y);
   // The canvas is X-flipped by facing; un-flip locally to keep digits readable.
   ctx.scale(facing, 1);
-  ctx.font = `800 ${size.toFixed(1)}px ${palette.displayFont}`;
+  ctx.font = `${typography.weight.extrabold} ${size.toFixed(1)}px ${palette.displayFont}`;
   ctx.fillStyle = color;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";

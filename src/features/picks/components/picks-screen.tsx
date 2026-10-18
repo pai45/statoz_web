@@ -14,7 +14,7 @@ import {
   setTypeFilter,
   usePicks,
 } from "../state/picks-store";
-import { PickMarketCard } from "./pick-market-card";
+import { EditorialMarketList } from "./editorial-market-list";
 import { PicksSettingsSheet } from "./picks-settings-sheet";
 import { usePickTrading } from "./pick-trading";
 import styles from "./picks.module.css";
@@ -73,18 +73,7 @@ export function PicksScreen() {
       {!picks.hydrated ? (
         <PicksSkeleton />
       ) : markets.length ? (
-        <div className={styles.grid}>
-          {markets.map((market, index) => (
-            <div key={market.id} className={styles.cardEnter} style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}>
-              <PickMarketCard
-                market={market}
-                positions={session.isAuthenticated ? selectPositionsForMarket(picks, market.id) : []}
-                onPick={openTrade}
-                onClaim={claim}
-              />
-            </div>
-          ))}
-        </div>
+        <EditorialMarketList markets={markets} positionsFor={id => session.isAuthenticated ? selectPositionsForMarket(picks, id) : []} onPick={openTrade} onClaim={claim} />
       ) : filtered ? (
         <NoDataState
           icon={PickIcon}

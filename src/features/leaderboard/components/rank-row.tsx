@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { accentVar, withAlpha } from "@/design-system";
 
@@ -46,7 +47,7 @@ export function RankRow({ entry, accent, meta, avatarSrc, frameColor, onOpen }: 
         <span
           className="ds-tabular w-8.5 shrink-0 font-display font-black leading-none"
           style={{
-            fontSize: "14px",
+            fontSize: typography.sizeRem.p14,
             color: entry.rank <= 3 ? gold : "var(--ds-color-text-muted)",
           }}
         >
@@ -68,7 +69,7 @@ export function RankRow({ entry, accent, meta, avatarSrc, frameColor, onOpen }: 
             <span
               className={[
                 "truncate text-base leading-none",
-                isUser ? "font-extrabold" : "font-semibold",
+                isUser ? "font-bold" : "font-semibold",
               ].join(" ")}
             >
               {entry.name}
@@ -85,7 +86,7 @@ export function RankRow({ entry, accent, meta, avatarSrc, frameColor, onOpen }: 
             {entry.subtitle ? (
               <span
                 className="truncate font-display font-black leading-none text-muted"
-                style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-wide)" }}
+                style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-wide)" }}
               >
                 {entry.subtitle}
               </span>
@@ -98,12 +99,12 @@ export function RankRow({ entry, accent, meta, avatarSrc, frameColor, onOpen }: 
             key={`row-${entry.rank}-${entry.score}-${meta.unit}`}
             value={entry.score}
             className="ds-tabular truncate font-display font-black leading-none"
-            style={{ fontSize: "16px", color: accent }}
+            style={{ fontSize: typography.sizeRem.p16, color: accent }}
           />
           <span
             className="mt-1 font-display font-extrabold leading-none"
             style={{
-              fontSize: "9px",
+              fontSize: typography.sizeRem.p9,
               letterSpacing: "var(--ds-tracking-label)",
               color: withAlpha("var(--ds-color-text-muted)", 0.82),
             }}

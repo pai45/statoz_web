@@ -19,7 +19,7 @@ The five collectible cards have metallic chamfered rims, inset face frames, spor
 - 3.8-5.3: staggered five-card fan, foil sweep, and headline reveal.
 - 5.3-6.0: cards rotate and collapse into depth while the arena completes its loop.
 
-Desktop and mobile have independent positions, card scales, and typography placement. Both use the app's exact self-hosted Orbitron and Onest fonts. No animation library or browser renderer ships to the client; the website receives standard video files.
+Desktop and mobile have independent positions, card scales, and typography placement. Both use the app's exact self-hosted Orbitron and Space Grotesk fonts. No animation library or browser renderer ships to the client; the website receives standard video files.
 
 ## Sources and prompts
 

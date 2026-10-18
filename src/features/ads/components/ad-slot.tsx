@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { publicAsset } from "@/shared/config";
 
 import { adPlacements } from "@/mocks/ads";
 import type { AdFormat, AdPlacementId } from "../types";
@@ -47,7 +48,7 @@ function CampaignCreative({ format }: { format: AdFormat }) {
   return (
     <>
       <Image
-        src={src}
+        src={publicAsset(src)}
         alt=""
         fill
         sizes={imageSizes(format)}
@@ -81,7 +82,7 @@ function WireframeCreative({ format }: { format: AdFormat }) {
   return (
     <>
       <Image
-        src={src}
+        src={publicAsset(src)}
         alt=""
         fill
         sizes={imageSizes(format)}

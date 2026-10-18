@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import type { ComponentType } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -329,7 +330,7 @@ function ActionPad({
             <Glyph name={copy.glyph} size={17} />
             <span
               className="font-display font-black leading-none"
-              style={{ fontSize: "11px", letterSpacing: "1.4px" }}
+              style={{ fontSize: typography.sizeRem.p11, letterSpacing: "1.4px" }}
             >
               {copy.label}
             </span>
@@ -337,7 +338,7 @@ function ActionPad({
           <span
             className="whitespace-nowrap font-bold leading-none"
             style={{
-              fontSize: "6.5px",
+              fontSize: typography.sizeRem.p6_5,
               letterSpacing: "0.65px",
               color: down ? gold : "var(--ds-color-text-muted)",
             }}
@@ -361,7 +362,7 @@ function HintLabel({ text }: { text: string }) {
     >
       <span
         className="font-display font-black leading-none"
-        style={{ fontSize: "8px", letterSpacing: "1.4px", color: gold }}
+        style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.4px", color: gold }}
       >
         {text}
       </span>

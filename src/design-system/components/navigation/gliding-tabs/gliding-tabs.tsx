@@ -106,7 +106,7 @@ export function GlidingTabs({
                 className={[
                   "font-display transition-all duration-200",
                   active
-                    ? "text-2xs font-black tracking-label"
+                    ? "text-2xs font-bold tracking-label"
                     : "text-2xs font-semibold tracking-tight",
                 ].join(" ")}
               >

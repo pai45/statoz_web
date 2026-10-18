@@ -69,7 +69,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-ultra);
   line-height: var(--ds-leading-compact);
   text-overflow: ellipsis;
@@ -99,7 +99,7 @@
   overflow: hidden;
   font-family: var(--ds-font-display);
   font-size: clamp(var(--ds-text-md), 2.3vw, var(--ds-text-2xl));
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-display);
   line-height: var(--ds-leading-compact);
   text-overflow: ellipsis;
@@ -111,7 +111,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
 }
 
@@ -162,7 +162,7 @@
 .gameResultCell span,
 .gameResultCell strong {
   font-family: var(--ds-font-display);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
 }
 
@@ -190,7 +190,7 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xl);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
 }
 
@@ -198,7 +198,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
 }
 
@@ -244,7 +244,7 @@
   color: color-mix(in srgb, var(--cell-accent) 90%, transparent);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   line-height: var(--ds-leading-compact);
 }
@@ -255,7 +255,7 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xl);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-tight);
   line-height: var(--ds-leading-compact);
 }
@@ -298,7 +298,7 @@
   padding: 1px var(--ds-space-12);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   transition: transform 150ms ease, color 150ms ease, filter 150ms ease;
 }
@@ -401,7 +401,7 @@
   background: color-mix(in srgb, var(--state-color) 14%, var(--ds-color-background-primary));
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
 }
 
@@ -413,7 +413,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   text-transform: uppercase;
 }
@@ -459,7 +459,7 @@
   color: var(--badge-text);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
 }
 
 .teamBadge::before {
@@ -481,7 +481,7 @@
   -webkit-line-clamp: 2;
   color: var(--ds-color-text-default);
   font-size: var(--ds-text-sm);
-  font-weight: 800;
+  font-weight:var(--ds-weight-extrabold);
   line-height: var(--ds-leading-tight);
 }
 
@@ -498,7 +498,7 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-lg);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
   text-align: center;
   white-space: nowrap;
@@ -509,7 +509,7 @@
   color: var(--ds-color-danger);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
 }
 
@@ -621,7 +621,7 @@
   color: var(--state-color);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -666,7 +666,7 @@
   overflow: hidden;
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -698,7 +698,7 @@
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-md);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-tight);
   line-height: var(--ds-leading-tight);
 }
@@ -728,7 +728,7 @@
   color: var(--ds-color-text-subtle);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -739,7 +739,7 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-md);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
 }
 
 .stretchedLink {
@@ -808,7 +808,7 @@
   overflow: hidden;
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -819,7 +819,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
 }
 
@@ -829,7 +829,7 @@
   color: var(--ds-color-text-subtle);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -842,7 +842,7 @@
   margin-top: var(--ds-space-8);
   font-family: var(--ds-font-display);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
 }
 
 .gameScore {
@@ -910,7 +910,7 @@
   color: var(--empty-accent);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-sm);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
 }
 
@@ -957,7 +957,7 @@
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xl);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-tight);
 }
 
@@ -990,7 +990,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
 }
 
@@ -999,7 +999,7 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-3xl);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
 }
 
@@ -1007,7 +1007,7 @@
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
 }
 
@@ -1020,7 +1020,7 @@
   padding: var(--ds-space-8) var(--ds-space-12);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-label);
 }
 
@@ -1051,7 +1051,7 @@
   margin: 0;
   color: var(--ds-color-text-default);
   font-size: var(--ds-text-xs);
-  font-weight: 700;
+  font-weight:var(--ds-weight-bold);
   text-align: right;
 }
 

@@ -77,7 +77,7 @@ keep that true.
 | --- | --- |
 | `Cyber.display(size)` | `font-display` plus a size token plus a tracking token |
 | `Cyber.body(size)` | `font-sans` plus a size token |
-| `fontFamily: 'Orbitron'` / `'Onest'` | `font-display` / `font-sans`; both are loaded through `next/font/google` in `src/app/layout.tsx` |
+| `StatOzTypography.displayFont` / `StatOzTypography.bodyFont` | `font-display` / `font-sans`; both are bundled with `next/font/local` in `src/app/layout.tsx` |
 | `fontSize: n` | the nearest step in `tokens/typography.ts` — add a step rather than an arbitrary value |
 | `FontWeight.w900` | `font-black` |
 | `letterSpacing: n` | a `tracking-*` token |

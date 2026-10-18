@@ -1,73 +1,29 @@
-import {
-  accentVar,
-  Badge,
-  BentoGrid,
-  BentoTile,
-  SignalOffIcon,
-  SignalPanel,
-} from "@/design-system";
-
-import { marketById, matchById, matchTrendingCatalog, type TrendingTileConfig } from "@/mocks/matches";
-import { TrendingMarketCard } from "./trending-market-card";
-import { TrendingMatchCard } from "./trending-match-card";
-import { TrendingPredictCard } from "./trending-predict-card";
-
-/** The curated trending bento — the home screen's main surface. */
+"use client";
+import { matchById, quizzesForMatch } from '@/mocks/matches';
+import { pickMarkets, pickMarketById } from '@/mocks/picks';
+import { selectFeaturedPicks } from '../editorial-cycle';
+import { FeaturedPicks } from './featured-picks';
+import { usePredictions, predictionFor } from '@/features/predictions/state/prediction-store';
+import { useProfileIdentity } from '@/features/profile/state/profile-identity';
+import { usePickTrading } from '@/features/picks/components/pick-trading';
+import { EditorialMarketCard, EditorialMatchCard, EditorialEventsPanel, EditorialMission } from './editorial-discovery';
+import { useEditorialSingleColumn } from "../editorial-layout";
+import styles from './editorial-discovery.module.css';
+import tokens from '@/design-system/tokens/match-discovery.module.css';
+import { SportQuiz } from './editorial-sport-quiz';
+import { useEditorialCycles } from './use-editorial-cycles';
+import { PersonalPredictions } from './personal-predictions';
+// Frozen ID order per mounted feed; actual prediction values stay subscribed.
 export function TrendingFeed() {
-  return (
-    <BentoGrid>
-      {matchTrendingCatalog.map((config) => (
-        <BentoTile key={config.id} span={config.span}>
-          <TrendingTile config={config} />
-        </BentoTile>
-      ))}
-    </BentoGrid>
-  );
-}
-
-function TrendingTile({ config }: { config: TrendingTileConfig }) {
-  if (config.kind === "match" || config.kind === "predict") {
-    const match = matchById(config.sourceId);
-    if (!match) return <Unavailable kind={config.kind} />;
-    return config.kind === "match" ? (
-      <TrendingMatchCard match={match} />
-    ) : (
-      <TrendingPredictCard match={match} />
-    );
-  }
-
-  const market = marketById(config.sourceId);
-  if (!market) return <Unavailable kind={config.kind} />;
-  return (
-    <TrendingMarketCard
-      market={market}
-      kind={config.kind}
-      detailed={config.span === "tall"}
-    />
-  );
-}
-
-const CHROME = accentVar("cyan");
-const BORDER_ACCENT = "var(--ds-color-fixture-predicted)";
-
-function Unavailable({ kind }: { kind: TrendingTileConfig["kind"] }) {
-  return (
-    <SignalPanel
-      accent={BORDER_ACCENT}
-      appearance="balanced"
-      lifted={false}
-      pad={false}
-      tag={<Badge accent={CHROME}>{kind.toUpperCase()}</Badge>}
-      footer={<span className="font-display text-2xs font-extrabold tracking-wide text-muted">NO DATA</span>}
-    >
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3.5 text-muted">
-        <SignalOffIcon size={22} />
-        <p className="text-center font-display text-2xs font-extrabold leading-tight tracking-wide">
-          SIGNAL
-          <br />
-          UNAVAILABLE
-        </p>
-      </div>
-    </SignalPanel>
-  );
+    const predictions = usePredictions(), profile = useProfileIdentity(), trading = usePickTrading();
+    const singleColumn = useEditorialSingleColumn();
+    const cycles = useEditorialCycles(profile, predictions);
+    const featured = selectFeaturedPicks(pickMarkets);
+    return <div className={`${styles.feed} ${tokens.editorialTokens}`} data-testid="match-trending-feed"><FeaturedPicks markets={featured} onPick={trading.openTrade}/><PersonalPredictions showPlayed={false}/>{cycles.map(cycle => <section className={styles.cycle} key={cycle.sport} aria-label={cycle.sport + ' discovery'} data-sport={cycle.sport}>
+    {cycle.matches.length > 0 && <div className={styles.matches}>{cycle.matches.map(id => { const match = matchById(id); return match ? <EditorialMatchCard key={id} match={match}/> : null; })}</div>}
+    <EditorialEventsPanel markets={cycle.events.flatMap(id => { const m = pickMarketById(id); return m ? [m] : []; })}/>
+    <div className={styles.grid} data-single={singleColumn || undefined}><SportQuiz sport={cycle.sport}/>{cycle.compact && matchById(cycle.compact) && <EditorialMatchCard match={matchById(cycle.compact)!} compact/>}{cycle.missions.flatMap(id => { const match = matchById(id); if (!match)
+            return []; const quiz = quizzesForMatch(match).find(q => (q.entryFee ?? 0) === 0); return quiz && !predictionFor(predictions, id, quiz.id) ? [<EditorialMission key={id + '::' + quiz.id} match={match} quiz={quiz} prediction={predictionFor(predictions, id, quiz.id)}/>] : []; })}</div>
+    {cycle.future && pickMarketById(cycle.future) && <EditorialMarketCard market={pickMarketById(cycle.future)!} featured onPick={trading.openTrade}/>}
+  </section>)}{trading.overlays}</div>;
 }

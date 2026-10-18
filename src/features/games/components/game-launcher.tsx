@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentType } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -41,7 +42,9 @@ export type GameLauncherProps = {
  * The games that exist. Anything absent falls through to the placeholder, which
  * says so plainly rather than 404ing — every tile in the app leads somewhere.
  */
+const RetroCircuit = dynamic(() => import("../retro-circuit/screen").then(m=>m.RetroCircuit), {ssr:false,loading:()=> <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO CIRCUIT…</div>});
 const renderers: Partial<Record<GameId, ComponentType<GameLauncherProps>>> = {
+  "retro-circuit": RetroCircuit,
   "penalty-shootout": PenaltyShootout,
   "pitch-duel": PitchDuel,
   "final-over": FinalOver,

@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
@@ -265,7 +266,7 @@ function RivalHero({
               <h3
                 className="min-w-0 truncate font-display font-black leading-none"
                 style={{
-                  fontSize: "22px",
+                  fontSize: typography.sizeRem.p22,
                   letterSpacing: "var(--ds-tracking-tight)",
                 }}
               >
@@ -276,7 +277,7 @@ function RivalHero({
             <p
               className="mt-1 truncate font-display font-black leading-none text-muted"
               style={{
-                fontSize: "10px",
+                fontSize: typography.sizeRem.p10,
                 letterSpacing: "var(--ds-tracking-ultra)",
               }}
             >
@@ -300,7 +301,7 @@ function ProChip() {
     <span
       className="shrink-0 rounded-sm border px-1.75 py-0.75 font-display font-black leading-none"
       style={{
-        fontSize: "9px",
+        fontSize: typography.sizeRem.p9,
         letterSpacing: "var(--ds-tracking-ultra)",
         color: violet,
         background: withAlpha(violet, 0.16),
@@ -335,7 +336,7 @@ function VsYouCard({ rows }: { rows: VsRow[] }) {
           <h3
             className="flex-1 font-display font-black leading-none"
             style={{
-              fontSize: "15px",
+              fontSize: typography.sizeRem.p15,
               letterSpacing: "var(--ds-tracking-wide)",
             }}
           >
@@ -344,7 +345,7 @@ function VsYouCard({ rows }: { rows: VsRow[] }) {
           <span
             className="font-display font-black leading-none text-muted"
             style={{
-              fontSize: "9px",
+              fontSize: typography.sizeRem.p9,
               letterSpacing: "var(--ds-tracking-ultra)",
             }}
           >
@@ -375,7 +376,7 @@ function VsLine({ row }: { row: VsRow }) {
     <div className="flex items-center py-2.25">
       <span
         className="ds-tabular w-13.5 shrink-0 font-display font-black leading-none"
-        style={{ fontSize: "18px" }}
+        style={{ fontSize: typography.sizeRem.p18 }}
       >
         {rival}
         {suffix}
@@ -384,14 +385,14 @@ function VsLine({ row }: { row: VsRow }) {
       <div className="flex min-w-0 flex-1 flex-col items-center">
         <span
           className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           {label}
         </span>
         <span
           className="ds-tabular mt-0.5 font-display font-black leading-none"
           style={{
-            fontSize: "11px",
+            fontSize: typography.sizeRem.p11,
             letterSpacing: "var(--ds-tracking-ultra)",
             color: tie
               ? "var(--ds-color-text-muted)"
@@ -406,7 +407,7 @@ function VsLine({ row }: { row: VsRow }) {
 
       <span
         className="ds-tabular w-13.5 shrink-0 text-right font-display font-black leading-none text-muted"
-        style={{ fontSize: "18px" }}
+        style={{ fontSize: typography.sizeRem.p18 }}
       >
         {you}
         {suffix}

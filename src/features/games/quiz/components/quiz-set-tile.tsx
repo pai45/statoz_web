@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import {
   accentVar,
@@ -118,7 +119,7 @@ export function QuizSetTile({
 
         <span
           className="ds-tabular font-display font-black leading-none"
-          style={{ fontSize: "15px", color }}
+          style={{ fontSize: typography.sizeRem.p15, color }}
         >
           {String(setNumber).padStart(2, "0")}
         </span>
@@ -129,7 +130,7 @@ export function QuizSetTile({
           <span
             className="truncate font-display font-black leading-none"
             style={{
-              fontSize: "6.5px",
+              fontSize: typography.sizeRem.p6_5,
               letterSpacing: "var(--ds-tracking-label)",
               color,
             }}
@@ -142,7 +143,7 @@ export function QuizSetTile({
           <span
             className="truncate font-display font-black leading-none"
             style={{
-              fontSize: "5.8px",
+              fontSize: typography.sizeRem.p5_8,
               letterSpacing: "var(--ds-tracking-tight)",
               color: graded ? "var(--ds-color-text-muted)" : withAlpha(color, 0.8),
             }}

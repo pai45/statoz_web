@@ -14,7 +14,7 @@
 .outcomes,
 .detail header {
   font-family: var(--ds-font-display);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
 }
 .header h3 { margin: 0; color: var(--ds-color-accent-cyan); font-size: var(--ds-text-2xs); }

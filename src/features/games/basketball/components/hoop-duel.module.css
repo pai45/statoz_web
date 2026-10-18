@@ -46,7 +46,7 @@
   display: grid;
   place-items: center;
   font-family: var(--ds-font-display), sans-serif;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: 1;
 }
 
@@ -203,11 +203,11 @@
 }
 
 .lobbyLevel::before { grid-column: 2; grid-row: 1 / -1; width: 1px; height: 30px; content: ""; background: var(--ds-color-border-strong); }
-.lobbyLevel > span { grid-column: 1; grid-row: 1; align-self: end; color: var(--ds-color-accent-cyan); font: 900 var(--ds-text-nano) var(--ds-font-display); letter-spacing: var(--ds-tracking-label); }
-.lobbyLevel > b { grid-column: 1; grid-row: 2; align-self: start; color: var(--ds-color-accent-gold); font: 950 var(--ds-text-2xl) var(--ds-font-display); line-height: .9; }
+.lobbyLevel > span { grid-column: 1; grid-row: 1; align-self: end; color: var(--ds-color-accent-cyan); font:var(--ds-weight-black) var(--ds-text-nano) var(--ds-font-display); letter-spacing: var(--ds-tracking-label); }
+.lobbyLevel > b { grid-column: 1; grid-row: 2; align-self: start; color: var(--ds-color-accent-gold); font:var(--ds-weight-black) var(--ds-text-2xl) var(--ds-font-display); line-height: .9; }
 .lobbyLevel > i { grid-column: 3; grid-row: 1; align-self: end; overflow: hidden; width: 34px; height: 2px; background: var(--ds-color-border-strong); }
 .lobbyLevel > i > span { display: block; height: 100%; background: var(--ds-color-accent-gold); }
-.lobbyLevel > small { grid-column: 3; grid-row: 2; align-self: start; color: var(--ds-color-text-muted); font: 800 var(--ds-text-nano) var(--ds-font-mono); }
+.lobbyLevel > small { grid-column: 3; grid-row: 2; align-self: start; color: var(--ds-color-text-muted); font:var(--ds-weight-extrabold) var(--ds-text-nano) var(--ds-font-mono); }
 .lobbyLevel > svg { grid-column: 4; grid-row: 1 / -1; justify-self: end; color: var(--ds-color-accent-cyan); transform: rotate(90deg); }
 
 .lobbyContent {
@@ -220,25 +220,25 @@
 
 .statusStrip { display: flex; min-height: 18px; align-items: center; gap: 8px; }
 .statusStrip > i { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--ds-color-success); box-shadow: 0 0 8px color-mix(in srgb, var(--ds-color-success) 60%, transparent); }
-.statusStrip > b { color: var(--ds-color-success); font: 900 9px var(--ds-font-display); letter-spacing: 2px; }
+.statusStrip > b { color: var(--ds-color-success); font:var(--ds-weight-black) var(--ds-size-p9) var(--ds-font-display); letter-spacing: 2px; }
 .statusStrip > span { height: 1px; flex: 1; background: color-mix(in srgb, var(--ds-color-accent-gold) 16%, transparent); }
-.statusStrip > small { color: var(--ds-color-text-muted); font: 800 8.5px var(--ds-font-display); letter-spacing: 1.2px; white-space: nowrap; }
+.statusStrip > small { color: var(--ds-color-text-muted); font:var(--ds-weight-extrabold) var(--ds-size-p8_5) var(--ds-font-display); letter-spacing: 1.2px; white-space: nowrap; }
 
 .lobbyHero { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
 .hoopEmblem { display: grid; width: 84px; height: 84px; flex: none; place-items: center; border: 1px solid color-mix(in srgb, var(--ds-color-accent-gold) 26%, transparent); border-radius: 50%; color: var(--ds-color-accent-gold); background: color-mix(in srgb, var(--ds-color-background-primary) 50%, transparent); animation: emblem-pulse 2600ms ease-in-out infinite alternate; }
 .lobbyHero > div { min-width: 0; flex: 1; }
-.lobbyHero h1 { margin: 0; font: 950 23px var(--ds-font-display); letter-spacing: 1.2px; line-height: 1; text-shadow: 0 0 14px color-mix(in srgb, var(--ds-color-accent-gold) 45%, transparent); }
-.lobbyHero p { margin: 6px 0 10px; color: var(--ds-color-text-muted); font: 800 8.5px var(--ds-font-display); letter-spacing: 1.8px; line-height: var(--ds-leading-tight); }
-.freshLegs { display: inline-block; padding: 3px 8px; border: 1px solid; font: 900 8px var(--ds-font-display); letter-spacing: 1.2px; line-height: 1; }
+.lobbyHero h1 { margin: 0; font:var(--ds-weight-black) var(--ds-size-p23) var(--ds-font-display); letter-spacing: 1.2px; line-height: 1; text-shadow: 0 0 14px color-mix(in srgb, var(--ds-color-accent-gold) 45%, transparent); }
+.lobbyHero p { margin: 6px 0 10px; color: var(--ds-color-text-muted); font:var(--ds-weight-extrabold) var(--ds-size-p8_5) var(--ds-font-display); letter-spacing: 1.8px; line-height: var(--ds-leading-tight); }
+.freshLegs { display: inline-block; padding: 3px 8px; border: 1px solid; font:var(--ds-weight-black) var(--ds-size-p8) var(--ds-font-display); letter-spacing: 1.2px; line-height: 1; }
 
 .difficulty { margin-top: 18px; }
-.difficulty > p { margin: 0; color: var(--ds-color-text-muted); font: 900 9px var(--ds-font-display); letter-spacing: 2px; line-height: 1; }
+.difficulty > p { margin: 0; color: var(--ds-color-text-muted); font:var(--ds-weight-black) var(--ds-size-p9) var(--ds-font-display); letter-spacing: 2px; line-height: 1; }
 .difficulty > div { display: flex; gap: 8px; margin-top: 10px; }
 .difficulty button { min-height: 52px; flex: 1; padding: 8px 4px; border: 1px solid color-mix(in srgb, var(--ds-color-border-default) 50%, transparent); background: var(--ds-color-background-elevated); transition: border-color 160ms ease, background 160ms ease; }
 .difficulty button[aria-pressed="true"] { border-width: 2px; border-color: var(--ds-color-accent-gold); background: color-mix(in srgb, var(--ds-color-accent-gold) 14%, var(--ds-color-background-elevated)); }
-.difficulty b { display: block; color: var(--ds-color-text-muted); font: 900 11px var(--ds-font-display); letter-spacing: 1px; line-height: 1; }
+.difficulty b { display: block; color: var(--ds-color-text-muted); font:var(--ds-weight-black) var(--ds-size-p11) var(--ds-font-display); letter-spacing: 1px; line-height: 1; }
 .difficulty button[aria-pressed="true"] b { color: var(--ds-color-accent-gold); }
-.difficulty small { display: block; margin-top: 5px; color: var(--ds-color-text-muted); font-size: 9px; line-height: 1; }
+.difficulty small { display: block; margin-top: 5px; color: var(--ds-color-text-muted); font-size:var(--ds-size-p9); line-height: 1; }
 
 .playWrap { margin-top: 18px; }
 
@@ -264,16 +264,16 @@
 .tipOffIcon { position: relative; display: grid; place-items: center; }
 .tipOffButton > i { position: relative; width: 1px; height: 38px; background: color-mix(in srgb, var(--ds-color-text-inverse) 28%, transparent); }
 .tipOffCopy { position: relative; display: flex; min-width: 0; flex-direction: column; align-items: center; padding-inline: 8px; }
-.tipOffCopy b { font: 950 var(--ds-text-lg) var(--ds-font-display); letter-spacing: var(--ds-tracking-ultra); line-height: 1; }
-.tipOffCopy small { overflow: hidden; max-width: 100%; margin-top: 7px; font: 900 var(--ds-text-nano) var(--ds-font-display); letter-spacing: var(--ds-tracking-label); line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.tipOffCopy b { font:var(--ds-weight-black) var(--ds-text-lg) var(--ds-font-display); letter-spacing: var(--ds-tracking-ultra); line-height: 1; }
+.tipOffCopy small { overflow: hidden; max-width: 100%; margin-top: 7px; font:var(--ds-weight-black) var(--ds-text-nano) var(--ds-font-display); letter-spacing: var(--ds-tracking-label); line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
 .tipOffButton:hover { filter: brightness(1.08); transform: translateY(-1px); }
 .tipOffButton:active { transform: translateY(0); }
 .tipOffButton:disabled { cursor: not-allowed; opacity: .5; }
 
 .lobbyActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
-.lobbyActions a { display: grid; min-height: 56px; place-items: center; border: 1px solid color-mix(in srgb, var(--ds-color-accent-cyan) 35%, var(--ds-color-border-default)); color: var(--ds-color-accent-cyan); background: color-mix(in srgb, var(--ds-color-background-elevated) 84%, transparent); font: 900 var(--ds-text-sm) var(--ds-font-display); letter-spacing: var(--ds-tracking-label); }
+.lobbyActions a { display: grid; min-height: 56px; place-items: center; border: 1px solid color-mix(in srgb, var(--ds-color-accent-cyan) 35%, var(--ds-color-border-default)); color: var(--ds-color-accent-cyan); background: color-mix(in srgb, var(--ds-color-background-elevated) 84%, transparent); font:var(--ds-weight-black) var(--ds-text-sm) var(--ds-font-display); letter-spacing: var(--ds-tracking-label); }
 .lobbyActions a:hover { background: color-mix(in srgb, var(--ds-color-accent-cyan) 10%, var(--ds-color-background-elevated)); }
-.howToLink { display: block; min-height: 44px; padding-top: 16px; color: var(--ds-color-accent-gold); font: 900 11px var(--ds-font-display); letter-spacing: 1.4px; text-align: center; }
+.howToLink { display: block; min-height: 44px; padding-top: 16px; color: var(--ds-color-accent-gold); font:var(--ds-weight-black) var(--ds-size-p11) var(--ds-font-display); letter-spacing: 1.4px; text-align: center; }
 
 @media (min-width: 768px) {
   .lobbyContent { width: min(100%, 480px); }

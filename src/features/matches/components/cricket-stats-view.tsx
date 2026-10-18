@@ -1,5 +1,7 @@
 "use client";
 
+
+import { typography } from "@/design-system/tokens/typography";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -277,7 +279,7 @@ function FeedRows({ feed }: { feed: NonNullable<MatchDetailScoreboard["feed"]> }
           <span className={styles.eventRow}>
             <b className={styles.feedMarker} style={{ color: accentFor(event.kind) }}>{event.marker}</b>
             <span className={styles.eventCopy}>
-              <strong style={{ whiteSpace: "normal", fontWeight: 400 }}>{event.text}</strong>
+              <strong style={{ whiteSpace: "normal", fontWeight: typography.weight.regular }}>{event.text}</strong>
             </span>
           </span>
         </StatsRow>

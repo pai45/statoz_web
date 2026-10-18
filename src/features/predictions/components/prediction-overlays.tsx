@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
@@ -282,7 +283,7 @@ function ContestPrizeBeat({ rank, field, prizeOz }: { rank: number; field: numbe
         {won ? <TrophyIcon size={13} aria-hidden="true" /> : null}
         SCORELINE CONTEST
       </span>
-      <strong className={[styles.display, styles.tabular].join(" ")} style={{ color: accent, fontSize: "18px" }}>
+      <strong className={[styles.display, styles.tabular].join(" ")} style={{ color: accent, fontSize: typography.sizeRem.p18 }}>
         FINISHED #{rank} OF {field}
       </strong>
       <span className={[styles.pollMeta, styles.tabular].join(" ")} style={{ justifyContent: "center", color: accent }}>

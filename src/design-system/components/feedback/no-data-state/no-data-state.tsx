@@ -60,7 +60,7 @@ export function NoDataState({
         <strong className="mt-3.5 font-display text-sm font-black tracking-wider text-white">
           {title.toUpperCase()}
         </strong>
-        <p className="mt-2 text-[13px] leading-[1.35] font-semibold text-(--ds-color-text-muted)">
+        <p className="mt-2 text-[length:var(--ds-size-p13)] leading-[1.35] font-semibold text-(--ds-color-text-muted)">
           {message}
         </p>
         {action ? <div className="mt-3">{action}</div> : null}

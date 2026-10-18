@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 import type { SportMatch, SportTeam } from "@/domain/matches";
 import { formatKickoffTime } from "@/shared/utils";
 
@@ -17,10 +18,11 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
   }
 
   const cricket = match.sport === "cricket";
+  const basketball = match.sport === "basketball";
   const hasScore = match.homeScore != null || match.awayScore != null;
 
   return (
-    <section className={styles.summary} aria-label="Match summary">
+    <section className={`${styles.summary} ${basketball ? styles.summaryBasketball : ""}`} aria-label="Match summary">
       <div className={styles.summaryBracket}>
         <time
           dateTime={match.status === "scheduled" ? match.kickoff : undefined}
@@ -30,22 +32,34 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
           {statusText(match)}
         </time>
 
-        <div className={styles.summaryTeams}>
-          <TeamBadge team={match.home} size={44} />
-          <TeamDetails team={match.home} score={match.homeScore} cricket={cricket} />
-
-          {cricket ? (
-            <span className={styles.summaryVs}>vs</span>
+        <div className={`${styles.summaryTeams} ${basketball ? styles.summaryTeamsStacked : ""}`}>
+          {basketball ? (
+            <>
+              <TeamIdentity team={match.home} score={match.homeScore} cricket={cricket} />
+              <span className={`${styles.summaryScore} ${hasScore ? "" : styles.summaryScoreEmpty}`}>
+                {hasScore ? `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}` : "-"}
+              </span>
+              <TeamIdentity team={match.away} score={match.awayScore} cricket={cricket} alignEnd />
+            </>
           ) : (
-            <span
-              className={`${styles.summaryScore} ${hasScore ? "" : styles.summaryScoreEmpty}`}
-            >
-              {hasScore ? `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}` : "-"}
-            </span>
-          )}
+            <>
+              <TeamBadge team={match.home} size={44} />
+              <TeamDetails team={match.home} score={match.homeScore} cricket={cricket} />
 
-          <TeamDetails team={match.away} score={match.awayScore} cricket={cricket} alignEnd />
-          <TeamBadge team={match.away} size={44} />
+              {cricket ? (
+                <span className={styles.summaryVs}>vs</span>
+              ) : (
+                <span
+                  className={`${styles.summaryScore} ${hasScore ? "" : styles.summaryScoreEmpty}`}
+                >
+                  {hasScore ? `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}` : "-"}
+                </span>
+              )}
+
+              <TeamDetails team={match.away} score={match.awayScore} cricket={cricket} alignEnd />
+              <TeamBadge team={match.away} size={44} />
+            </>
+          )}
         </div>
 
         <div className={styles.summarySplit} aria-hidden>
@@ -54,6 +68,27 @@ export function MatchSummaryHeader({ match }: { match: SportMatch }) {
         </div>
       </div>
     </section>
+  );
+}
+
+/** The basketball header follows the mobile scoreline treatment: crest first,
+ * then the team name, with both identities flanking the score. */
+function TeamIdentity({
+  team,
+  score,
+  cricket,
+  alignEnd = false,
+}: {
+  team: SportTeam;
+  score?: number | string;
+  cricket: boolean;
+  alignEnd?: boolean;
+}) {
+  return (
+    <span className={`${styles.summaryIdentity} ${alignEnd ? styles.summaryIdentityEnd : ""}`}>
+      <TeamBadge team={team} size={44} />
+      <TeamDetails team={team} score={score} cricket={cricket} alignEnd={alignEnd} />
+    </span>
   );
 }
 
@@ -87,7 +122,7 @@ function GrandPrixSummary({ match }: { match: SportMatch }) {
   return (
     <section className={styles.summary} style={{ paddingTop: 12 }} aria-label="Race summary">
       <div className={styles.summaryBracket} style={{ paddingTop: 12 }}>
-        <span className={styles.summaryStatus} style={{ color: statusColor(match), fontSize: 14 }}>
+        <span className={styles.summaryStatus} style={{ color: statusColor(match), fontSize: typography.sizePx.p14 }}>
           {match.status === "scheduled" ? "UPCOMING" : match.status === "live" ? "LIVE" : "FT"}
         </span>
         <div className="mt-2.5 line-clamp-2 text-center font-display text-xl font-bold leading-tight">

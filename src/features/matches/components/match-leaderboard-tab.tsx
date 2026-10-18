@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useMemo, useState, type ReactNode } from "react";
 
@@ -254,10 +255,10 @@ function UserBar({
 function MetaCell({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <span className="grid justify-items-end">
-      <small style={{ color: "var(--ds-color-text-muted)", fontSize: "8px", letterSpacing: "var(--ds-tracking-ultra)" }}>
+      <small style={{ color: "var(--ds-color-text-muted)", fontSize: typography.sizeRem.p8, letterSpacing: "var(--ds-tracking-ultra)" }}>
         {label}
       </small>
-      <b className="ds-tabular font-display" style={{ color, fontSize: "14px", marginTop: "3px" }}>
+      <b className="ds-tabular font-display" style={{ color, fontSize: typography.sizeRem.p14, marginTop: "3px" }}>
         {value}
       </b>
     </span>

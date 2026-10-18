@@ -9,13 +9,13 @@ export const gamesTrendingCatalog: GamesTrendingTileConfig[] = [
     id: "trend-game-pitch-duel",
     sourceId: "pitch-duel",
     sport: "football",
-    span: "tall",
+    span: "square",
   },
   {
     id: "trend-game-penalty",
     sourceId: "penalty-shootout",
     sport: "football",
-    span: "tall",
+    span: "square",
   },
   {
     id: "trend-game-football-chess",

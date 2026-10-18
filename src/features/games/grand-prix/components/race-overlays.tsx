@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { accentVar, feedbackVar, Glyph, withAlpha } from "@/design-system";
 
@@ -94,7 +95,7 @@ export function LightsRig({
       <span
         className="font-display font-black leading-none"
         style={{
-          fontSize: "10px",
+          fontSize: typography.sizeRem.p10,
           letterSpacing: "2.4px",
           color: lightsOut ? success : "var(--ds-color-text-muted)",
         }}
@@ -115,7 +116,7 @@ export function LaunchFlash({ grade }: { grade: LaunchGrade | null }) {
       <FlashPlate color={color} className={styles.launchFlash}>
         <span
           className="font-display font-black leading-none"
-          style={{ fontSize: "15px", letterSpacing: "2px", color }}
+          style={{ fontSize: typography.sizeRem.p15, letterSpacing: "2px", color }}
         >
           {label}
         </span>
@@ -136,7 +137,7 @@ export function LapFlash({ lap, laps }: { lap: number; laps: number }) {
       <FlashPlate key={lap} color={color} glow={finalLap} className={styles.lapFlash}>
         <span
           className="font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "15px", letterSpacing: "2px", color }}
+          style={{ fontSize: typography.sizeRem.p15, letterSpacing: "2px", color }}
         >
           {finalLap ? "FINAL LAP" : `LAP ${lap} / ${laps}`}
         </span>
@@ -171,13 +172,13 @@ export function StuckWarning({ seconds }: { seconds: number }) {
         </span>
         <span
           className="mt-1.5 font-display font-black leading-none"
-          style={{ fontSize: "16px", letterSpacing: "2px", color: danger }}
+          style={{ fontSize: typography.sizeRem.p16, letterSpacing: "2px", color: danger }}
         >
           GET BACK ON TRACK
         </span>
         <span
           className="mt-1 font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "11px", letterSpacing: "2px", color: danger }}
+          style={{ fontSize: typography.sizeRem.p11, letterSpacing: "2px", color: danger }}
         >
           RETIRING IN {Math.ceil(remaining)}s
         </span>
@@ -209,7 +210,7 @@ export function OvertakeToast({
       >
         <span
           className="font-display font-black leading-none"
-          style={{ fontSize: "9px", letterSpacing: "1.4px", color: cyan }}
+          style={{ fontSize: typography.sizeRem.p9, letterSpacing: "1.4px", color: cyan }}
         >
           P{overtake.overtakenPosition} ▲ PASSED{" "}
           {overtake.overtakenName.toUpperCase()}

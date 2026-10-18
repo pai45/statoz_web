@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -66,7 +67,7 @@ export function TransmissionCompose({ channel }: { channel: SupportChannel }) {
           <h1
             className="truncate font-display font-black leading-none"
             style={{
-              fontSize: "19px",
+              fontSize: typography.sizeRem.p19,
               color: accent,
               letterSpacing: "var(--ds-tracking-label)",
             }}
@@ -75,7 +76,7 @@ export function TransmissionCompose({ channel }: { channel: SupportChannel }) {
           </h1>
           <p
             className="mt-1 font-display font-black leading-none text-muted"
-            style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {channel.composeSubtitle}
           </p>

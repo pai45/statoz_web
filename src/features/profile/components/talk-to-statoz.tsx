@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 import Link from "next/link";
 
 import { ChevronLeftIcon, DirectoryCard, paletteVar } from "@/design-system";
@@ -31,7 +32,7 @@ export function TalkToStatoz() {
           <h1
             className="truncate font-display font-black leading-none"
             style={{
-              fontSize: "19px",
+              fontSize: typography.sizeRem.p19,
               color: "var(--ds-color-accent-cyan)",
               letterSpacing: "var(--ds-tracking-label)",
             }}
@@ -40,7 +41,7 @@ export function TalkToStatoz() {
           </h1>
           <p
             className="mt-1 font-display font-black leading-none text-muted"
-            style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {"// 1:1 DIRECT LINE"}
           </p>

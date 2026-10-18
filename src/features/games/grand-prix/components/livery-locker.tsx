@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useEffect, useRef } from "react";
 
@@ -63,7 +64,7 @@ export function LiveryLocker({
       <div className="flex items-center gap-2">
         <span
           className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "9px", letterSpacing: "2px" }}
+          style={{ fontSize: typography.sizeRem.p9, letterSpacing: "2px" }}
         >
           TEAM LIVERY
         </span>
@@ -71,7 +72,7 @@ export function LiveryLocker({
         <span aria-hidden className="size-1.25" style={{ background: racing }} />
         <span
           className="truncate font-display font-black leading-none"
-          style={{ fontSize: "7.5px", letterSpacing: "1.1px", color: racing }}
+          style={{ fontSize: typography.sizeRem.p7_5, letterSpacing: "1.1px", color: racing }}
         >
           {`${selectedSpec.name} // EQUIPPED`}
         </span>
@@ -94,7 +95,7 @@ export function LiveryLocker({
       ) : (
         <p
           className="mt-3 font-display font-black leading-none"
-          style={{ fontSize: "8px", letterSpacing: "1.2px", color: racing }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.2px", color: racing }}
         >
           BROWSE MORE LIVERIES IN THE SHOP
         </p>
@@ -118,7 +119,7 @@ function LiveryRow({
     <>
       <p
         className="mt-3 font-display font-black leading-none text-muted"
-        style={{ fontSize: "8px", letterSpacing: "1.6px" }}
+        style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.6px" }}
       >
         {heading}
       </p>
@@ -175,7 +176,7 @@ function LiveryTile({
         aria-hidden
         className="absolute top-1.5 left-1.75 font-display font-black leading-none tabular-nums"
         style={{
-          fontSize: "6.5px",
+          fontSize: typography.sizeRem.p6_5,
           letterSpacing: "0.8px",
           color: selected ? racing : "var(--ds-color-text-muted)",
         }}
@@ -187,7 +188,7 @@ function LiveryTile({
         aria-hidden
         className="absolute inset-x-1.5 bottom-1 truncate text-center font-display font-black leading-none"
         style={{
-          fontSize: "6px",
+          fontSize: typography.sizeRem.p6,
           letterSpacing: "0.4px",
           color: selected ? "var(--ds-color-text-default)" : "var(--ds-color-text-muted)",
         }}

@@ -73,60 +73,6 @@
   transform: translateY(0);
 }
 
-.trending .lift {
-  background: color-mix(in srgb, var(--fixture-state) 16%, transparent);
-}
-
-.trending .frame {
-  background: color-mix(in srgb, var(--fixture-state) 45%, transparent);
-}
-
-.trending .frame::before,
-.trending .frame::after {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  width: max(0px, calc(50% - 72px));
-  height: 2px;
-  background: color-mix(in srgb, var(--fixture-state) 65%, transparent);
-  content: "";
-  pointer-events: none;
-}
-
-.trending .frame::before {
-  left: 12px;
-}
-
-.trending .frame::after {
-  right: 12px;
-}
-
-.trending .body {
-  padding-inline: 14px;
-  background: var(--ds-gradient-trending-card);
-}
-
-.trending .tag,
-.trending .tag > * {
-  font-family: var(--ds-font-display);
-  font-size: var(--ds-text-2xs);
-  font-weight: 800;
-  letter-spacing: var(--ds-tracking-wide);
-}
-
-.trending .footer {
-  border-top-color: color-mix(in srgb, var(--fixture-state) 16%, transparent);
-  padding-inline: 14px;
-}
-
-.trending:hover .frame {
-  background: color-mix(in srgb, var(--fixture-state) 60%, transparent);
-}
-
-.trending:has(.stretchedLink:focus-visible) .frame {
-  background: var(--fixture-state);
-}
-
 .setChip {
   border: 1px solid color-mix(in srgb, var(--ds-color-accent-cyan) 35%, transparent);
   border-radius: var(--ds-radius-md);

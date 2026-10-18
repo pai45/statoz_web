@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import type { CSSProperties } from "react";
 
@@ -98,7 +99,7 @@ export function RankTag({ label, color }: { label: string; color: string }) {
       <span
         className="block px-1.5 py-px font-display font-black leading-normal"
         style={{
-          fontSize: "9px",
+          fontSize: typography.sizeRem.p9,
           letterSpacing: "var(--ds-tracking-wide)",
           color,
         }}
@@ -129,7 +130,7 @@ export function MovementBadge({
     <span
       className="ds-tabular shrink-0 font-display font-black leading-none"
       style={{
-        fontSize: "11px",
+        fontSize: typography.sizeRem.p11,
         letterSpacing: "var(--ds-tracking-tight)",
         color,
       }}
@@ -203,7 +204,7 @@ export function CountdownPill({
         <span
           className="ds-tabular font-display font-black leading-none"
           style={{
-            fontSize: "10px",
+            fontSize: typography.sizeRem.p10,
             letterSpacing: "var(--ds-tracking-label)",
             color: accent,
           }}

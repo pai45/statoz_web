@@ -79,7 +79,7 @@ export function NavRail({
                 className={[
                   "font-display leading-tight",
                   rail ? "text-xs" : "text-2xs",
-                  active ? "font-black" : "font-semibold",
+                  active ? "font-bold" : "font-semibold",
                 ].join(" ")}
               >
                 {item.label}

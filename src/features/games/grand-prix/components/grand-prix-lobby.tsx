@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { DailyDrop } from "@/features/packs";
 
@@ -119,7 +120,7 @@ export function GrandPrixLobby({
             />
             <span
               className="font-display font-black leading-none"
-              style={{ fontSize: "9px", letterSpacing: "2px", color: success }}
+              style={{ fontSize: typography.sizeRem.p9, letterSpacing: "2px", color: success }}
             >
               PIT LANE OPEN
             </span>
@@ -130,7 +131,7 @@ export function GrandPrixLobby({
             />
             <span
               className="font-display font-black leading-none text-muted"
-              style={{ fontSize: "8.5px", letterSpacing: "1.2px" }}
+              style={{ fontSize: typography.sizeRem.p8_5, letterSpacing: "1.2px" }}
             >
               SYS://GP_DASH v1.0.0
             </span>
@@ -156,7 +157,7 @@ export function GrandPrixLobby({
               <h1
                 className="font-display font-black leading-none"
                 style={{
-                  fontSize: "21px",
+                  fontSize: typography.sizeRem.p21,
                   letterSpacing: "1.2px",
                   textShadow: `0 0 14px ${withAlpha(racing, 0.45)}`,
                 }}
@@ -165,14 +166,14 @@ export function GrandPrixLobby({
               </h1>
               <p
                 className="mt-1.5 font-display font-black leading-tight text-muted"
-                style={{ fontSize: "9px", letterSpacing: "2.2px" }}
+                style={{ fontSize: typography.sizeRem.p9, letterSpacing: "2.2px" }}
               >
                 1·3·5 LAPS · 20 CARS · LIGHTS OUT
               </p>
               <span
                 className="mt-2.5 inline-block px-2 py-0.5 font-display font-black leading-none"
                 style={{
-                  fontSize: "8px",
+                  fontSize: typography.sizeRem.p8,
                   letterSpacing: "1.2px",
                   color: stats.wins > 0 ? gold : racing,
                   border: `1px solid ${withAlpha(stats.wins > 0 ? gold : racing, 0.5)}`,
@@ -255,7 +256,7 @@ export function GrandPrixLobby({
                     <span
                       className="font-display font-black leading-none tabular-nums"
                       style={{
-                        fontSize: "22px",
+                        fontSize: typography.sizeRem.p22,
                         color: selected ? racing : "var(--ds-color-text-default)",
                       }}
                     >
@@ -263,7 +264,7 @@ export function GrandPrixLobby({
                     </span>
                     <span
                       className="font-display font-black leading-none text-muted"
-                      style={{ fontSize: "9px", letterSpacing: "0.8px" }}
+                      style={{ fontSize: typography.sizeRem.p9, letterSpacing: "0.8px" }}
                     >
                       {option.laps === 1 ? " LAP" : " LAPS"}
                     </span>
@@ -271,7 +272,7 @@ export function GrandPrixLobby({
                   <span
                     className="mt-1 block truncate font-display font-black leading-none"
                     style={{
-                      fontSize: "7px",
+                      fontSize: typography.sizeRem.p7,
                       letterSpacing: "1.1px",
                       color: selected
                         ? "var(--ds-color-text-default)"
@@ -283,7 +284,7 @@ export function GrandPrixLobby({
                   <span
                     className="mt-1.75 inline-block px-1.5 py-0.5 font-display font-black leading-none"
                     style={{
-                      fontSize: "8px",
+                      fontSize: typography.sizeRem.p8,
                       letterSpacing: "1.2px",
                       color: multiplier > 1 ? gold : "var(--ds-color-text-muted)",
                       border: `1px solid ${withAlpha(
@@ -317,14 +318,14 @@ export function GrandPrixLobby({
               <Glyph name="sports_motorsports" size={18} />
               <span
                 className="font-display font-black leading-none"
-                style={{ fontSize: "15px", letterSpacing: "2px" }}
+                style={{ fontSize: typography.sizeRem.p15, letterSpacing: "2px" }}
               >
                 START RACE
               </span>
             </span>
             <span
               className="mt-1.5 block font-display font-black leading-none text-muted"
-              style={{ fontSize: "8px", letterSpacing: "1.2px" }}
+              style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.2px" }}
             >
               {driverReady
                 ? `${circuit.name} · ${stats.lastLaps === 1 ? "1 LAP" : `${stats.lastLaps} LAPS`} · ${liverySpec.name}`
@@ -333,7 +334,7 @@ export function GrandPrixLobby({
           </button>
           <p
             className="mt-2 text-center leading-body text-muted"
-            style={{ fontSize: "10px" }}
+            style={{ fontSize: typography.sizeRem.p10 }}
           >
             {driverReady && driverName !== null
               ? `${driverName.toUpperCase()} IN THE COCKPIT · ${circuit.flavor}`
@@ -361,11 +362,11 @@ export function GrandPrixLobby({
           >
             <p
               className="font-display font-black leading-none text-muted"
-              style={{ fontSize: "8px", letterSpacing: "1.8px" }}
+              style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.8px" }}
             >
               HOW TO RACE
             </p>
-            <ul className="mt-2 flex flex-col gap-1 text-[11px] leading-body text-muted">
+            <ul className="mt-2 flex flex-col gap-1 text-[length:var(--ds-size-p11)] leading-body text-muted">
               <li>Hit ACCEL the instant the five lights go out — early is a jump start</li>
               <li>◀ ▶ steer · the road pulls you wide, so steer into every corner</li>
               <li>BRAKE before the amber boards or the tyres scrub your speed away</li>
@@ -396,7 +397,7 @@ function SectionLabel({ children }: { children: string }) {
   return (
     <p
       className="font-display font-black leading-none text-muted"
-      style={{ fontSize: "9px", letterSpacing: "2px" }}
+      style={{ fontSize: typography.sizeRem.p9, letterSpacing: "2px" }}
     >
       {children}
     </p>
@@ -405,7 +406,7 @@ function SectionLabel({ children }: { children: string }) {
 
 function LobbyLink({ href, onClick, children }: { href?: string; onClick?: () => void; children: string }) {
   const className = "py-2 font-display font-black leading-none text-muted underline-offset-4 hover:underline";
-  const style = { fontSize: "9px", letterSpacing: "1.8px" };
+  const style = { fontSize: typography.sizeRem.p9, letterSpacing: "1.8px" };
   if (onClick) return <button type="button" onClick={onClick} className={className} style={style}>{children}</button>;
   if (!href) return null;
   return (
@@ -432,13 +433,13 @@ function RecordStat({
     <div className="flex min-w-0 flex-1 flex-col items-center">
       <span
         className="truncate font-display font-black leading-none tabular-nums"
-        style={{ fontSize: "17px", color: accent }}
+        style={{ fontSize: typography.sizeRem.p17, color: accent }}
       >
         {value}
       </span>
       <span
         className="mt-0.75 whitespace-nowrap font-display font-black leading-none text-muted"
-        style={{ fontSize: "7px", letterSpacing: "0.8px" }}
+        style={{ fontSize: typography.sizeRem.p7, letterSpacing: "0.8px" }}
       >
         {label}
       </span>
@@ -509,7 +510,7 @@ function CircuitStrip({
             <span
               className="w-full truncate font-display font-black leading-none"
               style={{
-                fontSize: "11px",
+                fontSize: typography.sizeRem.p11,
                 letterSpacing: "0.8px",
                 color: isSelected ? racing : "var(--ds-color-text-default)",
               }}
@@ -519,7 +520,7 @@ function CircuitStrip({
             <span
               className="mt-1.5 px-1.5 py-0.5 font-display font-black leading-none"
               style={{
-                fontSize: "8px",
+                fontSize: typography.sizeRem.p8,
                 letterSpacing: "1.2px",
                 color: isSelected ? racing : "var(--ds-color-text-muted)",
                 border: `1px solid ${withAlpha(isSelected ? racing : "#90a1b9", 0.5)}`,
@@ -529,7 +530,7 @@ function CircuitStrip({
             </span>
             <span
               className="mt-2 leading-none"
-              style={{ fontSize: "11px", letterSpacing: "2px", color: withAlpha(amber, 0.9) }}
+              style={{ fontSize: typography.sizeRem.p11, letterSpacing: "2px", color: withAlpha(amber, 0.9) }}
               aria-label={`Difficulty ${circuit.difficultyStars} of 4`}
             >
               {"★".repeat(circuit.difficultyStars)}
@@ -539,7 +540,7 @@ function CircuitStrip({
             <span
               className="font-display font-black leading-none tabular-nums"
               style={{
-                fontSize: "9px",
+                fontSize: typography.sizeRem.p9,
                 letterSpacing: "1px",
                 color: best !== null ? cyan : "var(--ds-color-text-muted)",
               }}

@@ -1,11 +1,20 @@
 name: Deploy GitHub Pages
+run-name: ${{ inputs.release_request_id && format('Designer release {0}', inputs.release_request_id) || github.event.head_commit.message || 'Deploy main' }}
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
+    inputs:
+      source_sha:
+        description: Reviewed source commit (blank uses the triggering revision)
+        required: false
+        type: string
+      release_request_id:
+        description: Designer release request ID
+        required: false
+        type: string
 permissions:
   contents: read
   pages: write
@@ -24,6 +33,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
+
+      - name: Validate reviewed source
+        env:
+          REVIEWED_SHA: ${{ inputs.source_sha }}
+        run: |
+          if [ -n "$REVIEWED_SHA" ]; then
+            [[ "$REVIEWED_SHA" =~ ^[a-f0-9]{40}$ ]] || exit 1
+            test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
+          fi
+
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,8 +58,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify shared typography
+        run: npm run typography:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
       - name: Build static export
         run: npm run build:pages
+
+      - name: Write public build manifest
+        env:
+          APP_ID: statoz_web
+          OUTPUT_DIR: out
+          APP_BASE_PATH: /statoz_web
+          RELEASE_BUILD_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, pathlib, subprocess
+          manifest = {"schemaVersion": 1, "appId": os.environ["APP_ID"], "sourceSha": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "buildId": os.environ["RELEASE_BUILD_ID"], "builtAt": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"), "basePath": os.environ["APP_BASE_PATH"]}
+          (pathlib.Path(os.environ["OUTPUT_DIR"]) / "release-manifest.json").write_text(json.dumps(manifest))
+          PY
+
+      - name: Upload downloadable static build
+        uses: actions/upload-artifact@v4
+        with:
+          name: statoz-statoz_web-static
+          path: out
+          retention-days: 30
+          if-no-files-found: error
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4

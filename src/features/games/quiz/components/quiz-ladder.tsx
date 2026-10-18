@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useState } from "react";
 
@@ -85,14 +86,14 @@ export function QuizLadder({
       <div className="mt-5 flex items-center gap-2">
         <h2
           className="flex-1 font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           SET CHAPTERS
         </h2>
         <span
           className="ds-tabular font-display font-black leading-none"
           style={{
-            fontSize: "9px",
+            fontSize: typography.sizeRem.p9,
             letterSpacing: "var(--ds-tracking-ultra)",
             color: accent,
           }}
@@ -103,7 +104,7 @@ export function QuizLadder({
         <span
           className="ds-tabular font-display font-black leading-none"
           style={{
-            fontSize: "9px",
+            fontSize: typography.sizeRem.p9,
             letterSpacing: "var(--ds-tracking-label)",
             color: gold,
           }}
@@ -154,7 +155,7 @@ export function QuizLadder({
               <h3
                 className="font-display font-black leading-none"
                 style={{
-                  fontSize: "9px",
+                  fontSize: typography.sizeRem.p9,
                   letterSpacing: "var(--ds-tracking-ultra)",
                   color:
                     index * 10 < authoredSets
@@ -166,7 +167,7 @@ export function QuizLadder({
               </h3>
               <span
                 className="ds-tabular font-display font-black leading-none text-muted"
-                style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-label)" }}
+                style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-label)" }}
               >
                 {String(firstSetOfBand(index)).padStart(2, "0")}–
                 {firstSetOfBand(index) + 9}
@@ -269,7 +270,7 @@ function NextChallenge({
           <h2
             className="flex-1 font-display font-black leading-none"
             style={{
-              fontSize: "10px",
+              fontSize: typography.sizeRem.p10,
               letterSpacing: "var(--ds-tracking-ultra)",
               color: accent,
             }}
@@ -279,7 +280,7 @@ function NextChallenge({
           <span
             className="shrink-0 border px-2 py-1 font-display font-black leading-none"
             style={{
-              fontSize: "9px",
+              fontSize: typography.sizeRem.p9,
               letterSpacing: "var(--ds-tracking-ultra)",
               color: accent,
               background: withAlpha(accent, 0.12),
@@ -292,7 +293,7 @@ function NextChallenge({
 
         <p
           className="mt-3.75 font-display font-black leading-tight"
-          style={{ fontSize: "20px", letterSpacing: "var(--ds-tracking-ultra)" }}
+          style={{ fontSize: typography.sizeRem.p20, letterSpacing: "var(--ds-tracking-ultra)" }}
         >
           {title}
         </p>
@@ -344,7 +345,7 @@ function ChapterTab({
       <span
         className="w-full truncate font-display font-black leading-none"
         style={{
-          fontSize: "7.5px",
+          fontSize: typography.sizeRem.p7_5,
           letterSpacing: "var(--ds-tracking-tight)",
           color: ink,
         }}
@@ -354,7 +355,7 @@ function ChapterTab({
       <span
         className="ds-tabular font-display font-black leading-none"
         style={{
-          fontSize: "8.5px",
+          fontSize: typography.sizeRem.p8_5,
           letterSpacing: "var(--ds-tracking-label)",
           color: selected ? accent : withAlpha(ink, authored ? 0.75 : 0.45),
         }}

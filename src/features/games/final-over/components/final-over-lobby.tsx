@@ -1,30 +1,17 @@
 "use client";
 
-import { DailyDrop } from "@/features/packs";
-
 import Link from "next/link";
-import type { CSSProperties } from "react";
-
-import { Glyph } from "@/design-system";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { Button, Glyph, MoreIcon } from "@/design-system";
+import { FuseCta } from "@/design-system/components/actions/fuse-cta/fuse-cta";
+import { FilterChips } from "@/design-system/components/navigation/filter-chips";
+import { DailyDrop } from "@/features/packs";
 import { levelProgress } from "@/domain/progression";
 import { GameLeaderboardCta } from "@/features/games/components/game-leaderboard-cta";
-
-import {
-  lobbyEnterMs,
-  lobbyHeroDelayMs,
-  lobbyPlayDelayMs,
-  lobbyTiersDelayMs,
-} from "../constants";
-import type { FinalOverStats } from "../state/final-over-progress";
-import {
-  finalOverTiers,
-  tierBlurbs,
-  tierLabels,
-  tierRange,
-  type FinalOverTier,
-} from "../tuning";
-
-import styles from "./final-over.module.css";
+import { useIsHydrated, type FinalOverStats } from "../state/final-over-progress";
+import { finalOverTiers, tierBlurbs, tierLabels, tierRange, type FinalOverTier } from "../tuning";
+import { FinalOverLobbyHero } from "./final-over-lobby-hero";
+import styles from "./final-over-lobby.module.css";
 
 export type FinalOverLobbyProps = {
   stats: FinalOverStats;
@@ -35,113 +22,63 @@ export type FinalOverLobbyProps = {
   onPlay: () => void;
 };
 
-function delayed(delay: number): CSSProperties {
-  return { "--lobby-delay": `${delay}ms` } as CSSProperties;
-}
-
-export function FinalOverLobby({
-  stats,
-  tier,
-  squadReady,
-  onBack,
-  onTierChange,
-  onPlay,
-}: FinalOverLobbyProps) {
+/** Presentation only: readiness, persistence and match creation stay with FinalOver. */
+export function FinalOverLobby({ stats, tier, squadReady, onBack, onTierChange, onPlay }: FinalOverLobbyProps) {
+  const [panel, setPanel] = useState<"difficulty" | "utilities" | null>(null);
+  const hydrated = useIsHydrated();
   const band = levelProgress(stats.xp);
-
+  const close = () => setPanel(null);
   return (
-    <section className={styles.finalLobby} aria-labelledby="final-over-title">
-      <header className={styles.finalLobbyHeader}>
-        <button type="button" onClick={onBack} aria-label="Back to cricket games">
-          <Glyph name="chevron_left" size={23} />
-        </button>
-
-        <div className={styles.lobbyLevel} aria-label={`Level ${band.level}, ${band.intoLevel} of ${band.levelSpan} XP`}>
-          <span>LVL</span>
-          <b>{band.level}</b>
-          <i aria-hidden>
-            <span style={{ width: `${band.fraction * 100}%` }} />
-          </i>
-          <small>{band.intoLevel}/{band.levelSpan}</small>
-          <Glyph name="chevron_right" size={15} />
-        </div>
+    <section className={styles.lobby} aria-labelledby="final-over-title">
+      <header className={styles.header}>
+        <Button variant="ghost" accent="var(--ds-color-text-subtle)" onClick={onBack} label="Back to cricket games"><Glyph name="chevron_left" size={24} /></Button>
+        <Button variant="ghost" accent="var(--ds-color-text-subtle)" onClick={() => setPanel("utilities")} label="Final Over menu"><MoreIcon size={22} /></Button>
       </header>
-
-      <div className={styles.finalLobbyMain}>
-        <div className={`${styles.lobbyIn} ${styles.finalStatus}`} style={delayed(0)}>
-          <i />
-          <span>SYS://FINAL_OVER V1.0.0 — PITCH READY</span>
-        </div>
-
-        <div className={`${styles.lobbyIn} ${styles.finalHero}`} style={delayed(lobbyHeroDelayMs)}>
-          <span aria-hidden><Glyph name="sports_cricket" size={28} /></span>
-          <div>
+      <div className={styles.scroll}>
+        <div className={styles.hero}><FinalOverLobbyHero paused={panel !== null} /></div>
+        <div className={styles.intro}>
+          <div className={styles.identityShell}><div className={styles.identity}>
             <h1 id="final-over-title">FINAL OVER</h1>
-            <p>THREE OVERS. FIVE BATTERS. ONE CHASE.</p>
-            <b>{tierBlurbs[tier]}</b>
-          </div>
+          </div></div>
         </div>
-
-        <div className={`${styles.lobbyIn} ${styles.tierSection}`} style={delayed(lobbyTiersDelayMs)}>
-          <p>CHASE TIER</p>
-          <div role="group" aria-label="Chase tier">
-            {finalOverTiers.map((option) => (
-              <TierTile
-                key={option}
-                tier={option}
-                selected={option === tier}
-                onSelect={() => onTierChange(option)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className={`${styles.lobbyIn} ${styles.finalActions}`} style={delayed(lobbyPlayDelayMs)}>
-          <button type="button" className={styles.takeGuard} onClick={onPlay} disabled={!squadReady}>
-            <span aria-hidden><Glyph name="sports_cricket" size={28} /></span>
-            <i aria-hidden />
-            <span>
-              <b>{squadReady ? "TAKE GUARD" : "SQUAD INCOMPLETE"}</b>
-              <small>
-                {squadReady
-                  ? `${tierLabels[tier]} / TARGET ${tierRange(tier)}`
-                  : "OPEN YOUR CRICKET PACK TO FIELD FIVE BATTERS"}
-              </small>
-            </span>
-          </button>
-
-          <div className={styles.finalSecondaryActions}>
-            <Link href="/decks/cricket?returnTo=/play/final-over">CRICKET DECK</Link>
-            <Link href="/profile/history/games">MATCH HISTORY</Link>
-          </div>
-        </div>
-        <GameLeaderboardCta sport="cricket" gameId="final-over" />
-        <DailyDrop sport="cricket" />
       </div>
+      <footer className={styles.dock}>
+        <FuseCta label={squadReady ? "TAKE GUARD" : hydrated ? "BUILD SQUAD" : "LOADING SQUAD"} disabled={!hydrated} pending={!hydrated} onClick={squadReady ? onPlay : undefined} href={hydrated && !squadReady ? "/decks/cricket?returnTo=/play/final-over" : undefined} />
+      </footer>
+      <LobbyPanel open={panel === "difficulty"} title="Choose your chase" onClose={close}>
+        <FilterChips label="Chase tier" options={finalOverTiers.map(t => tierLabels[t])} selected={tierLabels[tier]} onSelect={label => { const value = finalOverTiers.find(t => tierLabels[t] === label); if (value) onTierChange(value); }} />
+        <div className={styles.tierDetail} aria-live="polite"><strong>{tierBlurbs[tier]}</strong><p>Target {tierRange(tier)} · Three overs</p></div>
+        <Button fullWidth onClick={close}>READY</Button>
+      </LobbyPanel>
+      <LobbyPanel open={panel === "utilities"} title="Final Over" onClose={close}>
+        <Button variant="surface" onClick={() => setPanel("difficulty")} label={`Chase difficulty: ${tierLabels[tier]}. Change difficulty`}>DIFFICULTY / {tierLabels[tier]}</Button>
+        <div className={styles.level} aria-label={`Level ${band.level}, ${band.intoLevel} of ${band.levelSpan} XP`}><span>LEVEL {band.level}</span><span>{band.intoLevel}/{band.levelSpan} XP</span><progress value={band.fraction} max={1} aria-label="Level progress" /></div>
+        <nav aria-label="Final Over tools" className={styles.tools}>
+          <Link href="/decks/cricket?returnTo=/play/final-over">Cricket Deck <Glyph name="chevron_right" size={18} /></Link>
+          <Link href="/profile/history/games">Match History <Glyph name="chevron_right" size={18} /></Link>
+          <GameLeaderboardCta sport="cricket" gameId="final-over" />
+        </nav>
+        {panel === "utilities" && <DailyDrop sport="cricket" />}
+      </LobbyPanel>
     </section>
   );
 }
 
-function TierTile({
-  tier,
-  selected,
-  onSelect,
-}: {
-  tier: FinalOverTier;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      aria-pressed={selected}
-      className={styles.finalTierTile}
-    >
-      <b>{tierLabels[tier]}</b>
-      <span>{tierRange(tier)}</span>
-    </button>
-  );
+function LobbyPanel({ open, title, onClose, children }: { open: boolean; title: string; onClose: () => void; children: ReactNode }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open]);
+  return <dialog ref={ref} className={styles.dialog} aria-labelledby={titleId} onCancel={onClose} onClick={event => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className={styles.panelShell}><div className={styles.panel}>
+      <div className={styles.panelHeading}><h2 id={titleId}>{title}</h2><Button variant="ghost" onClick={onClose} label="Close panel"><Glyph name="close" size={22} /></Button></div>
+      {children}
+    </div></div>
+  </dialog>;
 }
 
-export { lobbyEnterMs };
+export { lobbyEnterMs } from "../constants";

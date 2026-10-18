@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -153,7 +154,7 @@ export function ProfileOverlay({
               id={headingId}
               className="flex-1 font-display font-black leading-none"
               style={{
-                fontSize: "11px",
+                fontSize: typography.sizeRem.p11,
                 letterSpacing: "var(--ds-tracking-ultra)",
                 color: accent,
               }}

@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -123,7 +124,7 @@ export function ProfileHero({
                 <h1
                   className="font-display font-black leading-none"
                   style={{
-                    fontSize: "24px",
+                    fontSize: typography.sizeRem.p24,
                     letterSpacing: "var(--ds-tracking-label)",
                   }}
                 >
@@ -131,7 +132,7 @@ export function ProfileHero({
                 </h1>
                 <p
                   className="mt-1 font-display font-black leading-none text-muted"
-                  style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-ultra)" }}
+                  style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-ultra)" }}
                 >
                   OPERATIVE // ID 0001
                 </p>
@@ -262,14 +263,14 @@ function MasteryStrip({
     <div>
       <p
         className="font-display font-black leading-none text-muted"
-        style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-ultra)" }}
+        style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-ultra)" }}
       >
         MASTERY
       </p>
       {tracks.length === 0 ? (
         <p
           className="mt-2 font-display font-black leading-none text-muted"
-          style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           PLAY A MODE TO START A TRACK
         </p>
@@ -320,13 +321,13 @@ function MasteryChip({ label, level }: { label: string; level: number }) {
       <span className="relative flex items-baseline gap-1.5 px-2.5 py-1.5">
         <span
           className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "8px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           {label}
         </span>
         <span
           className="ds-tabular font-display font-black leading-none"
-          style={{ fontSize: "14px", color: cyan }}
+          style={{ fontSize: typography.sizeRem.p14, color: cyan }}
         >
           L{level}
         </span>
@@ -361,7 +362,7 @@ function FriendsPill() {
       <GroupsIcon size={17} style={{ color: cyan }} />
       <span
         className="font-display font-black leading-none"
-        style={{ fontSize: "12px", letterSpacing: "var(--ds-tracking-label)" }}
+        style={{ fontSize: typography.sizeRem.p12, letterSpacing: "var(--ds-tracking-label)" }}
       >
         FRIENDS
       </span>
@@ -388,7 +389,7 @@ function CountBadge({
       style={{
         paddingLeft: dot ? "5px" : "7px",
         paddingRight: "7px",
-        fontSize: "11px",
+        fontSize: typography.sizeRem.p11,
         color,
         background: withAlpha(color, 0.16),
         boxShadow: `inset 0 0 0 1px ${withAlpha(color, 0.55)}`,
@@ -436,7 +437,7 @@ function PlayerTagPill({ tag }: { tag: string | null }) {
   }, [tag]);
 
   const style: CSSProperties = {
-    fontSize: "16px",
+    fontSize: typography.sizeRem.p16,
     letterSpacing: "var(--ds-tracking-tight)",
   };
 
@@ -463,7 +464,7 @@ function PlayerTagPill({ tag }: { tag: string | null }) {
           role="status"
           className={`${styles.copied} font-display font-black leading-none`}
           style={{
-            fontSize: "8px",
+            fontSize: typography.sizeRem.p8,
             letterSpacing: "var(--ds-tracking-wide)",
             color: cyan,
           }}
