@@ -41,6 +41,7 @@ export type GameEntry = {
  * few differ from the id: the arcade names a game, the module names a sport.
  */
 export const gameRegistry: Record<GameId, GameEntry> = {
+  "retro-hoops": {kind:"hero",title:"RETRO HOOPS",titleLines:["RETRO","HOOPS"],subtitle:"THREE MINUTES. FULL COURT.",badgeLabel:"RETRO // 3V3 BASKETBALL",ctaLabel:"TAKE THE COURT",accent:"game-hoop-duel",scene:"hoop-duel",href:"/play/retro-hoops"},
   "retro-circuit": {kind:"hero",title:"RETRO CIRCUIT",titleLines:["RETRO","CIRCUIT"],subtitle:"THREE LAPS. ONE CLEAN LINE.",badgeLabel:"RETRO // ARCADE RACING",ctaLabel:"CHASE THE HORIZON",accent:"game-grand-prix-dash",scene:"grand-prix-dash",href:"/play/retro-circuit"},
   /* ---- football ------------------------------------------------------- */
   "pitch-duel": {

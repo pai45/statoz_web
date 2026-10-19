@@ -30,7 +30,8 @@
     "backgrounds:sync": "node scripts/sync-hub-backgrounds.mjs",
     "backgrounds:check": "node scripts/sync-hub-backgrounds.mjs --check",
     "test:backgrounds": "node --test tests/hub-backgrounds.test.mjs",
-    "test:retro-circuit": "tsx --test tests/retro-circuit.test.ts tests/retro-circuit-account.test.ts"
+    "test:retro-circuit": "tsx --test tests/retro-circuit.test.ts tests/retro-circuit-account.test.ts",
+    "test:retro-hoops": "tsx --test tests/retro-hoops.test.ts tests/retro-hoops-account.test.ts tests/retro-hoops-protocol.test.ts tests/retro-hoops-catalog.test.ts tests/retro-hoops-animation.test.ts"
   },
   "dependencies": {
     "lottie-react": "^3.1.1",

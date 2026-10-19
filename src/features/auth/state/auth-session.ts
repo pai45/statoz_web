@@ -28,6 +28,7 @@ const playerStorageKeys = [
   "statoz.guessplayer.v1",
   "statoz.streaks.v1",
   "statoz:retro-circuit:v1",
+  "statoz.retro-hoops.v1",
 ] as const;
 
 const snapshots: Record<Exclude<AuthStatus, "authenticated">, AuthSessionSnapshot> = {

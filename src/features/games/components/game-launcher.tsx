@@ -44,6 +44,7 @@ export type GameLauncherProps = {
  */
 const RetroCircuit = dynamic(() => import("../retro-circuit/screen").then(m=>m.RetroCircuit), {ssr:false,loading:()=> <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO CIRCUIT…</div>});
 const renderers: Partial<Record<GameId, ComponentType<GameLauncherProps>>> = {
+  "retro-hoops": dynamic(() => import("../retro-hoops").then(m=>m.RetroHoops), {ssr:false,loading:()=> <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO HOOPS…</div>}),
   "retro-circuit": RetroCircuit,
   "penalty-shootout": PenaltyShootout,
   "pitch-duel": PitchDuel,

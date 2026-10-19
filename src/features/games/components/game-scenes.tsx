@@ -39,7 +39,7 @@ export function GameScene(props: GameSceneProps) {
 }
 function CatalogGameScene({ game, opacity = 1, animate = true, locked = false, phase }: GameSceneProps) {
   const root = useRef<HTMLDivElement>(null);
-  const scene = discoveryFamily.games[game];
+  const scene = discoveryFamily.games[game === "retro-hoops" ? "hoop-duel" : game];
 
   useEffect(() => {
     const element = root.current;
