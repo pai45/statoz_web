@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 export function generate(source, flutterRoot, webRoot) {
-  const manifestText=fs.readFileSync(path.join(source,'manifest.json'),'utf8');
+  const manifestText=fs.readFileSync(path.join(source,'manifest.json'),'utf8').replace(/\r\n/g,'\n');
   const manifest=JSON.parse(manifestText);
   if(manifest.version!==1||manifest.width!==220||manifest.height!==160||Object.keys(manifest.games).length!==18)throw Error('Invalid discovery family manifest');
   const files=new Map();
@@ -12,7 +12,7 @@ export function generate(source, flutterRoot, webRoot) {
   const hash=crypto.createHash('sha256').update(manifestText);
   const scenes={};
   for(const [id,game] of Object.entries(manifest.games)) {
-    const svg=fs.readFileSync(path.join(source,'masters',`${id}.svg`),'utf8');
+    const svg=fs.readFileSync(path.join(source,'masters',`${id}.svg`),'utf8').replace(/\r\n/g,'\n');
     if(/<script|<image|foreignObject|href=|<text|url\(/i.test(svg))throw Error(`Unsupported or external artwork: ${id}`);
     hash.update(svg);
     const layers=[...svg.matchAll(/<g data-layer="([a-z]+)">([\s\S]*?)<\/g><!-- end-layer -->/g)];
