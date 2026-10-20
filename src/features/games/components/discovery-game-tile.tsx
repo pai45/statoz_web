@@ -20,7 +20,7 @@ export function DiscoveryGameTile({ game, entry, landscape = false, streak = 0 }
     label={`${entry.title}, ${action}`}>
     <div className={`${styles.body} ${landscape ? styles.landscape : ""}`}>
       <div className={styles.content}>
-        <div className={styles.badge}><GameMarkIcon game={game === "retro-hoops" ? "hoop-duel" : game === "retro-circuit" ? "grand-prix-dash" : game} size={20} /><span className={styles.badgeText}>{badge.split("//").at(-1)?.trim()}</span>{guest && <span className={styles.status}><LockIcon size={12} />LOG IN</span>}</div>
+        <div className={styles.badge}><GameMarkIcon game={game === "retro-innings" ? "final-over" : game === "retro-hoops" ? "hoop-duel" : game === "retro-circuit" ? "grand-prix-dash" : game === "retro-football" ? "pitch-duel" : game} size={20} /><span className={styles.badgeText}>{badge.split("//").at(-1)?.trim()}</span>{guest && <span className={styles.status}><LockIcon size={12} />LOG IN</span>}</div>
         <div className={styles.art}><GameScene game={game} /></div>
         <div className={styles.copy}>
           {streak > 0 && <span className={styles.streak}><BrandIcon name="streak" size={13} alt="" /><span className="ds-tabular">{streak}</span></span>}

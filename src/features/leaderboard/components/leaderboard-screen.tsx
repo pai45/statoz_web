@@ -14,7 +14,7 @@ import {
 import { sportModuleFor, sportOrder, type Sport } from "@/domain/sports";
 import { AdSlot } from "@/features/ads";
 import { useAuthSession, useRequireAuth } from "@/features/auth";
-import { SportIcon } from "@/features/matches";
+import { SportIcon } from "@/features/matches/components/sport-icon";
 import {
   RivalDossierOverlay,
   usePlayerStanding,

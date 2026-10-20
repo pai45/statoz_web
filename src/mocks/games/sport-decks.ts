@@ -17,7 +17,7 @@ export const sportGameDecks: Record<Sport, GameId[]> = {
     "football-bingo",
     "guess-player",
   ],
-  cricket: ["final-over", "cricket-quiz", "cricket-guess-player"],
+  cricket: ["retro-innings", "final-over", "cricket-quiz", "cricket-guess-player"],
   basketball: ["retro-hoops", "hoop-duel", "basketball-quiz", "basketball-guess-player"],
   tennis: ["tennis-rally", "tennis-quiz", "tennis-guess-winner"],
   motorsport: ["retro-circuit", "grand-prix-dash", "motorsport-quiz", "guess-driver"],

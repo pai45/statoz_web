@@ -12,7 +12,8 @@
 
 /* ---- The pitch ------------------------------------------------------------ */
 
-:root,
+.actionBar,
+.timerSlot,
 .pitch {
   /*
    * The score bar, the pick timer and the action bar, plus their padding — the

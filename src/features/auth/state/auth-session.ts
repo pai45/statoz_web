@@ -28,6 +28,8 @@ const playerStorageKeys = [
   "statoz.guessplayer.v1",
   "statoz.streaks.v1",
   "statoz:retro-circuit:v1",
+  "statoz:retro-football:v1",
+  "statoz:retro-innings:v1",
   "statoz.retro-hoops.v1",
 ] as const;
 
