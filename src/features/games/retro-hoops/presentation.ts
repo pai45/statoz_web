@@ -28,7 +28,7 @@ export function courtCanvas() {
   c.strokeStyle="#f3d7a4";c.lineWidth=2;c.strokeRect(60,164,780,166);
   c.beginPath();c.moveTo(450,164);c.lineTo(450,330);c.ellipse(450,247,50,32,0,0,Math.PI*2);c.stroke();
   for(const left of [true,false]) {
-    const x=left?60:840,sign=left?1:-1;
+    const x=left?60:840;
     c.fillStyle="#805f48";c.fillRect(left?60:710,207,130,80);c.strokeRect(left?60:710,207,130,80);
     c.beginPath();c.ellipse(x,247,255,100,0,left?-Math.PI/2:Math.PI/2,left?Math.PI/2:Math.PI*1.5);c.stroke();
   }
