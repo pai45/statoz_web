@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useState, useSyncExternalStore } from "react";
 
@@ -74,7 +75,7 @@ export function TimeZoneCard({ selectedId }: TimeZoneCardProps) {
           <span className="min-w-0 flex-1">
             <span
               className="block font-display font-black leading-none"
-              style={{ fontSize: "11px", letterSpacing: "var(--ds-tracking-label)" }}
+              style={{ fontSize: typography.sizeRem.p11, letterSpacing: "var(--ds-tracking-label)" }}
             >
               SET UP YOUR LOCAL TIME ZONE
             </span>
@@ -156,7 +157,7 @@ function TimeZonePicker({
 
         <p
           className="px-4.5 pb-1.5 pt-3 font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           OR CHOOSE A CITY
         </p>

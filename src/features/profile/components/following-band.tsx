@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useState } from "react";
 
@@ -138,7 +139,7 @@ function PrimarySportChip({ sport }: { sport: Sport }) {
         </span>
         <span
           className="mt-0.5 block font-display font-black leading-none text-muted"
-          style={{ fontSize: "8px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           MODULE
         </span>
@@ -168,7 +169,7 @@ function FollowedTeamChip({ favourite }: { favourite: Favourite }) {
         </span>
         <span
           className="mt-0.5 block font-display font-black leading-none text-muted"
-          style={{ fontSize: "8px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           {favourite.leagueCode}
         </span>

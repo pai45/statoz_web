@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { accentVar, Progress, withAlpha } from "@/design-system";
 import type { LevelProgress } from "@/domain/progression";
@@ -42,7 +43,7 @@ export function LevelChip({ level }: { level: number }) {
         <span
           className="font-display font-black leading-none"
           style={{
-            fontSize: "9px",
+            fontSize: typography.sizeRem.p9,
             letterSpacing: "var(--ds-tracking-ultra)",
             color: withAlpha(cyan, 0.85),
           }}
@@ -51,7 +52,7 @@ export function LevelChip({ level }: { level: number }) {
         </span>
         <span
           className="ds-tabular font-display font-black leading-none"
-          style={{ fontSize: "20px", color: cyan }}
+          style={{ fontSize: typography.sizeRem.p20, color: cyan }}
         >
           {level}
         </span>
@@ -66,13 +67,13 @@ export function XpMeter({ band }: { band: LevelProgress }) {
       <div className="flex items-baseline">
         <span
           className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           XP
         </span>
         <span
           className="ds-tabular ml-auto font-display font-black leading-none text-muted"
-          style={{ fontSize: "10px", letterSpacing: "var(--ds-tracking-tight)" }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "var(--ds-tracking-tight)" }}
         >
           {band.intoLevel} / {band.levelSpan}
         </span>

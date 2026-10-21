@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Link from "next/link";
 
@@ -58,7 +59,7 @@ export function LoadoutCard() {
             <h2
               className="font-display font-black leading-none"
               style={{
-                fontSize: "11px",
+                fontSize: typography.sizeRem.p11,
                 letterSpacing: "var(--ds-tracking-wide)",
               }}
             >
@@ -67,7 +68,7 @@ export function LoadoutCard() {
             <p
               className="mt-1 truncate font-display font-black leading-none"
               style={{
-                fontSize: "8px",
+                fontSize: typography.sizeRem.p8,
                 letterSpacing: "var(--ds-tracking-label)",
                 color: cyan,
               }}
@@ -82,7 +83,7 @@ export function LoadoutCard() {
 
           <span
             className="ds-tabular font-display font-black leading-none"
-            style={{ fontSize: "17px", color: accent }}
+            style={{ fontSize: typography.sizeRem.p17, color: accent }}
           >
             {ready.length}/{sportOrder.length}
           </span>
@@ -109,7 +110,7 @@ export function LoadoutCard() {
 
         <p
           className="mt-2 font-display font-black leading-none text-muted"
-          style={{ fontSize: "7px", letterSpacing: "var(--ds-tracking-label)" }}
+          style={{ fontSize: typography.sizeRem.p7, letterSpacing: "var(--ds-tracking-label)" }}
         >
           {allReady
             ? "EVERY SPORT LOADOUT IS LOCKED AND READY"

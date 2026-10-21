@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 import Link from "next/link";
 
 import { FootballIcon, GameIcon, withAlpha } from "@/design-system";
@@ -61,7 +62,7 @@ export function LeaderboardEmpty({
 
       <h2
         className="mt-4.5 font-display font-black"
-        style={{ fontSize: "16px", letterSpacing: "var(--ds-tracking-display)" }}
+        style={{ fontSize: typography.sizeRem.p16, letterSpacing: "var(--ds-tracking-display)" }}
       >
         {config.title}
       </h2>
@@ -74,7 +75,7 @@ export function LeaderboardEmpty({
         <RankPlate cut={10} background={accent} interactive>
           <span
             className="block px-5.5 py-3 font-display font-black leading-none text-inverse"
-            style={{ fontSize: "12px", letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p12, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {config.cta}
           </span>

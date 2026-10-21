@@ -89,7 +89,7 @@ const tokenNames = {
 } as const;
 
 const displayFontProperty = "--ds-font-display";
-const displayFontFallback = '"Orbitron", "Onest", system-ui, sans-serif';
+const displayFontFallback = '"Orbitron", "Space Grotesk", system-ui, sans-serif';
 
 /**
  * The token values as they stand in `tokens.css`. Used on the server and as

@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import {
   CheckIcon,
@@ -119,7 +120,7 @@ export function QuizOption({
           <span
             className="font-display font-black leading-none"
             style={{
-              fontSize: "12px",
+              fontSize: typography.sizeRem.p12,
               color: selected || isAnswerKey ? ink : "var(--ds-color-text-muted)",
             }}
           >
@@ -146,7 +147,7 @@ export function QuizOption({
         <span
           className="ml-2 shrink-0 font-display font-black leading-none"
           style={{
-            fontSize: "8px",
+            fontSize: typography.sizeRem.p8,
             letterSpacing: "var(--ds-tracking-ultra)",
             color: ink,
           }}

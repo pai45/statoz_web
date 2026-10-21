@@ -31,3 +31,5 @@ export * from "./components/navigation/nav-rail";
 export * from "./components/navigation/underline-tabs";
 export * from "./components/overlays/dialog";
 export * from "./components/overlays/drawer";
+
+export * from "./components/data-display/discovery-card";

@@ -1,4 +1,4 @@
-import type { BentoSpan } from "@/design-system";
+import type { BentoSpan, StatozGameId } from "@/design-system";
 import type { Sport } from "@/domain/sports";
 
 /**
@@ -6,25 +6,7 @@ import type { Sport } from "@/domain/sports";
  * format — five quizzes, four mystery games — so the id names the sport's
  * version rather than the format alone.
  */
-export type GameId =
-  | "pitch-duel"
-  | "penalty-shootout"
-  | "football-chess"
-  | "football-quiz"
-  | "football-bingo"
-  | "guess-player"
-  | "final-over"
-  | "cricket-quiz"
-  | "cricket-guess-player"
-  | "hoop-duel"
-  | "basketball-quiz"
-  | "basketball-guess-player"
-  | "tennis-rally"
-  | "tennis-quiz"
-  | "tennis-guess-winner"
-  | "grand-prix-dash"
-  | "motorsport-quiz"
-  | "guess-driver";
+export type GameId = StatozGameId | "retro-circuit" | "retro-football" | "retro-hoops" | "retro-innings";
 
 /**
  * How a game presents itself. `hero` tiles carry a painted scene and a call to

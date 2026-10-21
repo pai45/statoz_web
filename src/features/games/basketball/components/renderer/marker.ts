@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 /**
  * The rebound landing marker — the web port of `_LandingMarkerComponent`.
  *
@@ -83,7 +84,7 @@ export function paintLandingMarker(
   ctx.lineCap = "butt";
   ctx.stroke();
 
-  ctx.font = displayFontOf(palette, 7, 900);
+  ctx.font = displayFontOf(palette, typography.sizePx.p7, typography.weight.black);
   ctx.fillStyle = withAlpha(palette.gold, 0.82);
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";

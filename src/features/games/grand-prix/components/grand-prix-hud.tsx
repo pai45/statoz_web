@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { accentVar, feedbackVar, Glyph, withAlpha } from "@/design-system";
 
@@ -44,13 +45,13 @@ export function GrandPrixHud({ view, laps, onExit }: GrandPrixHudProps) {
         <div className="flex flex-1 items-baseline justify-center">
           <span
             className="font-display font-black leading-none tabular-nums"
-            style={{ fontSize: "26px", color: cyan }}
+            style={{ fontSize: typography.sizeRem.p26, color: cyan }}
           >
             P{view.position}
           </span>
           <span
             className="font-display font-black leading-none tabular-nums text-muted"
-            style={{ fontSize: "13px" }}
+            style={{ fontSize: typography.sizeRem.p13 }}
           >
             /{fieldSize}
           </span>
@@ -58,7 +59,7 @@ export function GrandPrixHud({ view, laps, onExit }: GrandPrixHudProps) {
 
         <span
           className="w-21 shrink-0 text-right font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "13px" }}
+          style={{ fontSize: typography.sizeRem.p13 }}
         >
           {view.speedKph} KPH
         </span>
@@ -67,7 +68,7 @@ export function GrandPrixHud({ view, laps, onExit }: GrandPrixHudProps) {
       <div className="mt-1 flex items-center gap-2 pl-3">
         <span
           className="shrink-0 font-display font-black leading-none tabular-nums text-muted"
-          style={{ fontSize: "8px", letterSpacing: "1.6px" }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.6px" }}
         >
           {laps === 1 ? "LAP" : `LAP ${view.currentLap}/${laps}`}
         </span>
@@ -94,7 +95,7 @@ export function GrandPrixHud({ view, laps, onExit }: GrandPrixHudProps) {
         <span
           className="shrink-0 px-1.5 py-0.5 font-display font-black leading-none transition-opacity duration-150"
           style={{
-            fontSize: "8px",
+            fontSize: typography.sizeRem.p8,
             letterSpacing: "1.2px",
             color: cyan,
             border: `1px solid ${withAlpha(cyan, 0.5)}`,

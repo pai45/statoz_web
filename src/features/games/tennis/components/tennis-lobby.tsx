@@ -1,5 +1,7 @@
 "use client";
 
+
+import { typography } from "@/design-system/tokens/typography";
 import { DailyDrop } from "@/features/packs";
 
 import Link from "next/link";
@@ -219,7 +221,7 @@ function Emblem() {
       <span
         aria-hidden
         className="absolute bottom-2.75 left-2.75 font-display font-extrabold leading-none text-muted"
-        style={{ ...displayStyle, fontSize: 6.5, letterSpacing: "0.8px" }}
+        style={{ ...displayStyle, fontSize: typography.sizePx.p6_5, letterSpacing: "0.8px" }}
       >
         TR//01
       </span>

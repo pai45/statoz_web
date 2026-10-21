@@ -35,6 +35,7 @@ export function PlatformTopBar({
     <header
       className="flex h-19.5 shrink-0 items-center gap-3 border-b bg-surface-nav px-4 pr-3.5"
       style={{
+        background: pathname === "/" ? "color-mix(in srgb, var(--ds-color-background-nav) 84%, transparent)" : undefined,
         borderColor: `color-mix(in srgb, ${accent} 26%, transparent)`,
         boxShadow: "var(--ds-shadow-hard-drop)",
       }}

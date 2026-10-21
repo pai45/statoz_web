@@ -2,7 +2,7 @@
 .button { display: block; width: 100%; padding: 1px; border: 0; background: var(--ds-color-accent-cyan); color: var(--ds-color-text-inverse); clip-path: var(--ds-clip-hud-sheet); cursor: pointer; }
 .inner { display: flex; align-items: center; justify-content: center; gap: var(--ds-space-16); padding: var(--ds-space-16); min-height: 80px; background: var(--ds-gradient-pack-headline); clip-path: var(--ds-clip-hud-sheet); }
 .inner > span { display: flex; flex-direction: column; gap: var(--ds-space-4); text-align: left; min-width: 0; }
-.inner small, .inner b { font-family: var(--ds-font-display); font-weight: 900; }
+.inner small, .inner b { font-family: var(--ds-font-display); font-weight:var(--ds-weight-black); }
 .inner small { font-size: var(--ds-text-micro); letter-spacing: var(--ds-tracking-ultra); }
 .inner b { font-size: var(--ds-text-xs); }
 .inner em { font-size: var(--ds-text-2xs); font-style: normal; }

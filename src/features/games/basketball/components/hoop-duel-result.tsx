@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -97,7 +98,7 @@ export function HoopDuelResult({
             <h2
               className="font-display font-black leading-none"
               style={{
-                fontSize: "32px",
+                fontSize: typography.sizeRem.p32,
                 letterSpacing: "4px",
                 color: accent,
                 textShadow: `0 0 22px ${withAlpha(accent, 0.55)}`,
@@ -109,7 +110,7 @@ export function HoopDuelResult({
               <span
                 className="mt-2 px-2 py-0.5 font-display font-black leading-none"
                 style={{
-                  fontSize: "8px",
+                  fontSize: typography.sizeRem.p8,
                   letterSpacing: "1.4px",
                   color: gold,
                   border: `1px solid ${withAlpha(gold, 0.5)}`,
@@ -127,19 +128,19 @@ export function HoopDuelResult({
             <div className="flex items-center justify-center gap-3">
               <span
                 className="font-display font-black leading-none tabular-nums"
-                style={{ fontSize: "40px", color: cyan }}
+                style={{ fontSize: typography.sizeRem.p40, color: cyan }}
               >
                 {summary.playerScore}
               </span>
               <span
                 className="font-display font-black leading-none text-muted"
-                style={{ fontSize: "20px" }}
+                style={{ fontSize: typography.sizeRem.p20 }}
               >
                 —
               </span>
               <span
                 className="font-display font-black leading-none tabular-nums"
-                style={{ fontSize: "40px", color: violet }}
+                style={{ fontSize: typography.sizeRem.p40, color: violet }}
               >
                 {summary.cpuScore}
               </span>
@@ -162,7 +163,7 @@ export function HoopDuelResult({
               <XpLine xp={xp} run={stage >= 3} />
               <p
                 className="mt-2 text-center font-display font-black leading-none text-muted"
-                style={{ fontSize: "9px", letterSpacing: "1.6px" }}
+                style={{ fontSize: typography.sizeRem.p9, letterSpacing: "1.6px" }}
               >
                 RECORD {stats.wins}W — {stats.losses}L
                 {stats.currentStreak > 1 ? ` · ${stats.currentStreak} STRAIGHT` : ""}
@@ -181,7 +182,7 @@ export function HoopDuelResult({
                 <Glyph name="replay" size={16} />
                 <span
                   className="font-display font-black leading-none"
-                  style={{ fontSize: "13px", letterSpacing: "1.6px" }}
+                  style={{ fontSize: typography.sizeRem.p13, letterSpacing: "1.6px" }}
                 >
                   REMATCH
                 </span>
@@ -191,7 +192,7 @@ export function HoopDuelResult({
                 type="button"
                 onClick={onExit}
                 className="mt-2.5 cursor-pointer py-2 font-display font-black leading-none text-muted"
-                style={{ fontSize: "10px", letterSpacing: "2px" }}
+                style={{ fontSize: typography.sizeRem.p10, letterSpacing: "2px" }}
               >
                 BACK TO COURT LOBBY
               </button>
@@ -231,7 +232,7 @@ function GradePlate({ grade }: { grade: string }) {
     >
       <span
         className="font-display font-black leading-none"
-        style={{ fontSize: "26px", color }}
+        style={{ fontSize: typography.sizeRem.p26, color }}
       >
         {grade}
       </span>
@@ -274,13 +275,13 @@ function BoxScoreGrid({ summary }: { summary: BasketballMatchSummary }) {
               <div key={label} className="flex flex-1 flex-col items-center">
                 <span
                   className="font-display font-black leading-none tabular-nums"
-                  style={{ fontSize: "15px" }}
+                  style={{ fontSize: typography.sizeRem.p15 }}
                 >
                   {value}
                 </span>
                 <span
                   className="mt-1 whitespace-nowrap font-display font-black leading-none text-muted"
-                  style={{ fontSize: "6.8px", letterSpacing: "0.6px" }}
+                  style={{ fontSize: typography.sizeRem.p6_8, letterSpacing: "0.6px" }}
                 >
                   {label}
                 </span>
@@ -315,7 +316,7 @@ function XpLine({ xp, run }: { xp: number; run: boolean }) {
     <p
       className="text-center font-display font-black leading-none tabular-nums"
       style={{
-        fontSize: "22px",
+        fontSize: typography.sizeRem.p22,
         color: gold,
         textShadow: `0 0 14px ${withAlpha(gold, 0.5)}`,
       }}

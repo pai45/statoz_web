@@ -57,8 +57,8 @@
   margin: 0 0 22px;
   color: var(--acquire-accent);
   font-family: var(--ds-font-display);
-  font-size: 13px;
-  font-weight: 900;
+  font-size:var(--ds-size-p13);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 4.2px;
   line-height: 1;
   text-shadow: 0 0 16px color-mix(in srgb, var(--acquire-accent) 65%, transparent);
@@ -90,8 +90,8 @@
   overflow: hidden;
   color: var(--ds-color-text-primary);
   font-family: var(--ds-font-display);
-  font-size: 26px;
-  font-weight: 900;
+  font-size:var(--ds-size-p26);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 1.4px;
   line-height: 1.1;
   text-overflow: ellipsis;
@@ -108,9 +108,9 @@
   margin-top: 14px;
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
-  font-size: 18px;
+  font-size:var(--ds-size-p18);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: 1;
 }
 
@@ -122,8 +122,8 @@
   margin: 0;
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
-  font-size: 11px;
-  font-weight: 900;
+  font-size:var(--ds-size-p11);
+  font-weight:var(--ds-weight-black);
   letter-spacing: 2px;
   line-height: 1;
   text-align: center;
@@ -139,9 +139,9 @@
   place-items: center;
   color: var(--ds-color-accent-cyan);
   font-family: var(--ds-font-display);
-  font-size: 34px;
+  font-size:var(--ds-size-p34);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: 1;
   text-align: center;
   text-shadow: 0 0 22px color-mix(in srgb, var(--ds-color-accent-cyan) 55%, transparent);

@@ -86,26 +86,26 @@
 .copyDetail {
   margin: 0;
   font-family: var(--ds-font-display);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
   text-transform: uppercase;
 }
 
 .copyEyebrow {
   color: var(--ds-color-text-muted);
-  font-size: 0.5rem;
+  font-size: var(--ds-size-p8);
   letter-spacing: var(--ds-tracking-ultra);
 }
 
 .copyTitle {
   color: var(--ds-color-text-default);
-  font-size: clamp(0.75rem, 2.7vw, 1.25rem);
+  font-size: clamp(var(--ds-size-p12), 2.7vw, var(--ds-size-p20));
   letter-spacing: var(--ds-tracking-tight);
 }
 
 .copyDetail {
   color: var(--ds-color-accent-lime);
-  font-size: 0.5rem;
+  font-size: var(--ds-size-p8);
   letter-spacing: var(--ds-tracking-wide);
 }
 
@@ -155,7 +155,7 @@
 .wireframeCopy strong,
 .wireframeCopy small {
   font-family: var(--ds-font-display);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
   text-transform: uppercase;
 }

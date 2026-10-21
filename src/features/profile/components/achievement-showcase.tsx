@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useState, type CSSProperties } from "react";
 
@@ -63,7 +64,7 @@ export function AchievementShowcase({ stats }: AchievementShowcaseProps) {
             <TrophyIcon size={18} style={{ color: gold }} />
             <h2
               className="font-display font-black leading-none"
-              style={{ fontSize: "16px", letterSpacing: "var(--ds-tracking-label)" }}
+              style={{ fontSize: typography.sizeRem.p16, letterSpacing: "var(--ds-tracking-label)" }}
             >
               ACHIEVEMENTS
             </h2>
@@ -76,7 +77,7 @@ export function AchievementShowcase({ stats }: AchievementShowcaseProps) {
             >
               <span
                 className="ds-tabular font-display font-black leading-none"
-                style={{ fontSize: "13px", letterSpacing: "var(--ds-tracking-label)" }}
+                style={{ fontSize: typography.sizeRem.p13, letterSpacing: "var(--ds-tracking-label)" }}
               >
                 {unlocked} / {total}
               </span>
@@ -199,7 +200,7 @@ export function AchievementBadge({
       <span
         className="mt-1.75 flex h-6 items-start justify-center font-display font-black leading-tight"
         style={{
-          fontSize: "8px",
+          fontSize: typography.sizeRem.p8,
           letterSpacing: "var(--ds-tracking-tight)",
           color: unlocked
             ? "var(--ds-color-text-default)"
@@ -263,7 +264,7 @@ function AchievementCatalogue({
               onClick={() => setGroup(entry)}
               className="relative min-h-10 flex-1 cursor-pointer py-3.5 font-display font-black leading-none transition-colors"
               style={{
-                fontSize: "10px",
+                fontSize: typography.sizeRem.p10,
                 letterSpacing: "var(--ds-tracking-wide)",
                 color: active ? gold : "var(--ds-color-text-muted)",
                 background: active ? withAlpha(gold, 0.07) : "transparent",
@@ -272,7 +273,7 @@ function AchievementCatalogue({
               {achievementGroupLabels[entry]}
               <span
                 className="ds-tabular ml-1.5 opacity-70"
-                style={{ fontSize: "9px" }}
+                style={{ fontSize: typography.sizeRem.p9 }}
               >
                 {unlockedCountForGroup(stats, entry)}/
                 {achievementsForGroup(entry).length}
@@ -356,7 +357,7 @@ function AchievementDetail({
 
         <h3
           className="mt-4 font-display font-black leading-tight"
-          style={{ fontSize: "17px", letterSpacing: "var(--ds-tracking-label)" }}
+          style={{ fontSize: typography.sizeRem.p17, letterSpacing: "var(--ds-tracking-label)" }}
         >
           {achievement.title.toUpperCase()}
         </h3>
@@ -367,7 +368,7 @@ function AchievementDetail({
         <span
           className="mt-3 px-2 py-0.5 font-display font-black leading-none"
           style={{
-            fontSize: "8px",
+            fontSize: typography.sizeRem.p8,
             letterSpacing: "var(--ds-tracking-wide)",
             color: tier,
             border: `1px solid ${withAlpha(tier, 0.5)}`,
@@ -381,13 +382,13 @@ function AchievementDetail({
             <div className="flex items-baseline justify-between">
               <span
                 className="font-display font-black leading-none text-muted"
-                style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-wide)" }}
+                style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-wide)" }}
               >
                 PROGRESS
               </span>
               <span
                 className="ds-tabular font-display font-black leading-none"
-                style={{ fontSize: "11px", color: tier }}
+                style={{ fontSize: typography.sizeRem.p11, color: tier }}
               >
                 {current} / {achievement.target}
               </span>

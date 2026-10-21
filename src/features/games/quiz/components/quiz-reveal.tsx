@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useEffect, useState, type CSSProperties } from "react";
 
@@ -98,7 +99,7 @@ export function QuizReveal({
           className={`${styles.revealIn} text-center font-display font-black leading-none`}
           style={{
             ...beat(0),
-            fontSize: "25px",
+            fontSize: typography.sizeRem.p25,
             letterSpacing: "var(--ds-tracking-mega)",
             color: perfect ? gold : feedbackVar("success"),
             textShadow: reduced
@@ -115,7 +116,7 @@ export function QuizReveal({
         >
           <span
             className="ds-tabular font-display font-black leading-none text-muted"
-            style={{ fontSize: "12px", letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p12, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {correct} / {results.length} CORRECT
           </span>
@@ -123,7 +124,7 @@ export function QuizReveal({
             <span
               className="ds-tabular font-display font-black leading-none"
               style={{
-                fontSize: "12px",
+                fontSize: typography.sizeRem.p12,
                 letterSpacing: "var(--ds-tracking-ultra)",
                 color: bestStreak >= 5 ? gold : orange,
               }}
@@ -135,7 +136,7 @@ export function QuizReveal({
             <span
               className="border px-1.75 py-0.75 font-display font-black leading-none"
               style={{
-                fontSize: "9px",
+                fontSize: typography.sizeRem.p9,
                 letterSpacing: "var(--ds-tracking-ultra)",
                 color: gold,
                 background: withAlpha(gold, 0.13),
@@ -164,7 +165,7 @@ export function QuizReveal({
             <span
               className="font-display font-black leading-none"
               style={{
-                fontSize: "10px",
+                fontSize: typography.sizeRem.p10,
                 letterSpacing: "var(--ds-tracking-ultra)",
                 color: leveled ? gold : "var(--ds-color-text-muted)",
               }}
@@ -173,7 +174,7 @@ export function QuizReveal({
             </span>
             <span
               className="ds-tabular font-display font-black leading-none text-muted"
-              style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-wide)" }}
+              style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-wide)" }}
             >
               {after.intoLevel} / {after.levelSpan} XP
             </span>
@@ -260,7 +261,7 @@ function StarAward({ stars, gained }: { stars: number; gained: number }) {
       <p
         className="mt-2.5 text-center font-display font-black leading-none"
         style={{
-          fontSize: "9.5px",
+          fontSize: typography.sizeRem.p9_5,
           letterSpacing: "var(--ds-tracking-ultra)",
           color: gained > 0 ? gold : "var(--ds-color-text-muted)",
         }}
@@ -338,7 +339,7 @@ function XpTotal({ xp }: { xp: number }) {
     <p
       className="ds-tabular text-center font-display font-black leading-none"
       style={{
-        fontSize: "40px",
+        fontSize: typography.sizeRem.p40,
         letterSpacing: "var(--ds-tracking-ultra)",
         color: gold,
         textShadow: `0 0 26px ${withAlpha(gold, 0.55)}`,
@@ -377,7 +378,7 @@ function ClearBanner({
       <span
         className="truncate font-display font-black leading-none"
         style={{
-          fontSize: "13px",
+          fontSize: typography.sizeRem.p13,
           letterSpacing: "var(--ds-tracking-ultra)",
           color: accent,
         }}
@@ -417,7 +418,7 @@ function AnswerReview({
           <span
             className="block font-display font-black leading-none"
             style={{
-              fontSize: "11px",
+              fontSize: typography.sizeRem.p11,
               letterSpacing: "var(--ds-tracking-ultra)",
               color: accent,
             }}

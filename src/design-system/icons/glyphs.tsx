@@ -3,53 +3,66 @@ import { Icon, type IconProps } from "./icon";
 /* -------------------------------------------------------------------------
  * Material Symbols
  *
- * The StatOz app draws these from Flutter's Material icon set, so the paths
- * here are the corresponding Material Symbols glyphs, inlined to keep the
- * project free of an icon dependency. Sports use the filled cut; navigation
- * and status glyphs use outlined or rounded, matching the app.
+ * Navigation and status glyphs use inlined Material geometry so the project
+ * stays dependency-free. Sport identity uses the original StatOz vector
+ * family shared with the Flutter product and Designer.
  * ---------------------------------------------------------------------- */
 
-/** Material Symbols `sports_soccer` (outlined filled). */
+/** Original StatOz football mark: faceted ball and panel seams. */
 export function FootballIcon(props: IconProps) {
   return (
-    <Icon viewBox="0 -960 960 960" {...props}>
-      <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm200-500 54-18 16-54q-32-48-77-82.5T574-786l-54 38v56l160 112Zm-400 0 160-112v-56l-54-38q-54 17-99 51.5T210-652l16 54 54 18Zm-42 308 46-4 30-54-58-174-56-20-40 30q0 65 18 118.5T238-272Zm242 112q26 0 51-4t49-12l28-60-26-44H378l-26 44 28 60q24 8 49 12t51 4Zm-90-200h180l56-160-146-102-144 102 54 160Zm332 88q42-50 60-103.5T800-494l-40-28-56 18-58 174 30 54 46 4Z" />
+    <Icon viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit={2} {...props}>
+      <path d="M16 3.5L22.25 5.17L26.83 9.75L28.5 16L26.83 22.25L22.25 26.83L16 28.5L9.75 26.83L5.17 22.25L3.5 16L5.17 9.75L9.75 5.17Z" />
+      <path d="M16 10.25L16 4.25M21.47 14.22L27.17 12.37M19.38 20.65L22.91 25.51M12.62 20.65L9.09 25.51M10.53 14.22L4.83 12.37" />
+      <path d="M16 10.25L21.47 14.22L19.38 20.65L12.62 20.65L10.53 14.22Z" fill="currentColor" fillRule="evenodd" stroke="none" />
     </Icon>
   );
 }
 
-/** Material Symbols `sports_cricket` (outlined filled). */
+/** Original StatOz cricket mark: shouldered bat and seam ball. */
 export function CricketIcon(props: IconProps) {
   return (
-    <Icon viewBox="0 -960 960 960" {...props}>
-      <path d="M600-392 488-280q-12 12-28 12t-28-12L92-620q-12-12-12-27t12-27l112-112q12-12 29-12t29 12l338 338q12 12 12 28t-12 28ZM744-80 574-250l56-56 170 170-56 56Zm-4-520q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Z" />
+    <Icon viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit={2} {...props}>
+      <path d="M13.87 2.59L16.13 3.41L13.73 9.99L11.48 9.17Z" />
+      <path d="M11.48 9.17L13.73 9.99L14.74 12.48L9.27 27.52L7.64 29.06L3.89 27.69L3.63 25.47L9.1 10.43Z" />
+      <path d="M13.09 4.75L15.34 5.57M12.3 6.91L14.55 7.73" />
+      <path d="M19.5 24a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" />
+      <path d="M21.75 20.13Q27.82 24 21.75 27.87" />
     </Icon>
   );
 }
 
-/** Material Symbols `sports_basketball` (outlined filled). */
+/** Original StatOz basketball mark: faceted ball and curved seams. */
 export function BasketballIcon(props: IconProps) {
   return (
-    <Icon viewBox="0 -960 960 960" {...props}>
-      <path d="M82-521q5-51 21-96.5t44-85.5q35 36 58.5 83.5T236-521H82Zm642 0q7-51 30-98t59-83q28 39 44 85t21 96H724ZM147-258q-28-39-44-84.5T82-439h154q-7 51-30.5 98T147-258Zm666 0q-36-36-59-83t-30-98h154q-5 50-21 96t-44 85ZM317-521q-8-72-39-133t-81-110q48-48 109.5-77T439-878v357H317Zm204 0v-357q71 8 132.5 37T763-764q-51 48-81.5 109.5T643-521H521ZM439-82q-72-8-133-37.5T197-197q51-48 81.5-109T317-439h122v357Zm82 0v-357h122q8 72 38.5 133.5T763-196q-48 48-109.5 77T521-82Z" />
+    <Icon viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit={2} {...props}>
+      <path d="M16 3.5L22.25 5.17L26.83 9.75L28.5 16L26.83 22.25L22.25 26.83L16 28.5L9.75 26.83L5.17 22.25L3.5 16L5.17 9.75L9.75 5.17Z" />
+      <path d="M3.5 16H28.5M7.16 7.16C13.5 12.25 13.5 19.75 7.16 24.84" />
+      <path d="M16 3.5V28.5M24.84 7.16C18.5 12.25 18.5 19.75 24.84 24.84" />
     </Icon>
   );
 }
 
-/** Material Symbols `sports_tennis` (outlined filled). */
+/** Original StatOz tennis mark: strung racket and seam ball. */
 export function TennisIcon(props: IconProps) {
   return (
-    <Icon viewBox="0 -960 960 960" {...props}>
-      <path d="m137-160-57-56 164-164q31-31 42.5-77.5T298-600q0-58 26-114t74-104q91-91 201-103t181 61q72 72 60 182T738-478q-48 48-104 74t-114 26q-97 0-142 11t-77 43L137-160Zm275-334q47 46 127 34t143-75q64-64 76.5-143.5T724-803q-48-48-125.5-36T456-763q-63 63-76.5 142.5T412-494ZM720-40q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113T720-40Z" />
+    <Icon viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit={2} {...props}>
+      <path d="M13.99 14.68L14.4 10.03L18.53 5.9L23.18 5.49L26.01 8.32L25.6 12.97L21.47 17.1L16.82 17.51Z" />
+      <path d="M13.99 14.68L13.64 17.86L16.82 17.51" />
+      <path d="M17.24 14.26L22.76 8.74M17.17 8.67L22.83 14.33" />
+      <path d="M21.5 25a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0Z" />
+      <path d="M23.25 21.99Q27.98 25 23.25 28.01" />
+      <path d="M12.72 16.94L14.56 18.78L9.61 23.73L7.77 21.89Z" fill="currentColor" fillRule="evenodd" stroke="none" />
     </Icon>
   );
 }
 
-/** Material Symbols `sports_motorsports` (outlined filled). */
+/** Original StatOz motorsport mark: open-wheel racer and cockpit. */
 export function MotorsportIcon(props: IconProps) {
   return (
-    <Icon viewBox="0 -960 960 960" {...props}>
-      <path d="M579-182H96q-5 0-9-4t-4-9q0-47 1.5-82.5T89-341h314q69 0 117.5-49T569-510q0-51-28.5-92.5T464-664l-134-53q54-30 113.5-45.5T567-778q128 0 219 86.5T877-480q0 125-86.5 211.5T579-182ZM102-420q20-71 59-133.5T254-664l180 73q26 11 41 33t15 48q0 38-25.5 64T401-420H102Z" />
+    <Icon viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit={2} {...props}>
+      <path d="M14 3H18L20 10V15L23 20V25H9V20L12 15V10ZM8 7H24M7 28H25M7 13H12M20 13H25M7 23H10M22 23H25" />
+      <path d="M3 10H7V16H3ZM25 10H29V16H25ZM3 20H7V27H3ZM25 20H29V27H25ZM14 12L16 10L18 12V17H14Z" fill="currentColor" fillRule="evenodd" stroke="none" />
     </Icon>
   );
 }

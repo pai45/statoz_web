@@ -86,6 +86,14 @@
   --tracking-mega: var(--ds-tracking-mega);
   --tracking-max: var(--ds-tracking-max);
 
+  --font-weight-light: var(--ds-weight-light);
+  --font-weight-regular: var(--ds-weight-regular);
+  --font-weight-medium: var(--ds-weight-medium);
+  --font-weight-semibold: var(--ds-weight-semibold);
+  --font-weight-bold: var(--ds-weight-bold);
+  --font-weight-extrabold: var(--ds-weight-extrabold);
+  --font-weight-black: var(--ds-weight-black);
+
   /* Shape */
   --radius-sm: var(--ds-radius-sm);
   --radius-md: var(--ds-radius-md);
@@ -95,6 +103,9 @@
 }
 
 body {
+  font-size: var(--ds-type-body-size);
+  font-weight: var(--ds-type-body-weight);
+  line-height: var(--ds-type-body-leading);
   background: var(--ds-color-background-primary);
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-body);

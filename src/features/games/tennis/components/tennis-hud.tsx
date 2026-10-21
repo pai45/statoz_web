@@ -1,5 +1,7 @@
 "use client";
 
+
+import { typography } from "@/design-system/tokens/typography";
 import { accentVar, feedbackVar, hudChamferPath, withAlpha } from "@/design-system";
 
 import {
@@ -379,7 +381,7 @@ export function TennisStingLayer({ sting }: { sting: TennisSting | null }) {
             color: stingColors[sting.tone],
             fontSize: sting.major ? "var(--ds-text-xl)" : "var(--ds-text-md)",
             letterSpacing: "var(--ds-tracking-mega)",
-            fontWeight: 900,
+            fontWeight: typography.weight.black,
           }}
         >
           {sting.label}

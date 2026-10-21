@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -150,13 +151,13 @@ function FriendsArenaBoard() {
         <div className="min-w-0">
           <h1
             className="truncate font-display font-black leading-none"
-            style={{ fontSize: "19px", color: cyan, letterSpacing: "var(--ds-tracking-label)" }}
+            style={{ fontSize: typography.sizeRem.p19, color: cyan, letterSpacing: "var(--ds-tracking-label)" }}
           >
             FRIENDS ARENA
           </h1>
           <p
             className="mt-1 font-display font-black leading-none"
-            style={{ fontSize: "9px", color: muted, letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p9, color: muted, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {"// SCOUT NETWORK"}
           </p>

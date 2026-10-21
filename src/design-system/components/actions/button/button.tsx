@@ -37,9 +37,9 @@ export type ButtonProps = {
 const clip: CSSProperties = { clipPath: "var(--ds-clip-field)" };
 
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-9 gap-2 px-3.5 text-2xs",
-  md: "h-11 gap-2.5 px-4 text-xs",
-  lg: "h-13 gap-3 px-5 text-sm",
+  sm: "h-9 gap-2 px-3.5 ds-type-control-small",
+  md: "h-11 gap-2.5 px-4 ds-type-control",
+  lg: "h-13 gap-3 px-5 ds-type-control-large",
 };
 
 /** The plate colors each variant paints: an edge, an inset fill, and a label. */
@@ -93,7 +93,7 @@ export function Button({
   const blocked = disabled || pending;
 
   const chrome = [
-    "relative inline-flex items-center justify-center font-display font-black tracking-label",
+    "relative inline-flex items-center justify-center tracking-label",
     "transition-[transform,filter] duration-150 hover:-translate-y-px hover:brightness-110 active:translate-y-0",
     // A clip path crops anything layered behind the plate, so the bloom is a
     // drop-shadow — applied after clipping, it traces the chamfered silhouette.

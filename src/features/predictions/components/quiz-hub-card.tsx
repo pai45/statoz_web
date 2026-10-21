@@ -24,6 +24,7 @@ import { scorelineContestPrizes, type PredictionQuiz, type UserPrediction } from
 
 import { resolveQuizHubVisual, type ContestMeta, type QuizHubIcon } from "../hub-visual";
 import styles from "./predictions.module.css";
+import {EditorialRevealCard} from "@/features/matches/components/editorial-reveal-card";
 
 /**
  * One quiz set, as an objective card.
@@ -68,6 +69,7 @@ export function QuizHubCard({
   onBlocked,
 }: QuizHubCardProps) {
   const visual = resolveQuizHubVisual(match, quiz, prediction, { coins, now });
+  if (visual.glow && match.sport !== "tennis") return <EditorialRevealCard match={match} quiz={quiz} onOpen={onOpen}/>;
   const CtaIcon = ctaIcons[visual.ctaIcon];
 
   return (

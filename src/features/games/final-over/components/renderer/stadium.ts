@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 /**
  * The ground, drawn: night sky, floodlights, a bowl of crowd, the hoardings,
  * the sightscreen behind the bowler's arm, and the outfield running away to the
@@ -279,7 +280,7 @@ function paintHoardings(
     ctx.strokeRect(x, y, boardWidth - 2, boardHeight);
 
     ctx.save();
-    ctx.font = `800 7px ${palette.displayFont}`;
+    ctx.font = `${typography.weight.extrabold} ${typography.sizePx.p7}px ${palette.displayFont}`;
     if ("letterSpacing" in ctx) ctx.letterSpacing = "1.4px";
     ctx.fillStyle = withAlpha(accent, 0.85);
     ctx.textAlign = "center";

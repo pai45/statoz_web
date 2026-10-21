@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentType } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -41,7 +42,14 @@ export type GameLauncherProps = {
  * The games that exist. Anything absent falls through to the placeholder, which
  * says so plainly rather than 404ing — every tile in the app leads somewhere.
  */
+const RetroFootball = dynamic(() => import("../retro-football/screen").then(m=>m.RetroFootball), {ssr:false,loading:()=> <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO FOOTBALL?</div>});
+const RetroCircuit = dynamic(() => import("../retro-circuit/screen").then(m=>m.RetroCircuit), {ssr:false,loading:()=> <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO CIRCUIT…</div>});
+const RetroInnings = dynamic(() => import("../retro-innings").then(m => m.RetroInnings), { ssr: false, loading: () => <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO INNINGS...</div> });
 const renderers: Partial<Record<GameId, ComponentType<GameLauncherProps>>> = {
+  "retro-hoops": dynamic(() => import("../retro-hoops").then(m=>m.RetroHoops), {ssr:false,loading:()=> <div role="status" className="grid min-h-dvh place-content-center">LOADING RETRO HOOPS…</div>}),
+  "retro-innings": RetroInnings,
+  "retro-circuit": RetroCircuit,
+  "retro-football": RetroFootball,
   "penalty-shootout": PenaltyShootout,
   "pitch-duel": PitchDuel,
   "final-over": FinalOver,

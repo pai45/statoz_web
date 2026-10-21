@@ -12,7 +12,7 @@
   cursor: pointer;
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   transition: border-color 150ms ease-out, background 150ms ease-out, color 150ms ease-out;
 }
@@ -46,7 +46,7 @@
   color: color-mix(in srgb, var(--ds-color-accent-gold) 90%, transparent);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-nano);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -58,7 +58,7 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xl);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   line-height: var(--ds-leading-compact);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -82,7 +82,7 @@
   padding: 0 var(--ds-space-16);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-2xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-wide);
 }
 
@@ -115,7 +115,7 @@
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-xs);
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
   letter-spacing: var(--ds-tracking-tight);
 }
 
@@ -139,14 +139,14 @@
   font-family: var(--ds-font-display);
   font-size: var(--ds-text-md);
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight:var(--ds-weight-black);
 }
 
 .historyEntryValue span {
   margin-top: var(--ds-space-4);
   font-family: var(--ds-font-display);
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight:var(--ds-weight-extrabold);
 }
 
 @media (max-width: 30rem) {

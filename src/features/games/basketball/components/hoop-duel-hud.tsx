@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { accentVar, feedbackVar, Glyph, withAlpha } from "@/design-system";
 
@@ -123,7 +124,7 @@ function ScoreBlock({
         </span>
         <span
           className="font-display font-black leading-none text-muted"
-          style={{ fontSize: "8px", letterSpacing: "1.6px" }}
+          style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.6px" }}
         >
           {label}
         </span>
@@ -131,7 +132,7 @@ function ScoreBlock({
 
       <span
         className="mt-0.5 font-display font-black leading-none tabular-nums"
-        style={{ fontSize: "26px", color: accent }}
+        style={{ fontSize: typography.sizeRem.p26, color: accent }}
       >
         {score}
       </span>
@@ -139,7 +140,7 @@ function ScoreBlock({
       <span
         className="mt-1 font-display font-black leading-none"
         style={{
-          fontSize: "5.5px",
+          fontSize: typography.sizeRem.p5_5,
           letterSpacing: heatActive ? "0.8px" : "1.2px",
           color: heatActive ? gold : "var(--ds-color-text-muted)",
         }}
@@ -178,7 +179,7 @@ function ClockCluster({ hud }: { hud: HudSnapshot }) {
       <span
         className="font-display font-black leading-none"
         style={{
-          fontSize: "8px",
+          fontSize: typography.sizeRem.p8,
           letterSpacing: "1.8px",
           color: overtime ? gold : "var(--ds-color-text-muted)",
         }}
@@ -189,14 +190,14 @@ function ClockCluster({ hud }: { hud: HudSnapshot }) {
       {overtime ? (
         <span
           className="mt-0.5 font-display font-black leading-none"
-          style={{ fontSize: "14px", letterSpacing: "1.5px", color: gold }}
+          style={{ fontSize: typography.sizeRem.p14, letterSpacing: "1.5px", color: gold }}
         >
           SUDDEN DEATH
         </span>
       ) : (
         <span
           className="mt-0.5 font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "20px", color: danger10 ? danger : "#ffffff" }}
+          style={{ fontSize: typography.sizeRem.p20, color: danger10 ? danger : "#ffffff" }}
         >
           {/* Under ten seconds the clock switches to tenths, which is the tell
               that the possession has become a shot rather than a plan. */}
@@ -209,7 +210,7 @@ function ClockCluster({ hud }: { hud: HudSnapshot }) {
       <span
         className="mt-1 px-1.5 py-px font-display font-black leading-none tabular-nums"
         style={{
-          fontSize: "8.5px",
+          fontSize: typography.sizeRem.p8_5,
           letterSpacing: "1.2px",
           color: shotDanger ? danger : gold,
           backgroundColor: withAlpha("#0d111a", 0.6),
@@ -230,7 +231,7 @@ export function StaminaRail({ stamina }: { stamina: number }) {
     <div className="flex w-full items-center gap-2 px-4">
       <span
         className="font-display font-black leading-none text-muted"
-        style={{ fontSize: "7.5px", letterSpacing: "1.6px" }}
+        style={{ fontSize: typography.sizeRem.p7_5, letterSpacing: "1.6px" }}
       >
         STAMINA
       </span>
@@ -254,7 +255,7 @@ export function StaminaRail({ stamina }: { stamina: number }) {
       <span
         className="w-7.5 text-right font-display font-black leading-none tabular-nums"
         style={{
-          fontSize: "7.5px",
+          fontSize: typography.sizeRem.p7_5,
           letterSpacing: "0.5px",
           color: low ? danger : "var(--ds-color-text-muted)",
         }}
@@ -324,7 +325,7 @@ export function ShotMeter({ view }: { view: ShotMeterView | null }) {
       <span
         className="font-display font-black leading-none"
         style={{
-          fontSize: "7px",
+          fontSize: typography.sizeRem.p7,
           letterSpacing: "1.2px",
           color: hot ? lime : withAlpha(gold, 0.8),
         }}
@@ -353,7 +354,7 @@ export function StingLayer({ sting }: { sting: BasketballSting | null }) {
         className={major ? styles.stingMajor : styles.stingMinor}
         style={{
           padding: major ? "8px 18px" : "4px 10px",
-          fontSize: major ? "18px" : "11px",
+          fontSize: major ? typography.sizeRem.p18 : typography.sizeRem.p11,
           letterSpacing: major ? "2.4px" : "1.4px",
           color,
           backgroundColor: withAlpha("#0d111a", 0.82),

@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -54,7 +55,7 @@ export function HalftimeOverlay({ game, onResume }: HalftimeOverlayProps) {
         <h2
           className="text-center font-display font-black leading-none"
           style={{
-            fontSize: "24px",
+            fontSize: typography.sizeRem.p24,
             letterSpacing: "3px",
             textShadow: `0 0 16px ${withAlpha(gold, 0.5)}`,
           }}
@@ -65,19 +66,19 @@ export function HalftimeOverlay({ game, onResume }: HalftimeOverlayProps) {
         <div className="mt-2.5 flex items-center justify-center gap-1">
           <span
             className="font-display font-black leading-none tabular-nums"
-            style={{ fontSize: "30px", color: cyan }}
+            style={{ fontSize: typography.sizeRem.p30, color: cyan }}
           >
             {game.engine.teams[0].score}
           </span>
           <span
             className="px-2 font-display font-black leading-none text-muted"
-            style={{ fontSize: "16px" }}
+            style={{ fontSize: typography.sizeRem.p16 }}
           >
             —
           </span>
           <span
             className="font-display font-black leading-none tabular-nums"
-            style={{ fontSize: "30px", color: violet }}
+            style={{ fontSize: typography.sizeRem.p30, color: violet }}
           >
             {game.engine.teams[1].score}
           </span>
@@ -85,11 +86,11 @@ export function HalftimeOverlay({ game, onResume }: HalftimeOverlayProps) {
 
         <p
           className="mt-5 font-display font-black leading-none text-muted"
-          style={{ fontSize: "9px", letterSpacing: "2px" }}
+          style={{ fontSize: typography.sizeRem.p9, letterSpacing: "2px" }}
         >
           WHO TAKES THE SECOND HALF?
         </p>
-        <p className="mt-1 text-[11px] leading-body text-muted">
+        <p className="mt-1 text-[length:var(--ds-size-p11)] leading-body text-muted">
           The bench rested to full stamina.
         </p>
 
@@ -121,14 +122,14 @@ export function HalftimeOverlay({ game, onResume }: HalftimeOverlayProps) {
             <Glyph name="sports_basketball" size={16} />
             <span
               className="font-display font-black leading-none"
-              style={{ fontSize: "13px", letterSpacing: "1.6px" }}
+              style={{ fontSize: typography.sizeRem.p13, letterSpacing: "1.6px" }}
             >
               START 2ND HALF
             </span>
           </span>
           <span
             className="mt-1.5 block font-display font-black leading-none text-muted"
-            style={{ fontSize: "8px", letterSpacing: "1.2px" }}
+            style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1.2px" }}
           >
             {selected === activeIndex
               ? `STAY WITH ${chosen.name.toUpperCase()}`
@@ -182,7 +183,7 @@ function SubCard({
         <span className="flex items-center gap-2">
           <span
             className="truncate font-display font-black leading-none"
-            style={{ fontSize: "13px", letterSpacing: "1px" }}
+            style={{ fontSize: typography.sizeRem.p13, letterSpacing: "1px" }}
           >
             {name}
           </span>
@@ -193,7 +194,7 @@ function SubCard({
           ) : null}
           <span
             className="ml-auto shrink-0 font-display font-black leading-none text-muted"
-            style={{ fontSize: "8px", letterSpacing: "1px" }}
+            style={{ fontSize: typography.sizeRem.p8, letterSpacing: "1px" }}
           >
             {position}
           </span>
@@ -220,7 +221,7 @@ function Chip({ label, color }: { label: string; color: string }) {
     <span
       className="shrink-0 px-1.5 py-0.5 font-display font-black leading-none"
       style={{
-        fontSize: "7px",
+        fontSize: typography.sizeRem.p7,
         letterSpacing: "1px",
         color,
         border: `1px solid ${withAlpha(color, 0.5)}`,
@@ -263,7 +264,7 @@ export function OvertimeOverlay({ onBegin }: { onBegin: () => void }) {
         <span
           className="font-display font-black leading-none"
           style={{
-            fontSize: "34px",
+            fontSize: typography.sizeRem.p34,
             letterSpacing: "4px",
             color: gold,
             textShadow: `0 0 22px ${withAlpha(gold, 0.6)}`,
@@ -273,7 +274,7 @@ export function OvertimeOverlay({ onBegin }: { onBegin: () => void }) {
         </span>
         <span
           className="mt-2.5 font-display font-black leading-none"
-          style={{ fontSize: "10px", letterSpacing: "2.4px" }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "2.4px" }}
         >
           SUDDEN DEATH — FIRST BASKET WINS
         </span>
@@ -312,11 +313,11 @@ export function QuitDialog({
       >
         <h2
           className="font-display font-black leading-none"
-          style={{ fontSize: "15px", letterSpacing: "1.8px", color: danger }}
+          style={{ fontSize: typography.sizeRem.p15, letterSpacing: "1.8px", color: danger }}
         >
           LEAVE THE COURT?
         </h2>
-        <p className="mt-3 text-[12px] leading-body text-muted">
+        <p className="mt-3 text-[length:var(--ds-size-p12)] leading-body text-muted">
           Walking out abandons the match — no XP, no record.
         </p>
         <div className="mt-5 flex gap-2.5">
@@ -325,7 +326,7 @@ export function QuitDialog({
             onClick={onCancel}
             className="flex-1 cursor-pointer px-3 py-2.5 font-display font-black leading-none"
             style={{
-              fontSize: "10px",
+              fontSize: typography.sizeRem.p10,
               letterSpacing: "1.4px",
               color: cyan,
               border: `1px solid ${withAlpha(cyan, 0.5)}`,
@@ -338,7 +339,7 @@ export function QuitDialog({
             onClick={onConfirm}
             className="flex-1 cursor-pointer px-3 py-2.5 font-display font-black leading-none"
             style={{
-              fontSize: "10px",
+              fontSize: typography.sizeRem.p10,
               letterSpacing: "1.4px",
               color: danger,
               backgroundColor: withAlpha(danger, 0.14),

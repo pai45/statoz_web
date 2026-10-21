@@ -11,6 +11,9 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    // Generated standalone game bundle, including vendored React/Three.js.
+    // Its authored TypeScript is validated in the game workspace.
+    "public/games/retro-football/**",
     "next-env.d.ts",
   ]),
 ]);

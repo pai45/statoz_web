@@ -195,7 +195,7 @@ export function ActionCard({
           {title.toUpperCase()}
         </span>
         <span
-          className="truncate text-center font-extrabold leading-compact"
+          className="truncate text-center font-bold leading-compact"
           style={{
             color: `color-mix(in srgb, ${ink} 76%, transparent)`,
             fontSize: step.effect,

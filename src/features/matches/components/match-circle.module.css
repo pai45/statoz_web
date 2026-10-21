@@ -74,8 +74,8 @@
 .topTitle {
   min-width: 0;
   overflow: hidden;
-  font-size: 14px;
-  font-weight: 800;
+  font-size:var(--ds-size-p14);
+  font-weight:var(--ds-weight-extrabold);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -150,12 +150,12 @@
 .body { min-width: 0; flex: 1; }
 
 .head { display: flex; align-items: center; gap: 8px; }
-.head strong { min-width: 0; flex: 1; overflow: hidden; color: var(--ds-color-text-default); font-size: var(--body); font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
-.head time { flex: none; color: var(--ds-color-text-muted); font-size: 10px; }
+.head strong { min-width: 0; flex: 1; overflow: hidden; color: var(--ds-color-text-default); font-size: var(--body); font-weight:var(--ds-weight-extrabold); text-overflow: ellipsis; white-space: nowrap; }
+.head time { flex: none; color: var(--ds-color-text-muted); font-size:var(--ds-size-p10); }
 .deletedName { color: var(--ds-color-text-muted) !important; }
 
-.text { margin: 5px 0 0; color: var(--ds-color-text-default); font-size: var(--body); font-weight: 600; line-height: 1.45; }
-.deletedText { margin: 5px 0 0 0; padding-bottom: 8px; color: var(--ds-color-text-muted); font-size: var(--body); font-style: italic; font-weight: 500; line-height: 1.45; }
+.text { margin: 5px 0 0; color: var(--ds-color-text-default); font-size: var(--body); font-weight:var(--ds-weight-semibold); line-height: 1.45; }
+.deletedText { margin: 5px 0 0 0; padding-bottom: 8px; color: var(--ds-color-text-muted); font-size: var(--body); font-style: italic; font-weight:var(--ds-weight-medium); line-height: 1.45; }
 
 /* ---- Owned-comment menu ---------------------------------------------------- */
 
@@ -195,8 +195,8 @@
   background: none;
   color: var(--ds-color-accent-cyan);
   font-family: var(--ds-font-display);
-  font-size: 10px;
-  font-weight: 900;
+  font-size:var(--ds-size-p10);
+  font-weight:var(--ds-weight-black);
   letter-spacing: .1em;
   text-align: left;
   cursor: pointer;
@@ -221,8 +221,8 @@
   background: none;
   color: var(--ds-color-text-muted);
   font-family: var(--ds-font-display);
-  font-size: 9px;
-  font-weight: 900;
+  font-size:var(--ds-size-p9);
+  font-weight:var(--ds-weight-black);
   font-variant-numeric: tabular-nums;
   letter-spacing: .078em;
   cursor: pointer;
@@ -231,7 +231,7 @@
 .actionActive { color: var(--ds-color-accent-cyan); }
 .action:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -6px; }
 
-.edited { padding: 17px 8px; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size: 8px; font-weight: 900; letter-spacing: .1em; }
+.edited { padding: 17px 8px; color: var(--ds-color-text-muted); font-family: var(--ds-font-display); font-size:var(--ds-size-p8); font-weight:var(--ds-weight-black); letter-spacing: .1em; }
 
 .emptyAction {
   display: inline-flex;
@@ -243,8 +243,8 @@
   background: none;
   color: var(--ds-color-accent-cyan);
   font-family: var(--ds-font-display);
-  font-size: 9px;
-  font-weight: 900;
+  font-size:var(--ds-size-p9);
+  font-weight:var(--ds-weight-black);
   letter-spacing: .12em;
   cursor: pointer;
 }
@@ -271,8 +271,8 @@
   background: color-mix(in srgb, var(--ds-color-accent-cyan) 8%, transparent);
   color: var(--ds-color-accent-cyan);
   font-family: var(--ds-font-display);
-  font-size: 9px;
-  font-weight: 900;
+  font-size:var(--ds-size-p9);
+  font-weight:var(--ds-weight-black);
   letter-spacing: .1em;
 }
 .mode span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -280,13 +280,13 @@
 .mode button:hover { color: var(--ds-color-text-default); }
 .mode button:focus-visible { outline: 2px solid var(--ds-color-accent-cyan); outline-offset: -8px; }
 
-.error { display: flex; align-items: center; gap: 7px; margin: 0 0 6px; color: var(--ds-color-danger); font-size: 11px; }
+.error { display: flex; align-items: center; gap: 7px; margin: 0 0 6px; color: var(--ds-color-danger); font-size:var(--ds-size-p11); }
 .error svg { flex: none; }
 
 .composerRow { display: flex; align-items: flex-start; gap: 8px; }
 
 .field { display: grid; min-width: 0; flex: 1; gap: 4px; }
-.field small { padding-right: 4px; color: var(--ds-color-text-muted); font-size: 9px; text-align: right; }
+.field small { padding-right: 4px; color: var(--ds-color-text-muted); font-size:var(--ds-size-p9); text-align: right; }
 .countWarn { color: var(--ds-color-accent-gold); }
 
 .input {
@@ -299,7 +299,7 @@
   background: color-mix(in srgb, var(--ds-color-background-muted) 92%, transparent);
   color: var(--ds-color-text-default);
   font-family: var(--ds-font-body);
-  font-size: 13px;
+  font-size:var(--ds-size-p13);
   line-height: 1.35;
   resize: none;
 }

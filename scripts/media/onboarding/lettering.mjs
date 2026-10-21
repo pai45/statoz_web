@@ -16,8 +16,8 @@ await fs.mkdir(output,{recursive:true});
 const browser=await playwright.chromium.launch({headless:true});
 try{
   const page=await browser.newPage();
-  const fonts=await Promise.all(['orbitron','onest'].map(async name=>({name,data:(await fs.readFile(path.join(root,`src/app/fonts/${name}-latin-variable.woff2`))).toString('base64')})));
-  await page.setContent(`<style>${fonts.map(f=>`@font-face{font-family:${f.name};src:url(data:font/woff2;base64,${f.data}) format('woff2');font-weight:100 900;}`).join('')}</style>`);
+  const fonts=await Promise.all(['orbitron','spaceGrotesk'].map(async name=>({name,data:(await fs.readFile(path.join(root,name === "spaceGrotesk" ? "src/app/fonts/space-grotesk-variable.ttf" : "src/app/fonts/orbitron-latin-variable.woff2"))).toString('base64')})));
+  await page.setContent(`<style>${fonts.map(f=>`@font-face{font-family:${f.name};src:url(data:font/${f.name === "spaceGrotesk" ? "ttf" : "woff2"};base64,${f.data}) font-weight:${f.name === "spaceGrotesk" ? "300 700" : "400 900"};}`).join('')}</style>`);
   const tokens=await fs.readFile(path.join(root,'src/design-system/styles/tokens.css'),'utf8');
   const color=name=>tokens.match(new RegExp(`--ds-color-${name}:\\s*([^;]+);`))[1].trim();
   const entries=[
@@ -31,7 +31,7 @@ try{
   for(let i=0;i<entries.length;i++){
     const [text,size,fill,display]=entries[i];
     const result=await page.evaluate(async({text,size,fill,display})=>{
-      const font=`900 ${size}px ${display?'orbitron':'onest'}`;
+      const font=`900 ${size}px ${display?'orbitron':'spaceGrotesk'}`;
       await document.fonts.load(font);
       const canvas=document.createElement('canvas');
       let ctx=canvas.getContext('2d');ctx.font=font;
@@ -47,5 +47,5 @@ try{
     manifest[`${text}:${size}:${fill}:${display}`]={file,w:result.w,h:result.h};
   }
   await fs.writeFile(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
-  console.log('Exact Orbitron and Onest lettering saved.');
+  console.log('Exact Orbitron and Space Grotesk lettering saved.');
 }finally{await browser.close();}

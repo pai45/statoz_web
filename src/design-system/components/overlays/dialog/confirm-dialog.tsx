@@ -90,7 +90,7 @@ export function ConfirmDialog({
         >
           <div className="px-5 pt-5 pb-3">
             <p
-              className="flex items-center gap-2 font-(family-name:--ds-font-display) text-[11px] font-black tracking-[0.25em]"
+              className="flex items-center gap-2 font-(family-name:--ds-font-display) text-[length:var(--ds-size-p11)] font-black tracking-[0.25em]"
               style={{ color: accent }}
             >
               <WarningIcon size={14} aria-hidden="true" />
@@ -134,7 +134,7 @@ function DialogAction({
       ref={ref}
       type="button"
       onClick={onClick}
-      className="grid place-items-center font-(family-name:--ds-font-display) text-[11px] font-black tracking-[0.2em] hover:bg-(--ds-color-overlay-subtle) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-current"
+      className="grid place-items-center font-(family-name:--ds-font-display) text-[length:var(--ds-size-p11)] font-black tracking-[0.2em] hover:bg-(--ds-color-overlay-subtle) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-current"
       style={{ color }}
     >
       {label.toUpperCase()}

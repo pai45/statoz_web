@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EditorialMatchCard } from "./editorial-discovery";
 import type { CSSProperties } from "react";
 
 import type { SportMatch, SportTeam } from "@/domain/matches";
@@ -10,43 +11,32 @@ import { TeamBadge } from "./team-badge";
 export type SportFixtureCardProps = {
   match: SportMatch;
   followedTeamName?: string;
-  /** Keeps feed cards unchanged while Trending opts into its shared chrome. */
-  appearance?: "default" | "trending";
 };
 
-/** Flutter-faithful fixture surface shared by every sport match home. */
+/** Shared editorial fixtures; Tennis retains its existing set-score presentation. */
 export function SportFixtureCard({
   match,
   followedTeamName,
-  appearance = "default",
 }: SportFixtureCardProps) {
-  const trending = appearance === "trending";
+  if (match.sport !== "tennis" || match.status === "scheduled") return <EditorialMatchCard showCompetition={false} match={match} followed={[match.home.name,match.away.name].includes(followedTeamName ?? "")} />;
   const followed = [match.home, match.away].find((team) => team.name === followedTeamName);
-  const stateColor = trending
-    ? "var(--ds-color-fixture-predicted)"
-    : match.status === "live"
+  const stateColor = match.status === "live"
       ? "var(--ds-color-danger)"
       : match.status === "finished"
         ? "var(--ds-color-fixture-border)"
         : followed?.color ?? "var(--ds-color-fixture-predicted)";
-  const label = match.sport === "motorsport"
-    ? `${match.home.name}, ${statusLabel(match)}`
-    : `${match.home.name} versus ${match.away.name}, ${statusLabel(match)}`;
+  const label = `${match.home.name} versus ${match.away.name}, ${statusLabel(match)}`;
 
   return (
     <article
-      className={`${styles.shell} ${trending ? styles.trending : ""}`}
+      className={styles.shell}
       style={{ "--fixture-state": stateColor } as CSSProperties}
     >
       <div aria-hidden className={styles.lift} />
       <div className={styles.frame}>
         <div className={styles.inner}>
           <div className={styles.body}>
-            {match.sport === "motorsport" ? (
-              <RaceIdentity match={match} />
-            ) : (
-              <Teams match={match} followedTeamName={followedTeamName} />
-            )}
+            <Teams match={match} followedTeamName={followedTeamName} />
             {showsResultSummary(match) ? (
               <p className="mt-3 text-center text-xs font-semibold leading-body text-[var(--ds-color-fixture-result)]">
                 {match.resultLine}
@@ -67,7 +57,7 @@ export function SportFixtureCard({
 function StatusTag({ match }: { match: SportMatch }) {
   if (match.status === "live") {
     return (
-      <span className="flex items-center gap-1.5 text-xs font-extrabold tracking-label text-danger">
+      <span className="flex items-center gap-1.5 text-xs font-bold tracking-label text-danger">
         <span aria-hidden className={styles.liveDot} />
         {match.liveMinute == null ? "LIVE" : `LIVE ${match.liveMinute}′`}
       </span>
@@ -87,7 +77,6 @@ function StatusTag({ match }: { match: SportMatch }) {
 }
 
 function Teams({ match, followedTeamName }: { match: SportMatch; followedTeamName?: string }) {
-  const cricket = match.sport === "cricket";
   const hasScore = match.homeScore != null || match.awayScore != null;
   const homeValue = scoreValue(match.homeScore);
   const awayValue = scoreValue(match.awayScore);
@@ -96,9 +85,9 @@ function Teams({ match, followedTeamName }: { match: SportMatch; followedTeamNam
   const awayWinner = hasWinner ? awayValue > homeValue : null;
   return (
     <div className="flex min-w-0 items-start">
-      <TeamColumn team={match.home} followed={match.home.name === followedTeamName} dim={match.status === "finished" && homeWinner === false} winner={homeWinner} score={cricket ? match.homeScore : undefined} />
+      <TeamColumn team={match.home} followed={match.home.name === followedTeamName} dim={match.status === "finished" && homeWinner === false} />
       <div className="flex shrink-0 flex-col items-center px-2 pt-2">
-        {!cricket && hasScore ? (
+        {hasScore ? (
           <span className="ds-tabular whitespace-nowrap font-display text-2xl font-black tracking-tight">
             <span className={homeWinner === false ? "text-muted" : "text-foreground"}>{match.homeScore ?? "-"}</span>
             <span className="text-muted"> - </span>
@@ -120,7 +109,7 @@ function Teams({ match, followedTeamName }: { match: SportMatch; followedTeamNam
           </div>
         ) : null}
       </div>
-      <TeamColumn team={match.away} followed={match.away.name === followedTeamName} alignEnd dim={match.status === "finished" && awayWinner === false} winner={awayWinner} score={cricket ? match.awayScore : undefined} />
+      <TeamColumn team={match.away} followed={match.away.name === followedTeamName} alignEnd dim={match.status === "finished" && awayWinner === false} />
     </div>
   );
 }
@@ -129,52 +118,26 @@ function TeamColumn({
   team,
   alignEnd = false,
   dim,
-  winner,
   followed,
-  score,
 }: {
   team: SportTeam;
   alignEnd?: boolean;
   dim: boolean;
-  winner: boolean | null;
   followed: boolean;
-  score?: SportMatch["homeScore"];
 }) {
-  const cricketScore = score == null ? null : splitCricketScore(String(score));
   return (
     <div className={`flex min-w-0 flex-1 flex-col ${alignEnd ? "items-end text-right" : "items-start text-left"}`}>
-      <span className={`flex items-center gap-2 ${alignEnd ? "flex-row-reverse" : ""}`}><TeamBadge team={team} />{cricketScore ? <b className={`ds-tabular font-display text-lg font-black ${dim ? "text-muted" : "text-foreground"}`}>{cricketScore.score}</b> : null}</span>
+      <TeamBadge team={team} />
       <span className={`mt-2 line-clamp-2 max-w-full text-base font-bold leading-tight ${dim ? "text-[var(--ds-color-fixture-dim-name)]" : "text-foreground"}`} style={followed ? { color: team.color } : undefined}>
         {team.name}
       </span>
-      {cricketScore?.qualifier ? (
-        <span className={`ds-tabular mt-0.75 max-w-full text-xs font-semibold leading-tight ${winner ? "text-foreground" : "text-muted"}`}>
-          {cricketScore.qualifier}
-        </span>
-      ) : null}
     </div>
   );
-}
-
-function splitCricketScore(value: string): { score: string; qualifier: string } {
-  const index = value.indexOf("(");
-  return index < 0 ? { score: value.trim(), qualifier: "" } : { score: value.slice(0, index).trim(), qualifier: value.slice(index).trim().replace(/^\(|\)$/g, "") };
 }
 
 function scoreValue(value: SportMatch["homeScore"]): number | null {
   const match = String(value ?? "").match(/\d+/);
   return match ? Number(match[0]) : null;
-}
-
-function RaceIdentity({ match }: { match: SportMatch }) {
-  return (
-    <div className="flex flex-col items-center text-center">
-      <TeamBadge team={match.home} />
-      <span className="mt-2 line-clamp-2 text-base font-bold leading-tight text-foreground">
-        {match.home.name}
-      </span>
-    </div>
-  );
 }
 
 function showsResultSummary(match: SportMatch): match is SportMatch & { resultLine: string } {

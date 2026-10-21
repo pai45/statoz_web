@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Link from "next/link";
 import { useCallback, useEffect, useState, type CSSProperties, type ReactNode } from "react";
@@ -157,13 +158,13 @@ function ReferralBoard() {
         <div className="min-w-0">
           <h1
             className="truncate font-display font-black leading-none"
-            style={{ fontSize: "19px", color: cyan, letterSpacing: "var(--ds-tracking-label)" }}
+            style={{ fontSize: typography.sizeRem.p19, color: cyan, letterSpacing: "var(--ds-tracking-label)" }}
           >
             REFER A FRIEND
           </h1>
           <p
             className="mt-1 font-display font-black leading-none"
-            style={{ fontSize: "9px", color: muted, letterSpacing: "var(--ds-tracking-ultra)" }}
+            style={{ fontSize: typography.sizeRem.p9, color: muted, letterSpacing: "var(--ds-tracking-ultra)" }}
           >
             {"// INVITE & EARN"}
           </p>
@@ -257,7 +258,7 @@ function ReferralBoard() {
 
         <section className={`${styles.panel} spanFull`}>
           <div className="flex items-baseline gap-3">
-            <h3 className={`${styles.sectionTitle} flex-1`} style={{ fontSize: "13px" }}>
+            <h3 className={`${styles.sectionTitle} flex-1`} style={{ fontSize: typography.sizeRem.p13 }}>
               RECENT REFERRALS
             </h3>
             <span className={styles.sectionCount}>{referrals.entries.length} TOTAL</span>
@@ -371,7 +372,7 @@ function ReferralRow({ entry }: { entry: ReferralEntry }) {
         {entry.friendName.slice(0, 1).toUpperCase()}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate" style={{ fontSize: "13px" }}>{entry.friendName}</span>
+        <span className="block truncate" style={{ fontSize: typography.sizeRem.p13 }}>{entry.friendName}</span>
         <span className={`${styles.rowDate} block`}>{dateLabel(entry.createdAt)}</span>
       </span>
       <span className={styles.statusTag}>{label}</span>

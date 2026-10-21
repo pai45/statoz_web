@@ -2,6 +2,8 @@
  * StatOz semantic color tokens, seeded from the Flutter application's theme.
  * Components should use semantic names instead of raw palette values.
  */
+import { discoveryAccents, discoveryMaterials } from "./game-discovery.generated";
+
 export const colors = {
   background: {
     primary: "#0d111a",
@@ -31,7 +33,9 @@ export const colors = {
     /** Neutral edge for inactive streak surfaces. */
     inactive: "#94a3b8",
   },
+  artwork: discoveryMaterials,
   accent: {
+    ...discoveryAccents,
     /** Neutral sport identity used by cricket; aliases the primary text ink. */
     white: "#ffffff",
     cyan: "#5cdfff",

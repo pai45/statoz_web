@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import type { CSSProperties } from "react";
 
@@ -133,7 +134,7 @@ export function RankWinnerTile({
           <div className="flex items-center gap-2">
             <span
               className="ds-tabular font-display font-black leading-none"
-              style={{ fontSize: "15px", color }}
+              style={{ fontSize: typography.sizeRem.p15, color }}
             >
               #{entry.rank}
             </span>
@@ -150,7 +151,7 @@ export function RankWinnerTile({
               frameColor={entry.isUser ? frameColor : undefined}
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-base font-extrabold leading-none">
+              <p className="truncate text-base font-bold leading-none">
                 {entry.name}
               </p>
               <ScoreText
@@ -158,7 +159,7 @@ export function RankWinnerTile({
                 value={entry.score}
                 suffix={` ${meta.unit}`}
                 className="ds-tabular mt-1 block truncate font-display font-black leading-none"
-                style={{ fontSize: "13px", color }}
+                style={{ fontSize: typography.sizeRem.p13, color }}
               />
             </div>
           </div>
@@ -186,7 +187,7 @@ function WinnerCopy({ entry, color }: { entry: LeaderboardEntry; color: string }
       <div className="flex items-center gap-2">
         <span
           className="ds-tabular font-display font-black leading-none"
-          style={{ fontSize: "17px", color }}
+          style={{ fontSize: typography.sizeRem.p17, color }}
         >
           #{entry.rank}
         </span>
@@ -201,7 +202,7 @@ function WinnerCopy({ entry, color }: { entry: LeaderboardEntry; color: string }
       {entry.subtitle ? (
         <p
           className="mt-1.5 truncate font-display font-black leading-none text-muted"
-          style={{ fontSize: "9px", letterSpacing: "var(--ds-tracking-wide)" }}
+          style={{ fontSize: typography.sizeRem.p9, letterSpacing: "var(--ds-tracking-wide)" }}
         >
           {entry.subtitle}
         </p>
@@ -230,12 +231,12 @@ function WinnerScore({
       <ScoreText
         value={score}
         className="ds-tabular truncate font-display font-black leading-none"
-        style={{ fontSize: "24px", color }}
+        style={{ fontSize: typography.sizeRem.p24, color }}
       />
       <span
         className="mt-1 font-display font-black leading-none"
         style={{
-          fontSize: "9px",
+          fontSize: typography.sizeRem.p9,
           letterSpacing: "var(--ds-tracking-label)",
           color: withAlpha(color, 0.72),
         }}

@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import { useState } from "react";
 
@@ -122,7 +123,7 @@ function Facts({ match, scoreboard }: { match: SportMatch; scoreboard: MatchDeta
                 <small style={{ color: "var(--ds-color-text-muted)" }}>Not yet run.</small>
               ) : (
                 session.results.map((result) => (
-                  <span key={result} style={{ color: "var(--ds-color-text-default)", fontSize: "13px" }}>
+                  <span key={result} style={{ color: "var(--ds-color-text-default)", fontSize: typography.sizeRem.p13 }}>
                     {result}
                   </span>
                 ))
@@ -230,7 +231,7 @@ function StartingGrid({ scoreboard }: { scoreboard: MatchDetailScoreboard }) {
                     {parsed.time ? (
                       <b
                         className="ds-tabular font-display"
-                        style={{ fontSize: "12px", color: pole ? accentVar("gold") : "var(--ds-color-text-muted)" }}
+                        style={{ fontSize: typography.sizeRem.p12, color: pole ? accentVar("gold") : "var(--ds-color-text-muted)" }}
                       >
                         {parsed.time}
                       </b>

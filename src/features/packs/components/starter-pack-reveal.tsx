@@ -273,7 +273,7 @@ function ActionsStep({
             ACTION CARDS
           </h1>
           <p
-            className="mt-1.5 font-extrabold text-muted"
+            className="mt-1.5 font-bold text-muted"
             style={{
               fontSize: "var(--ds-text-2xs)",
               letterSpacing: "var(--ds-tracking-wide)",
@@ -358,7 +358,7 @@ function SummaryStep({
 
             {reveal.detailLabel ? (
               <p
-                className="mt-2 font-extrabold"
+                className="mt-2 font-bold"
                 style={{
                   color: "color-mix(in srgb, var(--ds-color-accent-cyan) 85%, transparent)",
                   fontSize: "var(--ds-text-2xs)",

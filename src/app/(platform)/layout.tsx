@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 
+import { HomeHubSurface } from "@/features/shell/components/home-hub-surface";
+
 import { AdSlot } from "@/features/ads";
 import { PlatformBreadcrumbs, PlatformNav, PlatformTopBar } from "@/features/shell";
 
@@ -38,13 +40,13 @@ export default function PlatformLayout({ children }: LayoutProps<"/">) {
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col">
+          <HomeHubSurface>
             <PlatformTopBar />
             <PlatformBreadcrumbs />
             <main className="flex min-h-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)]">
               {children}
             </main>
-          </div>
+          </HomeHubSurface>
 
           <PlatformNav className="sticky bottom-0 z-20 h-[calc(var(--platform-nav-height)+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] lg:hidden" />
         </div>

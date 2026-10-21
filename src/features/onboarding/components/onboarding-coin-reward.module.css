@@ -41,13 +41,13 @@
 .balanceLabel,
 .continueLabel {
   font-family: var(--ds-font-display);
-  font-weight: 800;
+  font-weight:var(--ds-weight-extrabold);
   line-height: 1;
 }
 
 .eyebrow {
   color: var(--ds-color-accent-cyan);
-  font-size: 12px;
+  font-size:var(--ds-size-p12);
   letter-spacing: 4px;
 }
 
@@ -151,8 +151,8 @@
 .rewardAmount {
   color: var(--ds-color-accent-gold);
   font-family: var(--ds-font-display);
-  font-size: 48px;
-  font-weight: 900;
+  font-size:var(--ds-size-p48);
+  font-weight:var(--ds-weight-black);
   font-feature-settings: var(--ds-numeric-tabular);
   font-variant-numeric: tabular-nums;
   letter-spacing: 1.2px;
@@ -210,8 +210,8 @@
 
 .balanceValue {
   font-family: var(--ds-font-display);
-  font-size: 16px;
-  font-weight: 900;
+  font-size:var(--ds-size-p16);
+  font-weight:var(--ds-weight-black);
   font-feature-settings: var(--ds-numeric-tabular);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.8px;
@@ -276,7 +276,7 @@
   }
 
   .rewardAmount {
-    font-size: 38px;
+    font-size:var(--ds-size-p38);
   }
 }
 

@@ -112,7 +112,7 @@ export function SummaryGroupHeader({
         {title}
       </h2>
       <span
-        className="ds-tabular font-extrabold text-muted"
+        className="ds-tabular font-bold text-muted"
         style={{ fontSize: "var(--ds-text-xs)" }}
       >
         {count}

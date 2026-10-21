@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -50,7 +51,7 @@ export function StatBand({
           </span>
           <h2
             className="font-display font-black leading-none"
-            style={{ fontSize: "15px", letterSpacing: "var(--ds-tracking-label)", color: accent }}
+            style={{ fontSize: typography.sizeRem.p15, letterSpacing: "var(--ds-tracking-label)", color: accent }}
           >
             {title}
           </h2>
@@ -125,7 +126,7 @@ function StatCell({ stat, accent }: { stat: ProfileStat; accent: string }) {
         <span
           className="truncate font-display font-black leading-none"
           style={{
-            fontSize: "8px",
+            fontSize: typography.sizeRem.p8,
             letterSpacing: "var(--ds-tracking-wide)",
             color: withAlpha(accent, 0.9),
           }}

@@ -12,7 +12,8 @@
 
 /* ---- The pitch ------------------------------------------------------------ */
 
-:root,
+.actionBar,
+.timerSlot,
 .pitch {
   /*
    * The score bar, the pick timer and the action bar, plus their padding — the
@@ -235,8 +236,8 @@
 
 .rating {
   font-family: var(--ds-font-display), sans-serif;
-  font-size: clamp(11px, 3.4vw, 16px);
-  font-weight: 700;
+  font-size: clamp(var(--ds-size-p11), 3.4vw, var(--ds-size-p16));
+  font-weight:var(--ds-weight-bold);
   line-height: 1;
 }
 
@@ -255,8 +256,8 @@
   overflow: hidden;
   color: color-mix(in srgb, var(--ds-color-text-default) 82%, transparent);
   font-family: var(--ds-font-display), sans-serif;
-  font-size: clamp(7px, 2.1vw, 11px);
-  font-weight: 600;
+  font-size: clamp(var(--ds-size-p7), 2.1vw, var(--ds-size-p11));
+  font-weight:var(--ds-weight-semibold);
   letter-spacing: 0.5px;
   line-height: 1;
   text-overflow: ellipsis;

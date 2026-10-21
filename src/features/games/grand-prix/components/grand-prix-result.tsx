@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import type { CSSProperties } from "react";
 
@@ -118,13 +119,13 @@ export function GrandPrixResultOverlay({
               </span>
               <h2
                 className="mt-1.5 font-display font-black leading-none"
-                style={{ fontSize: "34px", letterSpacing: "3px", color: look.color }}
+                style={{ fontSize: typography.sizeRem.p34, letterSpacing: "3px", color: look.color }}
               >
                 {look.text}
               </h2>
               <p
                 className="mt-1 font-display font-black leading-none text-muted"
-                style={{ fontSize: "9px", letterSpacing: "2px" }}
+                style={{ fontSize: typography.sizeRem.p9, letterSpacing: "2px" }}
               >
                 {circuitLabel}
               </p>
@@ -175,13 +176,13 @@ function PositionReadout({ result }: { result: GrandPrixResult }) {
       <div className="flex flex-col items-center">
         <p
           className="font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "64px", color: danger }}
+          style={{ fontSize: typography.sizeRem.p64, color: danger }}
         >
           DNF
         </p>
         <p
           className="mt-1 font-display font-black leading-none"
-          style={{ fontSize: "10px", letterSpacing: "1.8px", color: danger }}
+          style={{ fontSize: typography.sizeRem.p10, letterSpacing: "1.8px", color: danger }}
         >
           GAME OVER · STUCK ON TRACK
         </p>
@@ -202,20 +203,20 @@ function PositionReadout({ result }: { result: GrandPrixResult }) {
       <p className="flex items-baseline justify-center">
         <span
           className="font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "64px", color: cyan }}
+          style={{ fontSize: typography.sizeRem.p64, color: cyan }}
         >
           P{result.position}
         </span>
         <span
           className="font-display font-black leading-none tabular-nums text-muted"
-          style={{ fontSize: "28px" }}
+          style={{ fontSize: typography.sizeRem.p28 }}
         >
           /{result.fieldSize}
         </span>
       </p>
       <p
         className="mt-1 font-display font-black leading-none"
-        style={{ fontSize: "10px", letterSpacing: "1.8px", color: deltaColor }}
+        style={{ fontSize: typography.sizeRem.p10, letterSpacing: "1.8px", color: deltaColor }}
       >
         {deltaText}
       </p>
@@ -236,7 +237,7 @@ function RaceStats({ result }: { result: GrandPrixResult }) {
       <StatRow label={result.laps > 1 ? "RACE TIME" : "LAP TIME"}>
         <span
           className="font-display font-black leading-none tabular-nums"
-          style={{ fontSize: "13px" }}
+          style={{ fontSize: typography.sizeRem.p13 }}
         >
           {formatLapTime(result.lapTimeMs)}
         </span>
@@ -251,7 +252,7 @@ function RaceStats({ result }: { result: GrandPrixResult }) {
         <StatRow label="MVP MOVE">
           <span
             className="font-display font-black leading-none"
-            style={{ fontSize: "10px", letterSpacing: "1px", color: cyan }}
+            style={{ fontSize: typography.sizeRem.p10, letterSpacing: "1px", color: cyan }}
           >
             PASSED {result.bestOvertakeName.toUpperCase()}
           </span>
@@ -272,7 +273,7 @@ function StatRow({
     <div className="flex items-center gap-2">
       <span
         className="font-display font-black leading-none text-muted"
-        style={{ fontSize: "9px", letterSpacing: "1.6px" }}
+        style={{ fontSize: typography.sizeRem.p9, letterSpacing: "1.6px" }}
       >
         {label}
       </span>
@@ -287,7 +288,7 @@ function Chip({ label, color }: { label: string; color: string }) {
     <span
       className="px-1.5 py-0.5 font-display font-black leading-none"
       style={{
-        fontSize: "8px",
+        fontSize: typography.sizeRem.p8,
         letterSpacing: "1.2px",
         color,
         border: `1px solid ${withAlpha(color, 0.5)}`,
@@ -323,7 +324,7 @@ function XpPanel({
     >
       <p
         className="font-display font-black leading-none tabular-nums"
-        style={{ fontSize: "26px", letterSpacing: "1px", color: racing }}
+        style={{ fontSize: typography.sizeRem.p26, letterSpacing: "1px", color: racing }}
       >
         +{shownXp} XP
       </p>
@@ -336,7 +337,7 @@ function XpPanel({
       />
       <p
         className="mt-2 font-display font-black leading-none text-muted tabular-nums"
-        style={{ fontSize: "9px", letterSpacing: "0.5px" }}
+        style={{ fontSize: typography.sizeRem.p9, letterSpacing: "0.5px" }}
       >
         {band.intoLevel} / {band.levelSpan} XP · LEVEL {band.level}
       </p>

@@ -1,3 +1,4 @@
+import { typography } from "@/design-system/tokens/typography";
 import type { CSSProperties } from "react";
 
 export type GoalMouthPlacement = { x: number; y: number; label: string } | null;
@@ -16,6 +17,6 @@ export function GoalMouthDiagram({ placement, caption }: { placement: GoalMouthP
       <g stroke="currentColor"><GoalMouthStructure /></g>
       {placement ? <circle cx={placement.x} cy={placement.y} r="4" fill="var(--ds-color-accent-gold)" stroke="var(--ds-color-text-inverse)" strokeWidth="1.5" /> : null}
     </svg>
-    <figcaption style={{ minHeight: 20, paddingTop: 4, color: placement ? "var(--ds-color-accent-gold)" : "var(--ds-color-text-muted)", fontFamily: "var(--ds-font-display)", fontSize: "var(--ds-text-2xs)", fontWeight: 900, textAlign: "center", letterSpacing: "var(--ds-tracking-wide)" }}>{placement?.label ?? caption ?? "PLACEMENT NOT PUBLISHED"}</figcaption>
+    <figcaption style={{ minHeight: 20, paddingTop: 4, color: placement ? "var(--ds-color-accent-gold)" : "var(--ds-color-text-muted)", fontFamily: "var(--ds-font-display)", fontSize: "var(--ds-text-2xs)", fontWeight: typography.weight.black, textAlign: "center", letterSpacing: "var(--ds-tracking-wide)" }}>{placement?.label ?? caption ?? "PLACEMENT NOT PUBLISHED"}</figcaption>
   </figure>;
 }

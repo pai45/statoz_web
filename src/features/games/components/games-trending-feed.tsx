@@ -3,6 +3,7 @@ import { Badge, BentoGrid, BentoTile, SignalOffIcon, SignalPanel } from "@/desig
 import { gameEntryFor, gamesTrendingCatalog } from "@/mocks/games";
 import type { GamesTrendingTileConfig } from "../types";
 import { ArcadeHeroTile } from "./arcade-hero-tile";
+import styles from "./discovery-card.module.css";
 import { QuickGameTile } from "./quick-game-tile";
 
 /** The curated arcade bento — the home screen's GAMES surface. */
@@ -10,7 +11,7 @@ export function GamesTrendingFeed() {
   return (
     <BentoGrid>
       {gamesTrendingCatalog.map((config) => (
-        <BentoTile key={config.id} span={config.span}>
+        <BentoTile key={config.id} span={config.span} className={config.sourceId === "pitch-duel" || config.sourceId === "penalty-shootout" ? styles.compactHero : undefined}>
           <GameTile config={config} />
         </BentoTile>
       ))}

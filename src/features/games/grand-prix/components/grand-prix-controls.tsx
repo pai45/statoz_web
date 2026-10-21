@@ -1,4 +1,5 @@
 "use client";
+import { typography } from "@/design-system/tokens/typography";
 
 import type { PointerEvent as ReactPointerEvent } from "react";
 
@@ -130,7 +131,7 @@ function HoldPad({ icon, text, label, accent, wide = false, down, onHold }: Hold
           <span
             className="font-display font-black leading-none"
             style={{
-              fontSize: "8.5px",
+              fontSize: typography.sizeRem.p8_5,
               letterSpacing: "1.4px",
               color: down ? accent : "var(--ds-color-text-muted)",
             }}
